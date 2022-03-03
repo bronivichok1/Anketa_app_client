@@ -13,6 +13,7 @@ const Blank = observer( () => {
 
   const [tree, setTree] = useState([]);
   const [obj, setObj] = useState({});
+  const [data1, setData1] = useState([]);
 
   const mobile = useMediaQuery({ query: '(max-width: 1400px)' })
 
@@ -68,20 +69,17 @@ const Blank = observer( () => {
 
   useEffect( () => {
     setTree( createTree(data));
+    setData1(data);
   }, [data]);
 
-  useEffect( () => {
+
+  useEffect( async () => {
+    await sortTree(tree);
     setObj({
       id: 'id', name: '', num: '',
       children : tree
     })
   }, [tree]);
-
-  sortTree(obj.children);
-
-  // useEffect(() => {
-  //   sortTree(obj.children);
-  // }, [obj])
 
 
   return (
@@ -123,7 +121,7 @@ const Blank = observer( () => {
        
       <div style={{ marginTop: "0.5rem", marginBottom: '2rem' }} className="hr"></div>
 
-      <ListItem itemm={obj} />
+      <ListItem setData1={setData1} data1={data1} itemm={obj} />
 
       
        <Row style={{marginTop: '3rem'}}>

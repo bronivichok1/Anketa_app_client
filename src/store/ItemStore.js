@@ -16,6 +16,7 @@ export default class ItemStore {
             {id: 11, name: 'Выполнение ', num: '0', ball: 1, help: '', formula: 'ball*Сумма', type: 'Сумма',  parentId: null},
             {id: 12, name: 'Выполнение ', num: '0.1', ball: 1, help: '', formula: 'ball*Сумма', type: 'Сумма',  parentId: 11},
             {id: 13, name: 'процент', num: '1.1.2', ball: 1, help: 'Введите ', formula: 'ball*Ввод', type: 'Ввод данных', parentId: 2},
+            {id: 14, name: 'Тест массив 1', num: '2.4', ball: 1, help: '', formula: 'ball*Сумма', type: 'Массив данных',  parentId: 4},
         ]
        
         makeAutoObservable(this);
