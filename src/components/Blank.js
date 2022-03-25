@@ -1,93 +1,46 @@
 import { observer } from "mobx-react-lite";
-import { Container, Row, Col, Button } from "react-bootstrap";
+import { Row, Col, Button } from "react-bootstrap";
 import { useContext, useState, useEffect } from "react";
 import { Context } from "../index";
-import ListItem from "./ListItem";
-import { toJS} from 'mobx';
 import { useMediaQuery } from 'react-responsive';
+import Items from "./Items";
+import { createTree2 } from "../functions";
 
 const Blank = observer( () => {
   const { item } = useContext(Context);
 
   const [data, setData] = useState([]);
 
-  const [tree, setTree] = useState([]);
-  const [obj, setObj] = useState({});
-  const [data1, setData1] = useState([]);
-
   const mobile = useMediaQuery({ query: '(max-width: 1400px)' })
-
   const mobile2 = useMediaQuery({ query: '(max-width: 410px)' })
 
-  
-  function createTree(arr) {
-    if (!arr || !arr.length) { return []; }
-    var tree = [], map = new Map();
-    for (var i = 0, len = arr.length; i < len; ++i) {
-      var item = arr[i];
-      var mapItem = map.get(item.id);
-      if (!mapItem || Array.isArray(mapItem)) {
-        if (mapItem) {
-          item.children = mapItem;
-        }
-        map.set(item.id, item);
-      }
-      if (item.parentId == null) {
-        tree.push(item);
-      } else {
-        var parentItem = map.get(item.parentId);
-        if (!parentItem) {
-          map.set(item.parentId, [item]);
-        } else {
-          var children = Array.isArray(parentItem) ?
-            parentItem :
-            (parentItem.children = parentItem.children || []);
-          children.push(item);
-        }
-      }
-    }
-    return tree;
-  }
-  
-
-  function sortTree(arr) {
-    if (arr && arr.length) {
-
-    arr.sort((a, b) => Number(a.num.split('.')[ a.num.split('.').length - 1]) > Number(b.num.split('.')[ b.num.split('.').length - 1]) ? 1 : -1);
-    arr.map( ar => {
-      sortTree(ar.children);
-    })
-    }
-    return arr;
-  }
-
 
   useEffect( () => {
-    setData(toJS(item.items));
-  }, []);
+    setData(createTree2([...item.items.map(d => d.parentId === null ? {...d, clas: true, clasName: false} : 
+      d.children && d.children.length 
+      ?  {...d, clas: false, clasName: false}
+      :  {...d, clas: false}
+     )]));
+  }, [])
 
+  const showFunc = async (id) => {
+    setData([...data.map(d => d.parentId === id 
+      ? {...d, clas: !d.clas}
+      :  d.id === id && d.children && d.children.length
+      ? {...d, clasName: !d.clasName}
+      : {...d}
+      )]);
+  }
 
-  useEffect( () => {
-    setTree( createTree(data));
-    setData1(data);
-  }, [data]);
-
-
-  useEffect( async () => {
-    await sortTree(tree);
-    setObj({
-      id: 'id', name: '', num: '',
-      children : tree
-    })
-  }, [tree]);
+  console.log(data);
 
 
   return (
     
-      <Container  className="blank" style={{ marginTop: "4rem" }}>
+      <div  className="blank" style={{ marginTop: "4rem" }}>
       <Row style={{ backgroundColor: "#e9eff9", borderRadius: '15px'}}>
         <Col style={{ textAlign: "center" }}>Ставка:</Col>
-        <Col style={{ textAlign: "center" }}>Общий балл:</Col>
+        <Col style={{ textAlign: "center" }}>Общий балл: {item.sym ? item.sym : ''} </Col>
       </Row>
       <Row className="row" style={{ marginTop: "1rem" }}>
         <Col md={6}>ФИО</Col>
@@ -109,19 +62,22 @@ const Blank = observer( () => {
         className="hr"
       ></div>
       
-      <div style={{ textAlign: "center" }}>
-      Критерии
-      </div>
-      <div style={{ textAlign: "center" }} >
-      Значение
-        </div>
-        <div style={{ textAlign: "center" }} >
+        <Row>
+          <Col style={{ textAlign: "center" }} md={8} >
+          Критерии
+          </Col>
+          <Col style={{ textAlign: "center" }} md={1} >
           Балл
-        </div>
+          </Col>
+          <Col style={{ textAlign: "center" }} md={2}>
+          Значение
+          </Col>
+          <Col md={1} ></Col>
+        </Row>
        
       <div style={{ marginTop: "0.5rem", marginBottom: '2rem' }} className="hr"></div>
 
-      <ListItem setData1={setData1} data1={data1} itemm={obj} />
+      <Items showFunc={showFunc} data={data} setData={setData} />
 
       
        <Row style={{marginTop: '3rem'}}>
@@ -144,7 +100,7 @@ const Blank = observer( () => {
           </Col>
        </Row>
       
-    </Container>
+    </div>
    
   );
 });
