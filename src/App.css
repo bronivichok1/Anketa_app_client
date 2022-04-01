@@ -92,7 +92,8 @@ body {
 }
 
 .ques {
- width: 33px;
+ width: 30px;
+ height: 30px;
   box-shadow: 0px 0px 18px #0b5ed7;
   border-radius: 50%;
   margin: 0 auto;
@@ -115,15 +116,22 @@ body {
 	border-bottom: 1px solid #d1d1d1;
 	box-shadow: 0 20px 20px -20px rgb(92, 91, 91);
 	width: 100%;
+  
 }
 
 .item {
   border-bottom: 1px solid #d1d1d1;
   border-right: 1px solid #d1d1d1;
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  font-size: 20px;
 }
 
+.item2 {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #d1d1d1;
+}
 
 .item_hover:hover {
   background-color: #ebeef3;
@@ -135,6 +143,7 @@ body {
 
 .mas_but {
   margin-left: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .mas_val {
@@ -144,7 +153,7 @@ body {
   width: 83%;
   background-color: #cad8ed;
   text-align: center;
-  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
   font-size: 21px;
   height: 36px;
   
@@ -154,5 +163,10 @@ body {
  cursor: pointer;
  height: 1.1rem;
  width: 1.1rem;
- margin-top: 1.1rem;
+ margin-top: 0.5rem;
+}
+
+.it {
+  font-size: 19px;
+  
 }

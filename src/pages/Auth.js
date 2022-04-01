@@ -4,6 +4,7 @@ import { Context } from "..";
 import { observer } from "mobx-react-lite";
 import {  useNavigate } from "react-router-dom";
 import { REPORT_ROUTE } from "../utils/consts";
+import { loginFunc } from "../http/UserApi";
 
 const Auth = observer(() => {
   const [login, setLogin] = useState("");
@@ -16,14 +17,9 @@ const Auth = observer(() => {
   const [loginError, setLoginError] = useState("Заполните это поле!");
   const [passwordError, setPasswordError] = useState("Заполните это поле!");
 
-//   const { admin } = useContext(Context);
  const { user } = useContext(Context);
 
  const navigate = useNavigate();
-
-//   useEffect(() => {
-//     fetchAdmins().then((data) => admin.setAdmins(data));
-//   }, []);
 
   const blurHandler = (e) => {
     switch (e.target.name) {
@@ -63,27 +59,29 @@ const Auth = observer(() => {
     }
   }, [user.isUserAuth])
 
-//   const auth = async () => {
-//       try {
-//         let data;
 
-//         data = await loginFunc(login + "@bsmu.by", password);
+  const auth = async () => {
+      try {
+        let data;
 
-//         user.setIsAuth(true);
-//         user.setUser(data);
-//         navigate(COURSE_ROUTE);
-//       } catch (e) {
-//         alert(e.response.data.message);
-//       }
-//   };
+        data = await loginFunc(login + "@bsmu.by", password);
+        console.log(data);
+        localStorage.setItem('name', data.name);
+        user.setIsUserAuth(true);
+        user.setUser(data);
+        navigate(REPORT_ROUTE);
+      } catch (e) {
+        alert(e.response.data.message);
+      }
+  };
 
   return (
     <div
-    //   onKeyDown={(e) => {
-    //     if (e.keyCode === 13) {
-    //       auth();
-    //     }
-    //   }}
+      onKeyDown={(e) => {
+        if (e.keyCode === 13) {
+          auth();
+        }
+      }}
       className="auth_div"
     >
       <div className="auth" style={{position: 'relative', backgroundColor: 'white'}}>
@@ -118,7 +116,7 @@ const Auth = observer(() => {
         <Button
           className="button"
           disabled={!formValid}
-        //   onClick={auth}
+          onClick={auth}
           variant="primary"
           style={{
             marginTop: "2rem",

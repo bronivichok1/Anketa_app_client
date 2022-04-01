@@ -1,42 +1,54 @@
 import { makeAutoObservable } from "mobx";
 
 export default class ItemStore {
-    constructor() {
-        this._items = [
-            {id: 11, name: 'Выполнение ', num: '0', ball: 1, help: '', formula: 'ball*Сумма', type: 'Сумма',  parentId: null},
-            {id: 12, name: 'Выполнение ', num: '0.1', ball: 1, help: '', formula: 'ball*Сумма', type: 'Да/Нет',  parentId: 11},
-            {id: 1, name: 'УЧЕБНАЯ РАБОТА', num: '1', ball: 1, help: 'учебная работа', formula: 'ball*Сумма', type: 'Сумма', parentId: null},
-            {id: 2, name: 'Выполнение педагогической нагрузки, запланированной по кафедре на отчетный период', num: '1.1', ball: 1, help: '', formula: 'ball*Сумма', type: 'Сумма',  parentId: 1},
-            {id: 3, name: 'процент выполнения учебной нагрузки согласно индивидуальному плану', num: '1.1.1', ball: 1, help: 'Введите процент выполнения, количественный показатель без знака%', formula: 'ball*Ввод', type: 'Ввод данных', parentId: 2},
-            {id: 13, name: 'процент', num: '1.1.2', ball: 1, help: 'Введите ', formula: 'ball*Ввод', type: 'Ввод данных', parentId: 2},
-            {id: 5, name: 'Выполнение педагогической нагрузки, запланированной по кафедре на отчетный период', num: '1.2', ball: 1, help: 'ghbdtn', formula: 'ball*Сумма', type: 'Список',  parentId: 1},
-            {id: 4, name: 'УЧЕБНО-МЕТОДИЧЕСКАЯ РАБОТА', num: '2', ball: 20, help: 'ggjjg', formula: 'ball*Сумма', type: 'Сумма',  parentId: null},
-            {id: 6, name: 'Выполнение педагогической нагрузки, запланированной по кафедре на отчетный период', num: '2.2', ball: 1, help: '', formula: 'ball*Сумма', type: 'Сумма',  parentId: 4},
-            {id: 9, name: 'Выполнение педагогической нагрузки, запланированной по кафедре на отчетный период', num: '2.2.1', ball: 1, help: '', formula: 'ball*Сумма', type: 'Массив данных',  parentId: 6},
-            {id: 8, name: 'Выполнение педагогической нагрузки, запланированной по кафедре на отчетный период', num: '2.2.3', ball: 1, help: '', formula: 'ball*Сумма', type: 'Сумма',  parentId: 6},
-            {id: 10, name: 'Выполнение педагогической нагрузки, запланированной по кафедре на отчетный период', num: '2.2.3.1', ball: 1, help: '', formula: 'ball*Сумма', type: 'Список',  parentId: 8},
-            {id: 7, name: 'Выполнение педагогической нагрузки, запланированной по кафедре на отчетный период', num: '2.3', ball: 1, help: '', formula: 'ball*Сумма', type: 'Да/Нет',  parentId: 4},
-            {id: 14, name: 'Тест массив 1', num: '2.4', ball: 1, help: '', formula: 'ball*Сумма', type: 'Массив данных',  parentId: 4},  
-        ];
+  constructor() {
+    this._items = [];
     this._sym = 0;
-       
-        makeAutoObservable(this);
-    }
+    this._massiv = {};
+    this._selects = [];
+    this._stavka = '';
 
-    setItems(items) {
-        this._items = items;
-    }
+    makeAutoObservable(this);
+  }
 
-    get items() {
-        return this._items;
-    }
+  setItems(items) {
+    this._items = items;
+  }
 
-    setSym(sym) {
-        this._sym = sym;
-    }
+  get items() {
+    return this._items;
+  }
 
-    get sym() {
-        return this._sym;
-    }
-    
+  setSym(sym) {
+    this._sym = sym;
+  }
+
+  get sym() {
+    return this._sym;
+  }
+
+  setMassiv(massiv) {
+    this._massiv = massiv;
+  }
+
+  get massiv() {
+    return this._massiv;
+  }
+
+  setSelects(selects) {
+    this._selects = selects;
+  }
+
+  get selects() {
+    return this._selects;
+  }
+
+  setStavka(stavka) {
+    this._stavka = stavka;
+  }
+
+  get stavka() {
+    return this._stavka;
+  }
+
 }

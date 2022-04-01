@@ -3,8 +3,29 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter } from 'react-router-dom';
 import AppRouter from './components/AppRouter';
+import { useContext, useEffect, useState } from 'react';
+import { Context } from '.';
+import { Spinner } from 'react-bootstrap';
+import { check } from './http/UserApi';
 
 function App() {
+
+  const {user} = useContext(Context);
+  const [loading, setLoading] = useState(true);
+
+  useEffect( () => {
+    check().then( data => {
+      user.setUser(data);
+      user.setIsUserAuth(true);
+    }).finally( () => setLoading(false));
+  }, [])
+
+  if (loading) {
+    return <Spinner animation={'grow'} />
+  }
+
+  //console.log(user.user.name);
+
   return (
     
     <BrowserRouter className="App">
