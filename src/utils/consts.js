@@ -7,3 +7,4 @@ export const EDIT_CAFEDRAS_ROUTE = '/editCafedras';
 export const EDIT_CAFEDRAS_USERS_ROUTE = '/editUsers';
 export const SEE_REPORTS_ROUTE = '/reports';
 export const LOGIN_ROUTE = '/';
+export const EDIT_USER = '/reports/:id';

@@ -1,0 +1,28 @@
+.myModal {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    display: none;
+    background: rgba(0,0,0, 0.5);
+    
+}
+
+.myModalContent {
+    padding: 25px;
+    background: white;
+    border-radius: 16px;
+    max-width: 1200px;
+    min-height: 200px;
+    overflow-y: auto;
+}
+
+.myModal.active {
+    display: flex;
+    justify-content: center;
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+    z-index: 100;
+   
+}

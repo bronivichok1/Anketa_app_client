@@ -7,6 +7,7 @@ export default class ItemStore {
     this._massiv = {};
     this._selects = [];
     this._stavka = '';
+    this._result = {};
 
     makeAutoObservable(this);
   }
@@ -49,6 +50,14 @@ export default class ItemStore {
 
   get stavka() {
     return this._stavka;
+  }
+
+  setResult(res) {
+    this._result = res;
+  }
+
+  get result() {
+    return this._result;
   }
 
 }

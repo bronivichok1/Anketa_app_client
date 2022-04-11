@@ -15,3 +15,20 @@ export const check = async () => {
    //return {...jwt_decode(data.token), name: data.name};
 }
 
+export const updateUser = async (id, user) => {
+    const {data} = await $host.put('/user/' + id, user);
+    return data;
+}
+
+export const fetchOneUser = async (id) => {
+    const {data} = await $host.get('/user/' + id);
+    return data;
+}
+
+export const findUsers = async (cathedraId) => {
+    const {data} = await $host.get('/user/find/' + cathedraId);
+    return data;
+}
+
+
+

@@ -1,25 +1,28 @@
+import { observer } from "mobx-react-lite";
 import { Container } from "react-bootstrap";
-import AdminNavBar from "../components/AdminNavBar";
-import DeleteAnketa from "../components/DeleteAnketa";
+import { useParams } from "react-router-dom";
+import EditBlank from "../components/EditBlank";
 import Footer from "../components/Footer";
+import NavBar from "../components/NavBar";
 
-const DeleteReports = () => {
+const EditUser = observer( () => {
+
     return(
         <div className="wrapper" >
-      <AdminNavBar />
+      <NavBar />
       <div className="main" >
         <Container style={{ marginTop: "7rem" }}>
           <h2 style={{ textAlign: "center", color: "#0b5ed7" }}>
-          Удаление сохраненных анкет
+            Редактировать сотрудника
           </h2>
         </Container>
         <main>
-        <DeleteAnketa/>
+            <EditBlank/>
         </main>
       </div>
       <Footer />
     </div>
     );
-}
+})
 
-export default DeleteReports;
+export default EditUser;

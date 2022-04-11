@@ -7,10 +7,16 @@ import Items from "./Items";
 import { createTree2 } from "../functions";
 import { fetchItems } from "../http/ItemApi";
 import { fetchSelectsAll } from "../http/SelectApi";
-//import Lib from "./Lib";
+import { fetchCathedras } from "../http/CathedraApi";
+import { createResult } from "../http/ResultApi";
+import { createReport } from "../http/ReportApi";
+import { createMassiv } from "../http/MassivApi";
+import { fetchOneUser, updateUser } from "../http/UserApi";
 
 const Blank = observer( () => {
   const { item } = useContext(Context);
+  const { cathedra } = useContext(Context);
+  const { user } = useContext(Context);
 
   const [data, setData] = useState([]);
 
@@ -21,15 +27,18 @@ const Blank = observer( () => {
   const [parent, setParent] = useState('');
 
   const [name, setName] = useState('');
+  const [localUser, setLocalUser] = useState({});
+  const [cathValue, setCathValue] = useState('');
+  const [cathId, setCathId] = useState(0);
 
 
   useEffect( () => {
 
     if(localStorage.getItem('data')) {
-      setData(JSON.parse(localStorage.getItem('data')));
+      item.setItems(JSON.parse(localStorage.getItem('data')));
     } else {
       fetchItems().then((data) => {
-        setData(createTree2([...data.map(d => d.parentId === null ? {...d, clas: true, clasName: false} : 
+        item.setItems(createTree2([...data.map(d => d.parentId === null ? {...d, clas: true, clasName: false} : 
           d.children && d.children.length 
           ?  {...d, clas: false, clasName: false}
           :  {...d, clas: false}
@@ -41,14 +50,31 @@ const Blank = observer( () => {
       item.setMassiv(JSON.parse(localStorage.getItem('massiv')));
     }
 
-     setName(localStorage.getItem('name'));
+    if(localStorage.getItem('stavka')) {
+      item.setStavka(localStorage.getItem('stavka'));
+    }
+
+      setName(localStorage.getItem('name'));
+
+   // setName(user.user.fullname);
+
+   fetchOneUser(user.user.id).then(data => setName(data.fullname));
+
      fetchSelectsAll().then((data) => {
        item.setSelects(data);
      })
+
+     fetchCathedras().then((data) => {
+     cathedra.setCathedras(data);
+    })
+
+    fetchOneUser(user.user.id).then((data) => {
+      setLocalUser(data);
+    })
   }, [])
 
   const showFunc = async (id) => {
-    setData([...data.map(d => d.parentId === id 
+    item.setItems([...item.items.map(d => d.parentId === id 
       ? {...d, clas: !d.clas}
       :  d.id === id && d.children && d.children.length
       ? {...d, clasName: !d.clasName}
@@ -57,8 +83,8 @@ const Blank = observer( () => {
   }
 
   useEffect( () => {
-   data.forEach( el => {
-     data.forEach( el2 => {
+   item.items.forEach( el => {
+     item.items.forEach( el2 => {
        if( !el.clas && el2.num.includes(el.num) && el2.num.split('.').length === el.num.split('.').length + 1
        && el2.clas ) {
          setChild(el2.num);
@@ -66,12 +92,12 @@ const Blank = observer( () => {
        }
      })
    })
-  }, [data])
+  }, [item.items])
 
   useEffect( () => {
    if(child && parent) {
-    setData([
-      ...data.map((dat) =>
+    item.setItems([
+      ...item.items.map((dat) =>
         dat.num === child ? { ...dat, clas: !dat.clas } : 
         dat.num === parent ? { ...dat, clasName: !dat.clasName } : 
         { ...dat }
@@ -81,7 +107,22 @@ const Blank = observer( () => {
   }, [child, parent])
 
 
-  console.log(data);
+  useEffect(() => {
+    if(cathValue) {
+      cathedra.cathedras.forEach(cath => {
+        if(cath.name === cathValue) {
+          setCathId(cath.id);
+        }
+      })
+    }
+  }, [cathValue])
+
+  useEffect(() => {
+    if(cathId) {
+      setLocalUser({...localUser, cathedraId: cathId});
+    }
+  }, [cathId])
+
 
   function clearData() {
     
@@ -91,23 +132,63 @@ const Blank = observer( () => {
     if( localStorage.getItem('massiv')) {
       localStorage.removeItem('massiv');
     }
+    if( localStorage.getItem('stavka')) {
+      localStorage.removeItem('stavka');
+    }
     window.location.reload();
   }
 
   function saveData() {
-   localStorage.setItem('data', JSON.stringify(data));
+   localStorage.setItem('data', JSON.stringify(item.items));
    localStorage.setItem('massiv', JSON.stringify(item.massiv));
+   localStorage.setItem('stavka', item.stavka);
    alert('Ваши данные сохранены!');
   }
 
+
+  async function postAnketa() {
+    try {
+      let res;
+      res = await createResult({ userId: user.user.id, result: item.sym });
+      await item.items.forEach((d) => {
+        createReport({
+          selectvalue: d.select,
+          value: d.vvod,
+          ball_value: d.value,
+          userId: user.user.id,
+          itemId: d.id,
+        }).then((dat) => {
+
+          for (let key in item.massiv) {
+            if (item.massiv.hasOwnProperty(key)) {
+             if(d.id == key) {
+              item.massiv[key].forEach(el2 => {
+                createMassiv({value: el2.val, userId: user.user.id, itemId: d.id})
+                .then(end => console.log('massiv'));
+              })
+             }
+            
+            }
+          }
+        });
+      });
+
+      updateUser(localUser.id, localUser);
+
+      alert('Ваша анкета добавлена!');
+      //window.location.reload();
+    } catch (e) {
+      alert(e.response.data.message);
+    }
+  }
 
 
   return (
     
       <div  className="blank" style={{ marginTop: "4rem" }}>
-      <Row style={{ backgroundColor: "#e9eff9", borderRadius: '15px'}}>
-        <Col style={{ textAlign: "center" }}>Ставка: {item.stavka} </Col>
-        <Col style={{ textAlign: "center" }}>Общий балл: {item.sym ? Number(item.sym.toFixed(2)) : ''} </Col>
+      <Row>
+        <Col style={{ textAlign: "center", backgroundColor: "#e9eff9", borderRadius: '15px' }}>Ставка: {item.stavka} </Col>
+        <Col style={{ textAlign: "center", backgroundColor: "#e9eff9", borderRadius: '15px' }}>Общий балл: {item.sym ? Number(item.sym) : ''} </Col>
       </Row>
       <Row className="row" style={{ marginTop: "1rem" }}>
         <Col md={6}>ФИО</Col>
@@ -118,9 +199,16 @@ const Blank = observer( () => {
       <Row className="row" style={{ marginTop: "1rem" }}>
         <Col md={6}>Кафедра</Col>
         <Col md={6}>
-          <select>
+          <select
+          value={cathValue}
+          onChange={(e) => setCathValue(e.target.value)}
+          >
             <option value=""></option>
-            <option value="ghgj">hhjhljljl</option>
+            
+            {cathedra.cathedras.map(cath =>
+              <option key={cath.id} value={cath.name}> {cath.name} </option>
+              )}
+
           </select>
         </Col>
       </Row>
@@ -145,11 +233,15 @@ const Blank = observer( () => {
       <div style={{ marginTop: "0.5rem"}} className="hr"></div>
 
       <Items showFunc={showFunc} data={data} setData={setData} />
-      {/* <Lib/> */}
-
       
        <Row style={{marginTop: '3rem'}}>
-          <Col lg={6}></Col>
+          <Col lg={6}>
+            <Button onClick={postAnketa} style={
+             {fontFamily: "var(--bs-body-font-family)", fontWeight: '500', marginTop: '15px'}
+          } variant="primary">
+              Добавить анкету
+            </Button>
+          </Col>
           <Col lg={6}>
           <Button
           onClick={clearData}

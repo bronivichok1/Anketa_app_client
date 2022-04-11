@@ -7,8 +7,11 @@ import "tippy.js/dist/tippy.css";
 import del from "./../imgs/delete.svg";
 import { Context } from "..";
 
-const Items = observer(({ showFunc, data, setData }) => {
+
+const EditItems = observer(() => {
   const { item } = useContext(Context);
+  const { report } = useContext(Context);
+  const { massiv } = useContext(Context);
 
   const mobile = useMediaQuery({ query: "(max-width: 770px)" });
 
@@ -26,19 +29,29 @@ const Items = observer(({ showFunc, data, setData }) => {
   const [select, setSelect] = useState(0);
   const [selectId, setSelectId] = useState(0);
 
-  useEffect(() => {
-    if (localStorage.getItem("massiv")) {
-      item.setMassiv(JSON.parse(localStorage.getItem("massiv")));
-    }
-  }, []);
 
   useEffect(() => {
     let res = 0;
     item.items.forEach((el) => {
       res += Number(el.value ? el.value : 0);
     });
-    item.setSym(res);
+    item.setResult({...item.result, result: res});
   }, [item.items]);
+
+  useEffect(() => {
+ 
+    report.reports.map(el => {
+      item.setItems([
+          ...item.items.map(i =>
+              i.id === el.itemId
+              ? {...i, vvod: el.value, value: el.ball_value, select: el.selectvalue}
+              : {...i}
+              )
+      ])
+  })
+   
+  }, [report.reports])
+ 
 
   function massivFunc(id) {
     item.setMassiv(
@@ -56,7 +69,9 @@ const Items = observer(({ showFunc, data, setData }) => {
       ...item.massiv,
       [idMas]: [...item.massiv[idMas].filter((el) => el.id !== idEl)],
     });
+    massiv.setDeleted([...massiv.deleted, idEl]);
   }
+
 
   async function countResMassiv(id, formula, ball) {
     let res = 0;
@@ -71,7 +86,7 @@ const Items = observer(({ showFunc, data, setData }) => {
       await item.setItems([
         ...item.items.map((dat) =>
           dat.id === id ? { ...dat, value: Number(res.toFixed(2)) } : { ...dat }
-        ),
+        )
       ]);
     }
   }
@@ -131,6 +146,8 @@ const Items = observer(({ showFunc, data, setData }) => {
     selectFunc(selectId);
   }, [select, selectId]);
 
+
+
   return (
     <>
       {item.items.map((d) => (
@@ -157,7 +174,7 @@ const Items = observer(({ showFunc, data, setData }) => {
                 ? "it"
                 : "item"
             }
-            hidden={d.clas ? false : true}
+            
             style={
               d.parentId !== null
                 ? {
@@ -170,7 +187,7 @@ const Items = observer(({ showFunc, data, setData }) => {
                     borderLeft: mobile ? "" : "1px solid #d1d1d1",
                   }
             }
-            onClick={() => showFunc(d.id)}
+            
           >
             {d.num.includes("0") ? (
               <> {d.name}</>
@@ -188,7 +205,6 @@ const Items = observer(({ showFunc, data, setData }) => {
               paddingTop: "0.5rem",
             }}
             md={1}
-            hidden={d.clas ? false : true}
           >
             {d.value}
           </Col>
@@ -199,7 +215,6 @@ const Items = observer(({ showFunc, data, setData }) => {
                 borderRight: mobile ? "" : "1px solid #d1d1d1",
               }}
               md={2}
-              hidden={d.clas ? false : true}
             ></Col>
           ) : d.type === "Ввод данных" ? (
             <Col
@@ -208,13 +223,15 @@ const Items = observer(({ showFunc, data, setData }) => {
                 borderRight: mobile ? "" : "1px solid #d1d1d1",
               }}
               md={2}
-              hidden={d.clas ? false : true}
             >
               <input
                 value={
-                  item.items.find((el) => el.id === d.id).vvod
-                    ? item.items.find((el) => el.id === d.id).vvod
-                    : ""
+                //   item.items.find((el) => el.id === d.id).vvod
+                //     ? item.items.find((el) => el.id === d.id).vvod
+                //     : ""
+                d.vvod
+                ? d.vvod
+                : ""
                 }
                 style={{ marginTop: "0.5rem" }}
                 onChange={(e) => {
@@ -238,7 +255,7 @@ const Items = observer(({ showFunc, data, setData }) => {
                 borderRight: mobile ? "" : "1px solid #d1d1d1",
               }}
               md={2}
-              hidden={d.clas ? false : true}
+              
             >
               <div style={{ marginTop: "0.5rem", display: "flex" }}>
                 <input
@@ -292,13 +309,12 @@ const Items = observer(({ showFunc, data, setData }) => {
                 textAlign: "center",
               }}
               md={2}
-              hidden={d.clas ? false : true}
             >
               <input
                 checked={
-                  item.items.find((el) => el.id === d.id).value === d.ball
-                    ? true
-                    : false
+                 d.value
+                  ? true
+                  : false
                 }
                 onChange={(e) => {
                   setYesNo(e.target.value);
@@ -317,9 +333,8 @@ const Items = observer(({ showFunc, data, setData }) => {
 
               <input
                 checked={
-                  item.items.find((el) => el.id === d.id).value === 0
-                    ? true
-                    : false
+                  d.value === '0' ? true : false
+               
                 }
                 className="yes_no"
                 onChange={(e) => {
@@ -343,7 +358,7 @@ const Items = observer(({ showFunc, data, setData }) => {
                 borderRight: mobile ? "" : "1px solid #d1d1d1",
               }}
               md={2}
-              hidden={d.clas ? false : true}
+              
             >
               <select
                 value={d.select}
@@ -389,7 +404,7 @@ const Items = observer(({ showFunc, data, setData }) => {
           <Col
             className={mobile ? "item2" : "item"}
             style={{ textAlign: "center", cursor: "pointer" }}
-            hidden={d.clas ? false : true}
+           
             md={1}
           >
             {d.help ? (
@@ -411,4 +426,4 @@ const Items = observer(({ showFunc, data, setData }) => {
   );
 });
 
-export default Items;
+export default EditItems;
