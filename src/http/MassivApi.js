@@ -19,3 +19,8 @@ export const updateMassiv = async (id, massiv) => {
     const {data} = await $host.put('/massiv/' + id, massiv);
     return data;
 }
+
+export const ownDeleteMassiv = async (id) => {
+    const {data} = await $host.delete('/massiv/own/' + id);
+    return data;
+}

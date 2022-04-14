@@ -30,5 +30,11 @@ export const findUsers = async (cathedraId) => {
     return data;
 }
 
+export const findAdmins = async () => {
+    const {data} = await $host.get('/user');
+    return data;
+}
+
+
 
 

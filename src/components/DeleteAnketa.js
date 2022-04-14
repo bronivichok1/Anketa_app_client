@@ -55,6 +55,9 @@ const DeleteAnketa = observer(() => {
     if (user.users && user.users.length) {
       user.users.forEach((us) => {
         fetchOneResult(us.id).then((data) => {
+         if(data === null) {
+          user.setUsers([...user.users.filter(u => u.id !== us.id)]);
+         } else {
           user.setUsers([
             ...user.users.map((u) =>
               u.id === us.id
@@ -62,10 +65,14 @@ const DeleteAnketa = observer(() => {
                 : { ...u }
             ),
           ]);
+         }
+        
         });
       });
     }
   }, [user.users]);
+
+  
 
   function DeleteFunc(id) {
     deleteResult(id).then(data => {
@@ -79,6 +86,8 @@ const DeleteAnketa = observer(() => {
     deleteMassiv(id).then(data => {
         console.log('massiv');
     })
+
+    user.setUsers([...user.users.filter(u => u.id !== id)]);
     
   }
 
@@ -116,7 +125,7 @@ const DeleteAnketa = observer(() => {
             Сотрудники
           </h4>
 
-          {user.users && user.users.length ? (
+          {user.users && user.users.length && cathVal ? (
             <Row>
               <Col md={4}>
                 <input
@@ -134,7 +143,7 @@ const DeleteAnketa = observer(() => {
           )}
 
 
-          {user.users && user.users.length ? (
+          {user.users && user.users.length && cathVal ? (
 
            <>
 
@@ -149,9 +158,10 @@ const DeleteAnketa = observer(() => {
               <Row className="us_item" key={us.id}>
                 <Col md={4}>{us.fullname}</Col>
                 <Col md={3}>{us.res}</Col>
-                <Col md={4}>{us.update}</Col>
+                <Col md={4}>{new Date(us.update).toString()}</Col>
                 <Col md={1}>
                   <img
+                  onClick={() => DeleteFunc(us.id)}
                     style={{
                       height: "30px",
                       marginLeft: "30px",
@@ -165,9 +175,9 @@ const DeleteAnketa = observer(() => {
               </Row>
             ))}
            </>
-          ) : (
+          ) : cathVal ? (
             <div>Сотрудники не найдены!</div>
-          )}
+          ) : <></>}
         </div>
       </Container>
     </div>

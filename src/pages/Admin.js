@@ -1,5 +1,6 @@
 import { Container } from "react-bootstrap";
 import AdminNavBar from "../components/AdminNavBar";
+import AdminUsers from "../components/AdminUsers";
 import Footer from "../components/Footer";
 
 const Admin = () => {
@@ -13,7 +14,7 @@ const Admin = () => {
           </h2>
         </Container>
         <main>
-        
+          <AdminUsers/>
         </main>
       </div>
       <Footer />

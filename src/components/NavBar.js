@@ -9,6 +9,11 @@ const NavBar = () => {
 
     const navigate = useNavigate();
 
+    function out() {
+      localStorage.removeItem('token');
+      window.location.reload();
+    }
+
   return (
     <header>
       <Navbar bg="dark" fixed="top" collapseOnSelect expand="lg" variant="dark">
@@ -33,6 +38,13 @@ const NavBar = () => {
                   : { marginLeft: "10px" }
               } variant="outline-light">
                 Посмотреть анкеты
+              </Button>
+              <Button onClick={out} style={
+                  mobile
+                  ? { marginLeft: "0px" }
+                  : { marginLeft: "20px" }
+              } variant="outline-primary">
+                Выход
               </Button>
             </Nav>
           </Navbar.Collapse>

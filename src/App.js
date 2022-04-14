@@ -17,6 +17,7 @@ function App() {
     check().then( data => {
       user.setUser(data);
       user.setIsUserAuth(true);
+      user.setIsAuth(data.role === 'ADMIN');
     }).finally( () => setLoading(false));
   }, [])
 

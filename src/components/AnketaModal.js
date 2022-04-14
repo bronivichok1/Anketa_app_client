@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { Button } from "react-bootstrap";
+import { useMediaQuery } from "react-responsive";
 import { createItem } from "../http/ItemApi";
 import MyModal from "../UI/MyModal/MyModal";
 import SelectModal from "./SelectModal";
 
 function AnketaModal({ setVisible, items }) {
+  const mobile = useMediaQuery({ query: "(max-width: 900px)" });
+
   const [ball, setBall] = useState("");
   const [name, setName] = useState("");
   const [formula, setFormula] = useState("");
@@ -17,9 +20,20 @@ function AnketaModal({ setVisible, items }) {
 
   async function createItemFunc() {
     if (name && num && type) {
-      const parent = await items.find(
-        (el) => num.replace(/..$/, "") === el.num
-      );
+
+      let parent;
+
+      let n = num.split('.');
+      n.pop();
+      n = n.join('.')
+
+      await items.forEach(el => {
+        if(el.num === n) {
+          parent = el;
+        }
+      })
+
+      console.log(parent)
 
       if (!parent && num.split(".").length > 1) {
         alert("Сначала нужно создать родительский пункт!");
@@ -38,6 +52,8 @@ function AnketaModal({ setVisible, items }) {
         if(type === 'Список') {
             setItem(data);
             setShow(true);
+        } else {
+           window.location.reload();
         }
 
         setBall("");
@@ -46,7 +62,6 @@ function AnketaModal({ setVisible, items }) {
         setHelp("");
         setNum("");
         setType("");
-        // window.location.reload();
       });
     } else {
       alert("Номер, название и тип не могут быть пустыми!");
@@ -85,6 +100,7 @@ function AnketaModal({ setVisible, items }) {
         />
 
         <textarea
+         style={mobile ? {} : {minWidth: '800px'}}
           onChange={(e) => setName(e.target.value)}
           value={name}
           type="text"

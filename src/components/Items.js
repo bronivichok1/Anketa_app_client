@@ -6,9 +6,12 @@ import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
 import del from "./../imgs/delete.svg";
 import { Context } from "..";
+import { childValueFunc } from "../functions";
 
 const Items = observer(({ showFunc, data, setData }) => {
   const { item } = useContext(Context);
+  const { report } = useContext(Context);
+  const { massiv } = useContext(Context);
 
   const mobile = useMediaQuery({ query: "(max-width: 770px)" });
 
@@ -26,37 +29,102 @@ const Items = observer(({ showFunc, data, setData }) => {
   const [select, setSelect] = useState(0);
   const [selectId, setSelectId] = useState(0);
 
+  const [res, setRes] = useState(0);
+
+
   useEffect(() => {
     if (localStorage.getItem("massiv")) {
       item.setMassiv(JSON.parse(localStorage.getItem("massiv")));
     }
   }, []);
 
-  useEffect(() => {
-    let res = 0;
-    item.items.forEach((el) => {
-      res += Number(el.value ? el.value : 0);
+  // useEffect(() => {
+  //   let res = 0;
+  //   item.items.forEach((el) => {
+  //     res += Number(el.value ? el.value : 0);
+  //   });
+  //   item.setSym(res);
+  // }, [item.items]);
+
+  useEffect( () => {
+    item.items.forEach(async (el) => {
+     if(el.type === 'Сумма') {
+      let res = 0;
+      await el.children.forEach( ch => {
+        res += Number(ch.value ? ch.value : 0);
+       })
+       el.value = res;
+       //r(el.id, res)
+     
+    //   if(el.parentId && el.value) {
+    //     or(el.parentId, el.id, el.value);
+    //  }
+     }
+
     });
-    item.setSym(res);
+    //item.setSym(res);
   }, [item.items]);
 
-  function massivFunc(id) {
-    item.setMassiv(
-      item.massiv.hasOwnProperty(id)
-        ? {
-            ...item.massiv,
-            [id]: [...item.massiv[id], { val: massValue, id: Date.now() }],
-          }
-        : { ...item.massiv, [id]: [{ val: massValue, id: Date.now() }] }
-    );
+  function r (id, res) {
+    item.setItems([...item.items.map(el => el.id === id
+      ? {...el, value: res}
+      : {...el}
+      )])
   }
+
+  function or(parentId, id, res) {
+    item.setItems([...item.items.map(ar => ar.id === parentId
+      ? {...ar, children: [...ar.children.map(chil => chil.id === id
+        ? {...chil, value: res}
+        : {...chil}
+        )]}
+      : {...ar}
+      )])
+
+      console.log('ok')
+  }
+
+  useEffect(() => {
+ 
+   if(report.reports && report.reports.length) {
+    report.reports.map(el => {
+      item.setItems([
+          ...item.items.map(i =>
+              i.id === el.itemId
+              ? {...i, vvod: el.value, value: el.ball_value, select: el.selectvalue}
+              : {...i}
+              )
+      ])
+  })
+   }
+   
+  }, [report.reports])
+
+  function massivFunc(id) {
+    if(Number(massValue) && Number(massValue) > 0) {
+      item.setMassiv(
+        item.massiv.hasOwnProperty(id)
+          ? {
+              ...item.massiv,
+              [id]: [...item.massiv[id], { val: massValue, id: Date.now() }],
+            }
+          : { ...item.massiv, [id]: [{ val: massValue, id: Date.now() }] }
+      );
+
+    } else {
+      return
+    }
+  }
+
 
   function deleteMassivFunc(idMas, idEl) {
     item.setMassiv({
       ...item.massiv,
       [idMas]: [...item.massiv[idMas].filter((el) => el.id !== idEl)],
     });
+    massiv.setDeleted([...massiv.deleted, idEl]);
   }
+
 
   async function countResMassiv(id, formula, ball) {
     let res = 0;
@@ -73,6 +141,9 @@ const Items = observer(({ showFunc, data, setData }) => {
           dat.id === id ? { ...dat, value: Number(res.toFixed(2)) } : { ...dat }
         ),
       ]);
+
+      const parentId = await item.items.find(i => i.id === id ).parentId;
+      or(parentId, id, Number(res.toFixed(2)));
     }
   }
 
@@ -95,10 +166,16 @@ const Items = observer(({ showFunc, data, setData }) => {
           : { ...dat }
       ),
     ]);
+
+    const parent = await item.items.find(i => i.id === id );
+    or(parent.parentId, id, parent.value);
+    
   }
 
   useEffect(() => {
+   if(vvod) {
     vvodFunc(vvodId);
+   }
   }, [vvod, vvodId]);
 
   async function yesNoFunc(id) {
@@ -107,10 +184,17 @@ const Items = observer(({ showFunc, data, setData }) => {
         dat.id === id ? { ...dat, value: Number(yesNo) } : { ...dat }
       ),
     ]);
+
+    const parentId = await item.items.find(i => i.id === id ).parentId;
+    or(parentId, id, Number(yesNo));
   }
 
   useEffect(() => {
-    yesNoFunc(yesNoId);
+  
+    if(yesNo) {
+      yesNoFunc(yesNoId);
+    }
+   
   }, [yesNo, yesNoId]);
 
   async function selectFunc(id) {
@@ -124,6 +208,9 @@ const Items = observer(({ showFunc, data, setData }) => {
           dat.id === id ? { ...dat, value: Number(ball) } : { ...dat }
         ),
       ]);
+
+      const parentId = await item.items.find(i => i.id === id ).parentId;
+     or(parentId, id, Number(ball));
     }
   }
 
@@ -133,6 +220,7 @@ const Items = observer(({ showFunc, data, setData }) => {
 
   return (
     <>
+   
       {item.items.map((d) => (
         <Row
           className={
@@ -296,7 +384,7 @@ const Items = observer(({ showFunc, data, setData }) => {
             >
               <input
                 checked={
-                  item.items.find((el) => el.id === d.id).value === d.ball
+                  d.value
                     ? true
                     : false
                 }
@@ -317,9 +405,7 @@ const Items = observer(({ showFunc, data, setData }) => {
 
               <input
                 checked={
-                  item.items.find((el) => el.id === d.id).value === 0
-                    ? true
-                    : false
+                  d.value === '0' ? true : false
                 }
                 className="yes_no"
                 onChange={(e) => {
@@ -346,7 +432,7 @@ const Items = observer(({ showFunc, data, setData }) => {
               hidden={d.clas ? false : true}
             >
               <select
-                value={d.select}
+                value={d.select || ''}
                 onChange={(e) => {
                   setSelect(e.target.value);
                   setSelectId(d.id);

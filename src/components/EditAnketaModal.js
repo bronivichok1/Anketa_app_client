@@ -6,8 +6,12 @@ import trash from "./../imgs/trash_icon.svg";
 import edit from "./../imgs/edit_icon.svg";
 import MyModal from "../UI/MyModal/MyModal";
 import EditSelectModal from "./EditSelectModal";
+import { useMediaQuery } from "react-responsive";
 
 function EditAnketaModal({ setVisible, setItem, item }) {
+
+  const mobile = useMediaQuery({ query: "(max-width: 900px)" });
+
   const [selects, setSelects] = useState([]);
 
   const [ball, setBall] = useState('');
@@ -65,6 +69,7 @@ function EditAnketaModal({ setVisible, setItem, item }) {
       </h3>
       <div className="cath_modal">
         <textarea
+          style={mobile ? {} : {minWidth: '800px'}}
           onChange={(e) => setItem({ ...item, name: e.target.value })}
           value={item.name || ""}
           type="text"

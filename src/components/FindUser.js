@@ -1,8 +1,9 @@
 import { observer } from "mobx-react-lite";
-import { useContext, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { Col, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { Context } from "..";
+import { fetchOneResult } from "../http/ResultApi";
 import edit from './../imgs/edit_icon.svg'
 
 
@@ -18,6 +19,18 @@ const FindUser = observer( () => {
             return us.fullname.toLowerCase().includes(value.toLowerCase());
     })
     })
+
+    useEffect(() => {
+        if (user.users && user.users.length) {
+          user.users.forEach((us) => {
+            fetchOneResult(us.id).then((data) => {
+             if(data === null) {
+              user.setUsers([...user.users.filter(u => u.id !== us.id)]);
+             } 
+            });
+          });
+        }
+      }, [user.users]);
 
     return(
         <div>

@@ -8,9 +8,9 @@ import { fetchOneUser, updateUser } from "../http/UserApi";
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchCathedras, fetchOneCathedra } from "../http/CathedraApi";
 import EditItems from "./EditItems";
-import { findReports, findStavka, updateReport } from "../http/ReportApi";
+import { createReport, findReports, findStavka, updateReport } from "../http/ReportApi";
 import { fetchSelectsAll } from "../http/SelectApi";
-import { deleteMassiv, fetchMassiv, createMassiv } from "../http/MassivApi";
+import { deleteMassiv, fetchMassiv, createMassiv, ownDeleteMassiv } from "../http/MassivApi";
 import { fetchOneResult, updateResult } from "../http/ResultApi";
 import { createMassivFunc } from "../functions";
 import { SEE_REPORTS_ROUTE } from "../utils/consts";
@@ -30,6 +30,7 @@ const EditBlank = observer(() => {
 
   const [localUser, setLocalUser] = useState({});
   const [cathValue, setCathValue] = useState("");
+
 
   useEffect(async () => {
     await fetchItems().then((data) => {
@@ -85,19 +86,41 @@ const EditBlank = observer(() => {
   async function updateAnketa() {
     try {
       let res;
-      console.log('hi')
+     
       res = await updateResult(item.result.id, item.result);
-      console.log('hi2')
-       report.reports.forEach(rep => {
+      
+      await report.reports.forEach(rep => {
         updateReport(rep.id, {
           ...rep,
           selectvalue: item.items.find(i => i.id === rep.itemId).select,
           value: item.items.find(i => i.id === rep.itemId).vvod,
           ball_value: item.items.find(i => i.id === rep.itemId).value,
         })
-        console.log(rep);
+        
       })
-      console.log('hi3')
+
+      if(item.items.length > report.reports.length) {
+        const arr = [];
+        await item.items.forEach( async el => {
+          const t = await report.reports.find(rep => rep.itemId === el.id);
+          if(!t) {
+            arr.push(el);
+          }
+        })
+
+         arr.forEach((d) => {
+          createReport({
+            selectvalue: d.select,
+            value: d.vvod,
+            ball_value: d.value,
+            userId: params.id,
+            itemId: d.id,
+          }).then( data => {
+            console.log('good');
+          })
+        })
+      }
+      
 
       for(let key in item.massiv) {
         let itemId = await item.items.find(it => it.id == key).id;
@@ -105,23 +128,21 @@ const EditBlank = observer(() => {
         if(itemId) {
           item.massiv[key].forEach(mas => {
             if(massiv.massiv.find(sm => sm.id === mas.id)) {
-              console.log('no');
+              console.log('yes');
              } else {
-               console.log('yes')
                createMassiv({value: Number(mas.val), userId: params.id, itemId: itemId})
                .then(end => console.log('massiv'));
-              console.log(mas)
              }
           })
         }
       }
-      console.log('hi4')
+      
       if(massiv.deleted && massiv.deleted.length) {
         massiv.deleted.forEach(el => {
-          deleteMassiv(el).then(d => console.log('yes'));
+          ownDeleteMassiv(el).then(d => console.log('yes'));
         })
       }
-      console.log('hi5')
+      
       updateUser(localUser.id, localUser);
 
        alert('Ваша анкета изменена!');

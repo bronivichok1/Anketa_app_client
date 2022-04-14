@@ -54,14 +54,19 @@ const EditItems = observer(() => {
  
 
   function massivFunc(id) {
-    item.setMassiv(
-      item.massiv.hasOwnProperty(id)
-        ? {
-            ...item.massiv,
-            [id]: [...item.massiv[id], { val: massValue, id: Date.now() }],
-          }
-        : { ...item.massiv, [id]: [{ val: massValue, id: Date.now() }] }
-    );
+    if(Number(massValue) && Number(massValue) > 0) {
+      item.setMassiv(
+        item.massiv.hasOwnProperty(id)
+          ? {
+              ...item.massiv,
+              [id]: [...item.massiv[id], { val: massValue, id: Date.now() }],
+            }
+          : { ...item.massiv, [id]: [{ val: massValue, id: Date.now() }] }
+      );
+    } else {
+      return;
+    }
+    
   }
 
   function deleteMassivFunc(idMas, idEl) {
@@ -361,7 +366,7 @@ const EditItems = observer(() => {
               
             >
               <select
-                value={d.select}
+                value={d.select || ''}
                 onChange={(e) => {
                   setSelect(e.target.value);
                   setSelectId(d.id);
