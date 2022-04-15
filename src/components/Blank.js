@@ -97,15 +97,25 @@ const Blank = observer(() => {
 
   useEffect(() => {
     item.items.forEach((el) => {
-      item.items.forEach((el2) => {
+      item.items.forEach( (el2) => {
+
+        let n =  el2.num.split('.');
+         n.pop();
+        n = n.join('.')
+
         if (
+          // !el.clas &&
+          // el2.num.includes(el.num) &&
+          // el2.num.split(".").length === el.num.split(".").length + 1 &&
+          // el2.clas
           !el.clas &&
-          el2.num.includes(el.num) &&
-          el2.num.split(".").length === el.num.split(".").length + 1 &&
+          n === el.num &&
           el2.clas
         ) {
           setChild(el2.num);
           setParent(el.num);
+          // console.log(child)
+          // console.log(parent)
         }
       });
     });
@@ -116,9 +126,11 @@ const Blank = observer(() => {
       item.setItems([
         ...item.items.map((dat) =>
           dat.num === child
-            ? { ...dat, clas: !dat.clas }
+            ? { ...dat, clas: !dat.clas}
+            //{ ...dat, clas: false }
             : dat.num === parent
-            ? { ...dat, clasName: !dat.clasName }
+            ?  { ...dat, clasName: !dat.clasName}
+            //{ ...dat, clasName: false }
             : { ...dat }
         ),
       ]);
@@ -140,6 +152,7 @@ const Blank = observer(() => {
       setLocalUser({ ...localUser, cathedraId: cathId });
     }
   }, [cathId]);
+
 
   function clearData() {
     deleteReportLocal(user.user.id).then((data) => {
@@ -200,10 +213,7 @@ const Blank = observer(() => {
         })
       }
 
-     // updateUser(localUser.id, localUser);
-
       alert("Ваши данные сохранены!");
-      //window.location.reload();
     } catch (e) {
       alert(e.response.data.message);
     }
@@ -211,6 +221,7 @@ const Blank = observer(() => {
 
   async function postAnketa() {
     try {
+
       let res;
       res = await createResult({ userId: user.user.id, result: item.sym });
       await item.items.forEach((d) => {
@@ -237,18 +248,22 @@ const Blank = observer(() => {
         });
       });
 
-      updateUser(localUser.id, localUser);
+     if(localUser.cathedraId) {
+      await updateUser(localUser.id, localUser);
+     } else {
+       alert('Выберите кафедру!');
+     }
 
-      deleteReportLocal(user.user.id).then((data) => {
+     await deleteReportLocal(user.user.id).then((data) => {
         console.log("report");
       });
 
-      deleteMassivLocal(user.user.id).then((data) => {
+     await deleteMassivLocal(user.user.id).then((data) => {
         console.log("massiv");
       });
 
       alert("Ваша анкета добавлена!");
-      //window.location.reload();
+      window.location.reload();
     } catch (e) {
       alert(e.response.data.message);
     }

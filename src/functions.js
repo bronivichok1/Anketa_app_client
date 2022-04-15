@@ -23,33 +23,4 @@ export const createMassivFunc = (arr) => {
   return obj;
 };
 
-export const childValueFunc = async (id, res, arr) => {
- const el = await arr.find(a => a.id === id);
- console.log(el);
- console.log(res);
 
- const parent = await arr.find(p => p.id === el.parentId);
-
- console.log(parent);
-
- if (parent) {
-  //  setArr([...arr.map(ar => ar.id === parent.id
-  //   ? {...ar, children: [...ar.children.map(chil => chil.id === el.id
-  //     ? {...chil, value: res}
-  //     : {...chil}
-  //     )]}
-  //   : {...ar}
-  //   )])
-
- await arr.forEach( ar => {
-    if(ar.id === parent.id) {
-      ar.children.forEach(chil => {
-        if(chil.id === el.id) {
-          chil.value = res;
-        }
-      })
-    }
-  })
- }
- return arr;
-};

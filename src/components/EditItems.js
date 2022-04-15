@@ -33,10 +33,34 @@ const EditItems = observer(() => {
   useEffect(() => {
     let res = 0;
     item.items.forEach((el) => {
-      res += Number(el.value ? el.value : 0);
+      if(el.type !== 'Сумма') {
+        res += Number(el.value ? el.value : 0);
+      }
     });
     item.setResult({...item.result, result: res});
   }, [item.items]);
+
+  function test() {
+    item.items.forEach(async (el) => {
+      if(el.type === 'Сумма' && el.children && el.children.length && el.parentId === null) {
+       let res = 0;
+       let num = el.num;
+ 
+       console.log('ok')
+
+       await item.items.forEach( child => {
+         if(child.num.split('.')[0] === num.split('.')[0] && child.num.split('.').length > num.split('.').length ) {
+          res += Number(child.value ? child.value : 0);
+         }
+       })
+    
+        item.setItems([...item.items.map(i => i.id === el.id 
+          ? {...i, value: Number(res.toFixed(2))}
+          : {...i}
+          )])
+      }
+     });
+  }
 
   useEffect(() => {
  
@@ -93,6 +117,7 @@ const EditItems = observer(() => {
           dat.id === id ? { ...dat, value: Number(res.toFixed(2)) } : { ...dat }
         )
       ]);
+      test();
     }
   }
 
@@ -115,10 +140,13 @@ const EditItems = observer(() => {
           : { ...dat }
       ),
     ]);
+    test();
   }
 
   useEffect(() => {
-    vvodFunc(vvodId);
+    if(vvod) {
+      vvodFunc(vvodId);
+    }
   }, [vvod, vvodId]);
 
   async function yesNoFunc(id) {
@@ -127,10 +155,13 @@ const EditItems = observer(() => {
         dat.id === id ? { ...dat, value: Number(yesNo) } : { ...dat }
       ),
     ]);
+    test();
   }
 
   useEffect(() => {
+   
     yesNoFunc(yesNoId);
+   
   }, [yesNo, yesNoId]);
 
   async function selectFunc(id) {
@@ -144,6 +175,7 @@ const EditItems = observer(() => {
           dat.id === id ? { ...dat, value: Number(ball) } : { ...dat }
         ),
       ]);
+      test();
     }
   }
 
@@ -203,15 +235,27 @@ const EditItems = observer(() => {
             )}
           </Col>
           <Col
-            style={{
+            style={d.type === 'Сумма'
+            ? {
               borderBottom: mobile ? "" : "1px solid #d1d1d1",
               borderRight: mobile ? "" : "1px solid #d1d1d1",
               textAlign: "center",
               paddingTop: "0.5rem",
-            }}
+              color: 'blue'
+            }
+            : {
+              borderBottom: mobile ? "" : "1px solid #d1d1d1",
+              borderRight: mobile ? "" : "1px solid #d1d1d1",
+              textAlign: "center",
+              paddingTop: "0.5rem",
+            }
+          }
             md={1}
           >
-            {d.value}
+             {d.type === 'Сумма'
+             ? (d.value ? d.value : '')
+             : d.value
+             }
           </Col>
           {d.type === "Сумма" ? (
             <Col
@@ -231,9 +275,6 @@ const EditItems = observer(() => {
             >
               <input
                 value={
-                //   item.items.find((el) => el.id === d.id).vvod
-                //     ? item.items.find((el) => el.id === d.id).vvod
-                //     : ""
                 d.vvod
                 ? d.vvod
                 : ""
@@ -338,7 +379,7 @@ const EditItems = observer(() => {
 
               <input
                 checked={
-                  d.value === '0' ? true : false
+                  d.value == '0' ? true : false
                
                 }
                 className="yes_no"

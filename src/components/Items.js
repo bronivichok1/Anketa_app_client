@@ -6,7 +6,6 @@ import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
 import del from "./../imgs/delete.svg";
 import { Context } from "..";
-import { childValueFunc } from "../functions";
 
 const Items = observer(({ showFunc, data, setData }) => {
   const { item } = useContext(Context);
@@ -29,8 +28,6 @@ const Items = observer(({ showFunc, data, setData }) => {
   const [select, setSelect] = useState(0);
   const [selectId, setSelectId] = useState(0);
 
-  const [res, setRes] = useState(0);
-
 
   useEffect(() => {
     if (localStorage.getItem("massiv")) {
@@ -38,50 +35,35 @@ const Items = observer(({ showFunc, data, setData }) => {
     }
   }, []);
 
-  // useEffect(() => {
-  //   let res = 0;
-  //   item.items.forEach((el) => {
-  //     res += Number(el.value ? el.value : 0);
-  //   });
-  //   item.setSym(res);
-  // }, [item.items]);
-
-  useEffect( () => {
-    item.items.forEach(async (el) => {
-     if(el.type === 'Сумма') {
-      let res = 0;
-      await el.children.forEach( ch => {
-        res += Number(ch.value ? ch.value : 0);
-       })
-       el.value = res;
-       //r(el.id, res)
-     
-    //   if(el.parentId && el.value) {
-    //     or(el.parentId, el.id, el.value);
-    //  }
-     }
-
+  useEffect(() => {
+    let res = 0;
+    item.items.forEach((el) => {
+      if(el.type !== 'Сумма') {
+        res += Number(el.value ? el.value : 0);
+      }
     });
-    //item.setSym(res);
+    item.setSym(res);
   }, [item.items]);
 
-  function r (id, res) {
-    item.setItems([...item.items.map(el => el.id === id
-      ? {...el, value: res}
-      : {...el}
-      )])
-  }
 
-  function or(parentId, id, res) {
-    item.setItems([...item.items.map(ar => ar.id === parentId
-      ? {...ar, children: [...ar.children.map(chil => chil.id === id
-        ? {...chil, value: res}
-        : {...chil}
-        )]}
-      : {...ar}
-      )])
-
-      console.log('ok')
+  function test() {
+    item.items.forEach(async (el) => {
+      if(el.type === 'Сумма' && el.children && el.children.length && el.parentId === null) {
+       let res = 0;
+       let num = el.num;
+ 
+       await item.items.forEach( child => {
+         if(child.num.split('.')[0] === num.split('.')[0] && child.num.split('.').length > num.split('.').length ) {
+          res += Number(child.value ? child.value : 0);
+         }
+       })
+    
+        item.setItems([...item.items.map(i => i.id === el.id 
+          ? {...i, value: Number(res.toFixed(2))}
+          : {...i}
+          )])
+      }
+     });
   }
 
   useEffect(() => {
@@ -142,8 +124,7 @@ const Items = observer(({ showFunc, data, setData }) => {
         ),
       ]);
 
-      const parentId = await item.items.find(i => i.id === id ).parentId;
-      or(parentId, id, Number(res.toFixed(2)));
+      test();
     }
   }
 
@@ -166,10 +147,7 @@ const Items = observer(({ showFunc, data, setData }) => {
           : { ...dat }
       ),
     ]);
-
-    const parent = await item.items.find(i => i.id === id );
-    or(parent.parentId, id, parent.value);
-    
+    test();
   }
 
   useEffect(() => {
@@ -184,9 +162,7 @@ const Items = observer(({ showFunc, data, setData }) => {
         dat.id === id ? { ...dat, value: Number(yesNo) } : { ...dat }
       ),
     ]);
-
-    const parentId = await item.items.find(i => i.id === id ).parentId;
-    or(parentId, id, Number(yesNo));
+    test();
   }
 
   useEffect(() => {
@@ -209,8 +185,7 @@ const Items = observer(({ showFunc, data, setData }) => {
         ),
       ]);
 
-      const parentId = await item.items.find(i => i.id === id ).parentId;
-     or(parentId, id, Number(ball));
+    test();
     }
   }
 
@@ -269,16 +244,28 @@ const Items = observer(({ showFunc, data, setData }) => {
             )}
           </Col>
           <Col
-            style={{
-              borderBottom: mobile ? "" : "1px solid #d1d1d1",
-              borderRight: mobile ? "" : "1px solid #d1d1d1",
-              textAlign: "center",
-              paddingTop: "0.5rem",
-            }}
+            style={d.type === 'Сумма'
+          ? {
+            borderBottom: mobile ? "" : "1px solid #d1d1d1",
+            borderRight: mobile ? "" : "1px solid #d1d1d1",
+            textAlign: "center",
+            paddingTop: "0.5rem",
+            color: 'blue'
+          }
+          : {
+            borderBottom: mobile ? "" : "1px solid #d1d1d1",
+            borderRight: mobile ? "" : "1px solid #d1d1d1",
+            textAlign: "center",
+            paddingTop: "0.5rem",
+          }
+        }
             md={1}
             hidden={d.clas ? false : true}
           >
-            {d.value}
+            {d.type === 'Сумма'
+             ? (d.value ? d.value : '')
+             : d.value
+             }
           </Col>
           {d.type === "Сумма" ? (
             <Col
@@ -405,7 +392,7 @@ const Items = observer(({ showFunc, data, setData }) => {
 
               <input
                 checked={
-                  d.value === '0' ? true : false
+                  d.value == '0' ? true : false
                 }
                 className="yes_no"
                 onChange={(e) => {

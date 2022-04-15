@@ -12,7 +12,7 @@ import { createReport, findReports, findStavka, updateReport } from "../http/Rep
 import { fetchSelectsAll } from "../http/SelectApi";
 import { deleteMassiv, fetchMassiv, createMassiv, ownDeleteMassiv } from "../http/MassivApi";
 import { fetchOneResult, updateResult } from "../http/ResultApi";
-import { createMassivFunc } from "../functions";
+import { createMassivFunc, createTree2 } from "../functions";
 import { SEE_REPORTS_ROUTE } from "../utils/consts";
 
 
@@ -34,7 +34,7 @@ const EditBlank = observer(() => {
 
   useEffect(async () => {
     await fetchItems().then((data) => {
-      item.setItems(data);
+      item.setItems(createTree2(data));
     });
 
     fetchCathedras().then((data) => {
@@ -157,7 +157,8 @@ const EditBlank = observer(() => {
     <div className="blank" style={{ marginTop: "4rem" }}>
       <Row >
         <Col style={{ textAlign: "center", backgroundColor: "#e9eff9", borderRadius: "15px"  }}>Ставка: {item.stavka} </Col>
-        <Col style={{ textAlign: "center", backgroundColor: "#e9eff9", borderRadius: "15px"  }}>Общий балл: {item.result.result} </Col>
+        <Col style={{ textAlign: "center", backgroundColor: "#e9eff9", borderRadius: "15px"  }}>Общий балл: 
+         {item.result.result} </Col>
       </Row>
       <Row className="row" style={{ marginTop: "1rem" }}>
         <Col md={6}>ФИО</Col>
