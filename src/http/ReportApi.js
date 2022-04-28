@@ -24,3 +24,13 @@ export const deleteReport = async (id) => {
     const {data} = await $host.delete('/report/' + id);
     return data;
 }
+
+export const deleteReportOne = async (id) => {
+    const {data} = await $host.delete('/report/one/' + id);
+    return data;
+}
+
+export const findByCathReport = async (cathId) => {
+    const {data} = await $host.get('/report/cath/' + cathId);
+    return data;
+}

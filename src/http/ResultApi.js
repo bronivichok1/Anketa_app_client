@@ -19,3 +19,8 @@ export const deleteResult = async (id) => {
     const {data} = await $host.delete('/result/' + id);
     return data;
 }
+
+export const findByCathResult = async (cathId) => {
+    const {data} = await $host.get('/result/cath/' + cathId);
+    return data;
+}

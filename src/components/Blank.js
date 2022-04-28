@@ -12,7 +12,7 @@ import { createResult } from "../http/ResultApi";
 import { createReport } from "../http/ReportApi";
 import { createMassiv } from "../http/MassivApi";
 import { fetchOneUser, updateUser } from "../http/UserApi";
-import { createReportLocal, deleteReportLocal, findReportsLocal, findStavkaLocal, updateReportLocal } from "../http/ReportLocalApi";
+import { createReportLocal, deleteReportLocal, deleteReportLocalOne, findReportsLocal, findStavkaLocal, updateReportLocal } from "../http/ReportLocalApi";
 import { createMassivLocal, deleteMassivLocal, fetchMassivLocal, ownDeleteMassivLocal } from "../http/MassivLocalApi";
 
 const Blank = observer(() => {
@@ -34,6 +34,7 @@ const Blank = observer(() => {
   const [localUser, setLocalUser] = useState({});
   const [cathValue, setCathValue] = useState("");
   const [cathId, setCathId] = useState(0);
+
 
   useEffect(async () => {
 
@@ -63,8 +64,8 @@ const Blank = observer(() => {
         });
 
         fetchMassivLocal(user.user.id).then((data) => {
-          item.setMassiv(createMassivFunc(data));
-          massiv.setMassiv(data);
+          item.setMassivLocal(createMassivFunc(data));
+          massiv.setMassivLocal(data);
         });
       }
    });
@@ -104,18 +105,20 @@ const Blank = observer(() => {
         n = n.join('.')
 
         if (
-          // !el.clas &&
-          // el2.num.includes(el.num) &&
-          // el2.num.split(".").length === el.num.split(".").length + 1 &&
-          // el2.clas
           !el.clas &&
-          n === el.num &&
+          el2.num.includes(el.num) &&
+          el2.num.split(".").length === el.num.split(".").length + 1 &&
           el2.clas
+          //!el.clas &&
+         // n === el.num &&
+          //el2.clas 
+         // el.id === el2.parentId
+        // el.num.split('.')[0] === el2.num.split('.')[0] && el2.num.split('.').length > el.num.split('.').length
         ) {
           setChild(el2.num);
           setParent(el.num);
-          // console.log(child)
-          // console.log(parent)
+          //  console.log(`child: ${child}`)
+          //  console.log(`parent: ${parent}`)
         }
       });
     });
@@ -127,7 +130,7 @@ const Blank = observer(() => {
         ...item.items.map((dat) =>
           dat.num === child
             ? { ...dat, clas: !dat.clas}
-            //{ ...dat, clas: false }
+            //{ ...dat, clas: !dat.clas }
             : dat.num === parent
             ?  { ...dat, clasName: !dat.clasName}
             //{ ...dat, clasName: false }
@@ -168,36 +171,52 @@ const Blank = observer(() => {
 
   async function saveData() {
     try {
-    
-      await item.items.forEach((d) => {
 
-        const cond = report.reports.find(rep => rep.itemId === d.id);
+      if(item.items.length > report.reports.length) {
+        const arr = [];
+        await item.items.forEach( async el => {
+          const t = await report.reports.find(rep => rep.itemId === el.id);
+          if(!t) {
+            arr.push(el);
+          }
+        })
 
-        if(cond) {
-            updateReportLocal(cond.id, {
-              ...cond,
-              selectvalue: d.select,
-              value: d.vvod,
-              ball_value: d.value,
-            })
-        } else {
-          createReportLocal({
+         arr.forEach(async (d) => {
+         await createReportLocal({
             selectvalue: d.select,
             value: d.vvod,
             ball_value: d.value,
             userId: user.user.id,
             itemId: d.id,
-          }).then((dat) => { });
+          }).then( data => {
+            console.log('good');
+          })
+        })
+      }
+      
+      await report.reports.forEach(rep => {
+        const cont = item.items.find(i => i.id === rep.itemId);
+        if(cont) {
+          updateReportLocal(rep.id, {
+            ...rep,
+            selectvalue: cont.select,
+            value: cont.vvod,
+            ball_value: cont.value,
+          })
+        } else {
+          deleteReportLocalOne(rep.id).then(data => {
+            console.log('delete report');
+          })
         }
-       
-      });
+        
+      })
 
-      for(let key in item.massiv) {
+      for(let key in item.massivLocal) {
         let itemId = await item.items.find(it => it.id == key).id;
 
         if(itemId) {
-          item.massiv[key].forEach(mas => {
-            if(massiv.massiv.find(sm => sm.id === mas.id)) {
+          item.massivLocal[key].forEach(mas => {
+            if(massiv.massivLocal.find(sm => sm.id === mas.id)) {
               console.log('yes');
              } else {
                createMassivLocal({value: Number(mas.val), userId: user.user.id, itemId: itemId})
@@ -207,8 +226,8 @@ const Blank = observer(() => {
         }
       }
 
-      if(massiv.deleted && massiv.deleted.length) {
-        massiv.deleted.forEach(el => {
+      if(massiv.deletedLocal && massiv.deletedLocal.length) {
+        massiv.deletedLocal.forEach(el => {
           ownDeleteMassivLocal(el).then(d => console.log('yes'));
         })
       }
@@ -222,48 +241,50 @@ const Blank = observer(() => {
   async function postAnketa() {
     try {
 
-      let res;
-      res = await createResult({ userId: user.user.id, result: item.sym });
-      await item.items.forEach((d) => {
-        createReport({
-          selectvalue: d.select,
-          value: d.vvod,
-          ball_value: d.value,
-          userId: user.user.id,
-          itemId: d.id,
-        }).then((dat) => {
-          for (let key in item.massiv) {
-            if (item.massiv.hasOwnProperty(key)) {
-              if (d.id == key) {
-                item.massiv[key].forEach((el2) => {
-                  createMassiv({
-                    value: el2.val,
-                    userId: user.user.id,
-                    itemId: d.id,
-                  }).then((end) => console.log("massiv"));
-                });
+      if(localUser.cathedraId) {
+        let res;
+        res = await createResult({ userId: user.user.id, result: item.sym, cathedra_id: localUser.cathedraId });
+        await item.items.forEach((d) => {
+          createReport({
+            selectvalue: d.select,
+            value: d.vvod,
+            ball_value: d.value,
+            userId: user.user.id,
+            itemId: d.id,
+            cathedra_id: localUser.cathedraId
+          }).then((dat) => {
+            for (let key in item.massivLocal) {
+              if (item.massivLocal.hasOwnProperty(key)) {
+                if (d.id == key) {
+                  item.massivLocal[key].forEach((el2) => {
+                    createMassiv({
+                      value: el2.val,
+                      userId: user.user.id,
+                      itemId: d.id,
+                    }).then((end) => console.log("massiv"));
+                  });
+                }
               }
             }
-          }
+          });
         });
-      });
-
-     if(localUser.cathedraId) {
-      await updateUser(localUser.id, localUser);
-     } else {
-       alert('Выберите кафедру!');
-     }
-
-     await deleteReportLocal(user.user.id).then((data) => {
-        console.log("report");
-      });
-
-     await deleteMassivLocal(user.user.id).then((data) => {
-        console.log("massiv");
-      });
-
-      alert("Ваша анкета добавлена!");
-      window.location.reload();
+  
+       await updateUser(localUser.id, localUser);
+  
+       await deleteReportLocal(user.user.id).then((data) => {
+          console.log("report");
+        });
+  
+       await deleteMassivLocal(user.user.id).then((data) => {
+          console.log("massiv");
+        });
+  
+        alert("Ваша анкета добавлена!");
+        window.location.reload();
+      } else {
+        alert('Выберите кафедру!');
+      }
+     
     } catch (e) {
       alert(e.response.data.message);
     }

@@ -231,7 +231,7 @@ html {
   padding: 20px;
   font-size: 20px;
   box-shadow: 0px 0px 18px #0b5ed7;
-  margin-top: 1rem;
+  margin-bottom: 1rem;
   background-color: white;
   font-family: Roboto;
 }
@@ -243,11 +243,9 @@ html {
 
 .search {
   width: 100%;
-  padding: 8px 15px;
+  padding: 10px 15px;
   font-size: 16px;
   margin-bottom: 2rem;
-  /* box-shadow: 0px 0px 18px #0b5ed7;
-  border: none; */
   border-radius: 15px; 
   border: 2px solid #0b5ed7;
 }
@@ -339,3 +337,62 @@ html {
   margin-bottom: 0.5rem;
  
 }
+
+.colvo {
+  text-align: center;
+  padding-top: 0.5rem;
+}
+
+.big-table {
+	overflow: auto;
+	position: relative;
+	table-layout: fixed;
+	width: 100%;
+	margin-bottom: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 18px #0b5ed7;
+}
+.big-table table {
+	display: inline-block;
+	vertical-align: top;
+	max-width: 100%;
+	overflow-x: auto;
+	white-space: nowrap;
+	-webkit-overflow-scrolling: touch;
+}
+
+.big-table th {
+	font-weight: bold;
+	padding: 10px;
+	background: #b2c4df;
+	border: 1px solid #dddddd;
+}
+.big-table td{
+	padding: 10px 10px;
+	border: 1px solid #eee;
+	text-align: left;
+  font-size: 18px;
+  font-weight: 500;
+}
+.big-table tbody tr:nth-child(odd){
+	background: #fff;
+}
+.big-table tbody tr:nth-child(even){
+	background: #f2f5fb;
+}
+
+.wrapp {
+  width: 90%;
+  margin-left: 5%;
+}
+
+.date_span {
+  font-family: 'Roboto';
+ margin-right: 10px;
+}
+
+/* .date {
+  border-radius: 5px; 
+  border: 2px solid #0b5ed7;
+  padding: 5px;
+} */

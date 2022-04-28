@@ -24,3 +24,8 @@ export const deleteReportLocal = async (id) => {
     const {data} = await $host.delete('/reportLocal/' + id);
     return data;
 }
+
+export const deleteReportLocalOne = async (id) => {
+    const {data} = await $host.delete('/reportLocal/one/' + id);
+    return data;
+}

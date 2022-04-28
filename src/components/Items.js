@@ -30,12 +30,6 @@ const Items = observer(({ showFunc, data, setData }) => {
 
 
   useEffect(() => {
-    if (localStorage.getItem("massiv")) {
-      item.setMassiv(JSON.parse(localStorage.getItem("massiv")));
-    }
-  }, []);
-
-  useEffect(() => {
     let res = 0;
     item.items.forEach((el) => {
       if(el.type !== 'Сумма') {
@@ -84,13 +78,13 @@ const Items = observer(({ showFunc, data, setData }) => {
 
   function massivFunc(id) {
     if(Number(massValue) && Number(massValue) > 0) {
-      item.setMassiv(
-        item.massiv.hasOwnProperty(id)
+      item.setMassivLocal(
+        item.massivLocal.hasOwnProperty(id)
           ? {
-              ...item.massiv,
-              [id]: [...item.massiv[id], { val: massValue, id: Date.now() }],
+              ...item.massivLocal,
+              [id]: [...item.massivLocal[id], { val: massValue, id: Date.now() }],
             }
-          : { ...item.massiv, [id]: [{ val: massValue, id: Date.now() }] }
+          : { ...item.massivLocal, [id]: [{ val: massValue, id: Date.now() }] }
       );
 
     } else {
@@ -100,18 +94,18 @@ const Items = observer(({ showFunc, data, setData }) => {
 
 
   function deleteMassivFunc(idMas, idEl) {
-    item.setMassiv({
-      ...item.massiv,
-      [idMas]: [...item.massiv[idMas].filter((el) => el.id !== idEl)],
+    item.setMassivLocal({
+      ...item.massivLocal,
+      [idMas]: [...item.massivLocal[idMas].filter((el) => el.id !== idEl)],
     });
-    massiv.setDeleted([...massiv.deleted, idEl]);
+    massiv.setDeletedLocal([...massiv.deletedLocal, idEl]);
   }
 
 
   async function countResMassiv(id, formula, ball) {
     let res = 0;
-    if (item.massiv.hasOwnProperty(id) && item.massiv[id]) {
-      await item.massiv[id].map((el) => {
+    if (item.massivLocal.hasOwnProperty(id) && item.massivLocal[id]) {
+      await item.massivLocal[id].map((el) => {
         res += formula
           ? eval(formula.replace(/Балл/gi, ball).replace(/Ввод/gi, el.val))
           : 0;
@@ -130,7 +124,7 @@ const Items = observer(({ showFunc, data, setData }) => {
 
   useEffect(() => {
     countResMassiv(massId, massFormula, massBall);
-  }, [massId, item.massiv]);
+  }, [massId, item.massivLocal]);
 
   async function vvodFunc(id) {
     await item.setItems([
@@ -336,10 +330,10 @@ const Items = observer(({ showFunc, data, setData }) => {
                   +
                 </Button>
               </div>
-              {item.massiv.hasOwnProperty(`${d.id}`) &&
-              item.massiv[`${d.id}`] &&
-              item.massiv[`${d.id}`].length ? (
-                item.massiv[`${d.id}`].map((dat) => (
+              {item.massivLocal.hasOwnProperty(`${d.id}`) &&
+              item.massivLocal[`${d.id}`] &&
+              item.massivLocal[`${d.id}`].length ? (
+                item.massivLocal[`${d.id}`].map((dat) => (
                   <div key={dat.id} style={{ display: "flex" }}>
                     <div className="mas_val">{dat.val}</div>
                     <img

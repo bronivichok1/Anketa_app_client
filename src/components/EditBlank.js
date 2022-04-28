@@ -8,7 +8,7 @@ import { fetchOneUser, updateUser } from "../http/UserApi";
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchCathedras, fetchOneCathedra } from "../http/CathedraApi";
 import EditItems from "./EditItems";
-import { createReport, findReports, findStavka, updateReport } from "../http/ReportApi";
+import { createReport, deleteReportOne, findReports, findStavka, updateReport } from "../http/ReportApi";
 import { fetchSelectsAll } from "../http/SelectApi";
 import { deleteMassiv, fetchMassiv, createMassiv, ownDeleteMassiv } from "../http/MassivApi";
 import { fetchOneResult, updateResult } from "../http/ResultApi";
@@ -87,17 +87,7 @@ const EditBlank = observer(() => {
     try {
       let res;
      
-      res = await updateResult(item.result.id, item.result);
-      
-      await report.reports.forEach(rep => {
-        updateReport(rep.id, {
-          ...rep,
-          selectvalue: item.items.find(i => i.id === rep.itemId).select,
-          value: item.items.find(i => i.id === rep.itemId).vvod,
-          ball_value: item.items.find(i => i.id === rep.itemId).value,
-        })
-        
-      })
+      res = await updateResult(item.result.id, {...item.result, cathedra_id: localUser.cathedraId});
 
       if(item.items.length > report.reports.length) {
         const arr = [];
@@ -108,18 +98,37 @@ const EditBlank = observer(() => {
           }
         })
 
-         arr.forEach((d) => {
-          createReport({
+         arr.forEach(async (d) => {
+         await createReport({
             selectvalue: d.select,
             value: d.vvod,
             ball_value: d.value,
             userId: params.id,
             itemId: d.id,
+            cathedra_id: localUser.cathedraId
           }).then( data => {
             console.log('good');
           })
         })
       }
+      
+      await report.reports.forEach(rep => {
+        const cont = item.items.find(i => i.id === rep.itemId);
+        if(cont) {
+          updateReport(rep.id, {
+            ...rep,
+            selectvalue: cont.select,
+            value: cont.vvod,
+            ball_value: cont.value,
+            cathedra_id: localUser.cathedraId
+          })
+        } else {
+          deleteReportOne(rep.id).then(data => {
+            console.log('delete report');
+          })
+        }
+        
+      })
       
 
       for(let key in item.massiv) {

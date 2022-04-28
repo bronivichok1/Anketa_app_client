@@ -7,6 +7,7 @@ export default class UserStore {
         this._user = {};
         this._users = [];
         this._admins = [];
+        this._dateUsers = [];
         makeAutoObservable(this);
     }
 
@@ -48,6 +49,14 @@ export default class UserStore {
 
     setAdmins(admins) {
         this._admins = admins;
+    }
+
+    get dateUsers() {
+        return this._dateUsers;
+    }
+
+    setDateUsers(user) {
+        this._dateUsers = user;
     }
 
 }

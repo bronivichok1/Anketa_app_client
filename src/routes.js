@@ -5,10 +5,12 @@ import EditAdmins from "./pages/EditAdmins"
 import EditAnketa from "./pages/EditAnketa"
 import EditCafedras from "./pages/EditCafedras"
 import EditCafedrasUsers from "./pages/EditCafedrasUsers"
+import EditCathRating from "./pages/EditCathRating"
+import EditCathReport from "./pages/EditCathReport"
 import EditUser from "./pages/EditUser"
 import Report from "./pages/Report"
 import SeeReports from "./pages/SeeReports"
-import { ADMIN_ROUTE, DELETE_REPORTS_ROUTE, EDIT_ADMINS_ROUTE, EDIT_BLANK_ROUTE, EDIT_CAFEDRAS_ROUTE, EDIT_CAFEDRAS_USERS_ROUTE, EDIT_USER, LOGIN_ROUTE, REPORT_ROUTE, SEE_REPORTS_ROUTE } from "./utils/consts"
+import { ADMIN_ROUTE, DELETE_REPORTS_ROUTE, EDIT_ADMINS_ROUTE, EDIT_BLANK_ROUTE, EDIT_CAFEDRAS_ROUTE, EDIT_CAFEDRAS_USERS_ROUTE, EDIT_CATHEDRA_RATING, EDIT_CATHEDRA_REPORT, EDIT_USER, LOGIN_ROUTE, REPORT_ROUTE, SEE_REPORTS_ROUTE } from "./utils/consts"
 
 export const authRoutes = [
     {
@@ -58,6 +60,14 @@ export const publicAuthRoutes = [
     {
         path: EDIT_USER,
         Component: <EditUser/>
+    },
+    {
+        path: EDIT_CATHEDRA_REPORT,
+        Component: <EditCathReport/>
+    },
+    {
+        path: EDIT_CATHEDRA_RATING,
+        Component: <EditCathRating/>
     },
    
 ]

@@ -1,7 +1,7 @@
 const EditAdmins = () => {
     return(
         <div>
-            edit admins
+            edit cathedra reports
         </div>
     );
 }

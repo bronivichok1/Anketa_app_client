@@ -8,6 +8,8 @@ export default class ItemStore {
     this._selects = [];
     this._stavka = '';
     this._result = {};
+    this._massivLocal = {};
+    this._dateArr = [];
 
     makeAutoObservable(this);
   }
@@ -36,6 +38,14 @@ export default class ItemStore {
     return this._massiv;
   }
 
+  setMassivLocal(massiv) {
+    this._massivLocal = massiv;
+  }
+
+  get massivLocal() {
+    return this._massivLocal;
+  }
+
   setSelects(selects) {
     this._selects = selects;
   }
@@ -59,5 +69,14 @@ export default class ItemStore {
   get result() {
     return this._result;
   }
+
+  setDateArr(arr) {
+    this._dateArr = arr;
+  }
+
+  get dateArr() {
+    return this._dateArr;
+  }
+
 
 }

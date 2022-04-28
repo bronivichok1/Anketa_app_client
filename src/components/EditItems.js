@@ -199,15 +199,7 @@ const EditItems = observer(() => {
           <Col
             md={8}
             className={
-              d.children && d.children.length
-                ? d.clasName
-                  ? mobile
-                    ? "show it"
-                    : "show item"
-                  : mobile
-                  ? "hide it"
-                  : "hide item"
-                : mobile
+              mobile
                 ? "it"
                 : "item"
             }

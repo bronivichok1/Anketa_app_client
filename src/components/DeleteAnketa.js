@@ -1,8 +1,9 @@
 import { observer } from "mobx-react-lite";
 import { useContext, useEffect, useMemo, useState } from "react";
-import { Col, Container, Row } from "react-bootstrap";
+import { Col, Container, Row, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { Context } from "..";
+import { convertDate } from "../functions";
 import { fetchCathedras } from "../http/CathedraApi";
 import { deleteMassiv } from "../http/MassivApi";
 import { deleteReport } from "../http/ReportApi";
@@ -20,6 +21,7 @@ const DeleteAnketa = observer(() => {
   const navigate = useNavigate();
 
   const [value, setValue] = useState("");
+  const [bool, setBool] = useState(false);
 
   const filteredUsers = useMemo(() => {
     return user.users.filter((us) => {
@@ -51,7 +53,9 @@ const DeleteAnketa = observer(() => {
     }
   }, [cathId]);
 
-  useEffect(() => {
+
+  function findUser() {
+    setBool(true);
     if (user.users && user.users.length) {
       user.users.forEach((us) => {
         fetchOneResult(us.id).then((data) => {
@@ -70,8 +74,7 @@ const DeleteAnketa = observer(() => {
         });
       });
     }
-  }, [user.users]);
-
+  }
   
 
   function DeleteFunc(id) {
@@ -91,6 +94,7 @@ const DeleteAnketa = observer(() => {
     
   }
 
+
   return (
     <div className="filter" style={{ marginTop: "4rem" }}>
       <Container>
@@ -98,9 +102,12 @@ const DeleteAnketa = observer(() => {
           <Col style={{ fontFamily: "Roboto" }} md={4}>
             Выберите кафедру:
           </Col>
-          <Col md={8}>
+          <Col md={7}>
             <select
-              onChange={(e) => setCathVal(e.target.value)}
+              onChange={(e) => {
+                setCathVal(e.target.value);
+                setBool(false);
+              }}
               value={cathVal}
               className="select"
             >
@@ -111,6 +118,9 @@ const DeleteAnketa = observer(() => {
                 </option>
               ))}
             </select>
+          </Col>
+          <Col md={1} >
+          <Button onClick={findUser} variant='primary' >Найти</Button>
           </Col>
         </Row>
 
@@ -125,7 +135,7 @@ const DeleteAnketa = observer(() => {
             Сотрудники
           </h4>
 
-          {user.users && user.users.length && cathVal ? (
+          {user.users && user.users.length && cathVal && bool ? (
             <Row>
               <Col md={4}>
                 <input
@@ -143,7 +153,7 @@ const DeleteAnketa = observer(() => {
           )}
 
 
-          {user.users && user.users.length && cathVal ? (
+          {user.users && user.users.length && cathVal && bool ? (
 
            <>
 
@@ -158,7 +168,7 @@ const DeleteAnketa = observer(() => {
               <Row className="us_item" key={us.id}>
                 <Col md={4}>{us.fullname}</Col>
                 <Col md={3}>{us.res}</Col>
-                <Col md={4}>{new Date(us.update).toString()}</Col>
+                <Col md={4}>{ convertDate(us.update) }</Col>
                 <Col md={1}>
                   <img
                   onClick={() => DeleteFunc(us.id)}
@@ -175,7 +185,7 @@ const DeleteAnketa = observer(() => {
               </Row>
             ))}
            </>
-          ) : cathVal ? (
+          ) : cathVal && bool ? (
             <div>Сотрудники не найдены!</div>
           ) : <></>}
         </div>
