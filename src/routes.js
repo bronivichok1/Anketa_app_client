@@ -37,6 +37,10 @@ export const authRoutes = [
         path: EDIT_CAFEDRAS_USERS_ROUTE,
         Component: <EditCafedrasUsers/>
     },
+    {
+        path: EDIT_CATHEDRA_RATING,
+        Component: <EditCathRating/>
+    },
    
 ]
 
@@ -65,9 +69,6 @@ export const publicAuthRoutes = [
         path: EDIT_CATHEDRA_REPORT,
         Component: <EditCathReport/>
     },
-    {
-        path: EDIT_CATHEDRA_RATING,
-        Component: <EditCathRating/>
-    },
+
    
 ]

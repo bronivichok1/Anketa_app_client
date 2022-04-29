@@ -1,13 +1,20 @@
 import axios from "axios";
 import { observer } from "mobx-react-lite";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import { Context } from "..";
 import { saveAs } from "file-saver";
+import { fetchTablesTrue } from "../http/RatingTablesApi";
 
 const FindCathRating = observer(({ cathId }) => {
   const { rating } = useContext(Context);
 
+  useEffect(() => {
+    fetchTablesTrue().then(data => {
+      console.log(data)
+      rating.setRatingTables(data);
+    })
+  }, [])
 
   function createExcel() {
     axios
@@ -33,7 +40,12 @@ const FindCathRating = observer(({ cathId }) => {
         <table>
           <thead>
             <tr>
-              <th>№</th>
+
+              {rating.ratingTables.map(el => {
+                <th key={el.id} > {el.name} </th>
+              })}
+
+              {/* <th>№</th>
               <th>Фамилия</th>
               <th>Ставки</th>
               <th>Учебная деят.</th>
@@ -49,7 +61,7 @@ const FindCathRating = observer(({ cathId }) => {
               <th>Работа по COVID-19</th>
               <th>Должность</th>
               <th>Степень</th>
-              <th>Возраст</th>
+              <th>Возраст</th> */}
             </tr>
           </thead>
           <tbody>
