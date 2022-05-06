@@ -2,7 +2,7 @@ import { Button, Container, Nav, Navbar } from "react-bootstrap";
 import icon from './../imgs/anketa_iconn.svg';
 import { useMediaQuery } from 'react-responsive';
 import {  useNavigate } from "react-router-dom";
-import { ADMIN_ROUTE, DELETE_REPORTS_ROUTE, EDIT_BLANK_ROUTE, EDIT_CAFEDRAS_ROUTE, EDIT_CATHEDRA_RATING, REPORT_ROUTE, SEE_REPORTS_ROUTE } from "../utils/consts";
+import { ADMIN_ROUTE, DELETE_REPORTS_ROUTE, EDIT_BLANK_ROUTE, EDIT_CAFEDRAS_ROUTE, EDIT_CATHEDRA_RATING, EDIT_DATE, REPORT_ROUTE, SEE_REPORTS_ROUTE } from "../utils/consts";
 
 const AdminNavBar = () => {
     const mobile = useMediaQuery({ query: '(max-width: 980px)' })
@@ -31,12 +31,17 @@ const AdminNavBar = () => {
             id="responsive-navbar-nav"
           >
             <Nav style={{ color: "white" }}>
-            <Button onClick={() => navigate(EDIT_CATHEDRA_RATING)} variant="outline-light">Редактировать рейтинг</Button>
+            <Button onClick={() => navigate(EDIT_DATE)} variant="outline-light">Дата</Button>
             <Button style={
                   mobile
                   ? { marginLeft: "0px" }
                   : { marginLeft: "10px" }
-              } onClick={() => navigate(EDIT_CAFEDRAS_ROUTE)} variant="outline-light">Редактировать кафедры</Button>
+              } onClick={() => navigate(EDIT_CATHEDRA_RATING)} variant="outline-light">Рейтинг</Button>
+            <Button style={
+                  mobile
+                  ? { marginLeft: "0px" }
+                  : { marginLeft: "10px" }
+              } onClick={() => navigate(EDIT_CAFEDRAS_ROUTE)} variant="outline-light">Кафедры</Button>
             <Button style={
                   mobile
                   ? { marginLeft: "0px" }
@@ -46,7 +51,7 @@ const AdminNavBar = () => {
                   mobile
                   ? { marginLeft: "0px" }
                   : { marginLeft: "10px" }
-              } onClick={() => navigate(EDIT_BLANK_ROUTE)} variant="outline-light">Редактировать анкету</Button>
+              } onClick={() => navigate(EDIT_BLANK_ROUTE)} variant="outline-light">Анкета</Button>
               <Button onClick={() => navigate(DELETE_REPORTS_ROUTE)} style={
                   mobile
                   ? { marginLeft: "0px" }

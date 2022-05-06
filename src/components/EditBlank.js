@@ -14,6 +14,9 @@ import { deleteMassiv, fetchMassiv, createMassiv, ownDeleteMassiv } from "../htt
 import { fetchOneResult, updateResult } from "../http/ResultApi";
 import { createMassivFunc, createTree2 } from "../functions";
 import { SEE_REPORTS_ROUTE } from "../utils/consts";
+import { deleteCathResult, fetchCathResultActive } from "../http/CathResultApi";
+import { createObj, deleteCathReportByRes } from "../http/CathReportApi";
+import { deleteColvoByRes } from "../http/ColvoSelectsApi";
 
 
 const EditBlank = observer(() => {
@@ -21,6 +24,7 @@ const EditBlank = observer(() => {
   const { cathedra } = useContext(Context);
   const { report } = useContext(Context);
   const { massiv } = useContext(Context);
+  const { cath_report } = useContext(Context);
 
   const navigate = useNavigate();
 
@@ -153,6 +157,29 @@ const EditBlank = observer(() => {
       }
       
       updateUser(localUser.id, localUser);
+
+      await fetchCathResultActive(localUser.cathedraId).then(async data => {
+        if(data && data.length) {
+
+          await deleteCathResult(data[0].id).then(data => {
+          })
+         await deleteCathReportByRes(data[0].id).then(data => {});
+         await deleteColvoByRes(data[0].id).then(data => {});
+
+        await createObj({cathedra_id: localUser.cathedraId}).then( data => {
+         console.log('create and update cath');
+
+         cath_report.setSelects( [] );
+        })
+
+        } else {
+         await createObj({cathedra_id: localUser.cathedraId}).then( data => {
+           console.log('create cath');
+
+           cath_report.setSelects( [] );
+          })
+        }
+      })
 
        alert('Ваша анкета изменена!');
 

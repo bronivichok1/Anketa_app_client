@@ -24,3 +24,8 @@ export const fetchCathResultOwn = async (id) => {
     const {data} = await $host.get('/cathResult/own/' + id);
     return data;
 }
+
+export const fetchCathResultActive = async (id) => {
+    const {data} = await $host.get('/cathResult/active/' + id);
+    return data;
+}

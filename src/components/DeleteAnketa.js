@@ -10,6 +10,12 @@ import { deleteReport } from "../http/ReportApi";
 import { deleteResult, fetchOneResult } from "../http/ResultApi";
 import { findUsers } from "../http/UserApi";
 import trash from "./../imgs/trash_icon.svg";
+import moment from 'moment';
+import { deleteCathResult, fetchCathResultActive, fetchCathResults } from "../http/CathResultApi";
+import { createObj, deleteCathReport, deleteCathReportByRes } from "../http/CathReportApi";
+import { deleteColvo, deleteColvoByRes } from "../http/ColvoSelectsApi";
+moment().format(); 
+moment.locale("ru");
 
 const DeleteAnketa = observer(() => {
   const { cathedra } = useContext(Context);
@@ -77,20 +83,39 @@ const DeleteAnketa = observer(() => {
   }
   
 
-  function DeleteFunc(id) {
-    deleteResult(id).then(data => {
+  async function DeleteFunc(id) {
+   await deleteResult(id).then(data => {
         console.log('result');
     })
 
-    deleteReport(id).then(data => {
+   await deleteReport(id).then(data => {
         console.log('report');
     })
 
-    deleteMassiv(id).then(data => {
+   await deleteMassiv(id).then(data => {
         console.log('massiv');
     })
 
     user.setUsers([...user.users.filter(u => u.id !== id)]);
+
+    await fetchCathResultActive(cathId).then(async data => {
+      if(data && data.length) {
+
+        await deleteCathResult(data[0].id).then(data => {
+        })
+       await deleteCathReportByRes(data[0].id).then(data => {});
+       await deleteColvoByRes(data[0].id).then(data => {});
+
+       createObj({cathedra_id: cathId}).then( data => {
+       console.log('create and update cath');
+      })
+
+      } else {
+        createObj({cathedra_id: cathId}).then( data => {
+         console.log('create cath');
+        })
+      }
+    })
     
   }
 
@@ -168,7 +193,9 @@ const DeleteAnketa = observer(() => {
               <Row className="us_item" key={us.id}>
                 <Col md={4}>{us.fullname}</Col>
                 <Col md={3}>{us.res}</Col>
-                <Col md={4}>{ convertDate(us.update) }</Col>
+                <Col md={4}>{ 
+               // convertDate(us.update) 
+               moment(us.update).format("DD.MM.YYYY h:mm:ss")}</Col>
                 <Col md={1}>
                   <img
                   onClick={() => DeleteFunc(us.id)}

@@ -26,6 +26,6 @@ export const fetchTables = async () => {
 }
 
 export const fetchTablesTrue = async () => {
-    const {data} = await $host.get('/ratingTables/truee/');
+    const {data} = await $host.post('/ratingTables/truee');
     return data;
 }

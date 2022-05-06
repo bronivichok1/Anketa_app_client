@@ -14,6 +14,12 @@ import { createMassiv } from "../http/MassivApi";
 import { fetchOneUser, updateUser } from "../http/UserApi";
 import { createReportLocal, deleteReportLocal, deleteReportLocalOne, findReportsLocal, findStavkaLocal, updateReportLocal } from "../http/ReportLocalApi";
 import { createMassivLocal, deleteMassivLocal, fetchMassivLocal, ownDeleteMassivLocal } from "../http/MassivLocalApi";
+import moment from 'moment';
+import { fetchDates } from "../http/DatesApi";
+import { deleteCathResult, fetchCathResultActive, fetchCathResults } from "../http/CathResultApi";
+import { createObj, deleteCathReport, deleteCathReportByRes } from "../http/CathReportApi";
+import { deleteColvo, deleteColvoByRes } from "../http/ColvoSelectsApi";
+moment().format(); 
 
 const Blank = observer(() => {
   const { item } = useContext(Context);
@@ -21,6 +27,7 @@ const Blank = observer(() => {
   const { user } = useContext(Context);
   const { report } = useContext(Context);
   const { massiv } = useContext(Context);
+  const { dates } = useContext(Context);
 
   const [data, setData] = useState([]);
 
@@ -82,6 +89,10 @@ const Blank = observer(() => {
       setLocalUser(data);
       setName(data.fullname)
     });
+
+    fetchDates().then(data => {
+      dates.setDates(data[0]);
+    })
   }, []);
 
   const showFunc = async (id) => {
@@ -237,56 +248,80 @@ const Blank = observer(() => {
       alert(e.response.data.message);
     }
   }
-
+//moment(el.createdAt).isBetween(startDate, endDate, undefined, '[]')
   async function postAnketa() {
-    try {
+    if(moment(new Date()).isBetween(dates.dates.firstDate, dates.dates.lastDate, undefined, '[]')) {
+      try {
 
-      if(localUser.cathedraId) {
-        let res;
-        res = await createResult({ userId: user.user.id, result: item.sym, cathedra_id: localUser.cathedraId });
-        await item.items.forEach((d) => {
-          createReport({
-            selectvalue: d.select,
-            value: d.vvod,
-            ball_value: d.value,
-            userId: user.user.id,
-            itemId: d.id,
-            cathedra_id: localUser.cathedraId
-          }).then((dat) => {
-            for (let key in item.massivLocal) {
-              if (item.massivLocal.hasOwnProperty(key)) {
-                if (d.id == key) {
-                  item.massivLocal[key].forEach((el2) => {
-                    createMassiv({
-                      value: el2.val,
-                      userId: user.user.id,
-                      itemId: d.id,
-                    }).then((end) => console.log("massiv"));
-                  });
+        if(localUser.cathedraId) {
+          let res;
+          res = await createResult({ userId: user.user.id, result: item.sym, cathedra_id: localUser.cathedraId });
+          await item.items.forEach((d) => {
+            createReport({
+              selectvalue: d.select,
+              value: d.vvod,
+              ball_value: d.value,
+              userId: user.user.id,
+              itemId: d.id,
+              cathedra_id: localUser.cathedraId,
+              resultId: res.id
+            }).then((dat) => {
+              for (let key in item.massivLocal) {
+                if (item.massivLocal.hasOwnProperty(key)) {
+                  if (d.id == key) {
+                    item.massivLocal[key].forEach((el2) => {
+                      createMassiv({
+                        value: el2.val,
+                        userId: user.user.id,
+                        itemId: d.id,
+                      }).then((end) => console.log("massiv"));
+                    });
+                  }
                 }
               }
-            }
+            });
           });
-        });
-  
-       await updateUser(localUser.id, localUser);
-  
-       await deleteReportLocal(user.user.id).then((data) => {
-          console.log("report");
-        });
-  
-       await deleteMassivLocal(user.user.id).then((data) => {
-          console.log("massiv");
-        });
-  
-        alert("Ваша анкета добавлена!");
-        window.location.reload();
-      } else {
-        alert('Выберите кафедру!');
+    
+         await updateUser(localUser.id, localUser);
+    
+         await deleteReportLocal(user.user.id).then((data) => {
+            console.log("report");
+          });
+    
+         await deleteMassivLocal(user.user.id).then((data) => {
+            console.log("massiv");
+          });
+
+          await fetchCathResultActive(localUser.cathedraId).then(async data => {
+            if(data && data.length) {
+
+              await deleteCathResult(data[0].id).then(data => {
+              })
+             await deleteCathReportByRes(data[0].id).then(data => {});
+             await deleteColvoByRes(data[0].id).then(data => {});
+
+             createObj({cathedra_id: localUser.cathedraId}).then( data => {
+             console.log('create and update cath');
+            })
+
+            } else {
+              createObj({cathedra_id: localUser.cathedraId}).then( data => {
+               console.log('create cath');
+              })
+            }
+          })
+    
+          alert("Ваша анкета добавлена!");
+          window.location.reload();
+        } else {
+          alert('Выберите кафедру!');
+        }
+       
+      } catch (e) {
+        alert(e.response.data.message);
       }
-     
-    } catch (e) {
-      alert(e.response.data.message);
+    } else {
+      alert(`Добавить анкету можно только с ${moment(dates.dates.firstDate).format("DD.MM.YYYY")} по ${moment(dates.dates.lastDate).format("DD.MM.YYYY")}!`)
     }
   }
 

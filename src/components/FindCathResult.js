@@ -9,12 +9,14 @@ import { deleteCathResult } from "../http/CathResultApi";
 import { deleteColvo } from "../http/ColvoSelectsApi";
 import edit from "./../imgs/edit_icon.svg";
 import trash from "./../imgs/trash_icon.svg";
+import moment from 'moment';
+moment().format(); 
+moment.locale("ru");
 
 const FindCathResult = observer(({ cathId }) => {
   const navigate = useNavigate();
 
   const { cath_report } = useContext(Context);
-  const { item } = useContext(Context);
 
   const createResult = async () => {
     try {
@@ -65,10 +67,10 @@ const FindCathResult = observer(({ cathId }) => {
         <Row className="us_item" key={us.id}>
           <Col md={5}>{us.result}</Col>
           <Col md={3}>
-            { convertDate(us.createdAt) }
+            {moment(us.createdAt).format("DD.MM.YYYY h:mm:ss")}
           </Col>
           <Col md={3}>
-            { convertDate(us.updatedAt) }
+            {moment(us.updatedAt).format("DD.MM.YYYY h:mm:ss")}
           </Col>
           <Col style={{display: 'flex'}} md={1}>
             <img  onClick={() => navigate(`/cathReports/${us.id}`)} className="edit" src={edit} alt="" />
@@ -88,9 +90,7 @@ const FindCathResult = observer(({ cathId }) => {
         </>
       ) : (
         <div>
-          <Button onClick={createResult} variant="primary">
-            Создать отчёт
-          </Button>
+          Кафедрального отчёта ещё нет!
         </div>
       )}
     </div>

@@ -25,6 +25,11 @@ export const deleteColvo = async (id) => {
     return data;
 }
 
+export const deleteColvoByRes = async (id) => {
+    const {data} = await $host.delete('/colvo/res/' + id);
+    return data;
+}
+
 export const createColvo = async (sel) => {
     const {data} = await $host.post('/colvo', sel);
     return data;

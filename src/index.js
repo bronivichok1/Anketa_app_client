@@ -8,6 +8,7 @@ import CathedraStore from './store/CathedraStore';
 import MassivStore from './store/MassivStore';
 import CathReportStore from './store/CathReportStore';
 import RatingStore from './store/RatingStore';
+import DatesStore from './store/DatesStore';
 
 export const Context = createContext(null);
 
@@ -20,6 +21,7 @@ ReactDOM.render(
     massiv: new MassivStore(),
     cath_report: new CathReportStore(),
     rating: new RatingStore(),
+    dates: new DatesStore(),
   }} >
     <App />
   </Context.Provider>,

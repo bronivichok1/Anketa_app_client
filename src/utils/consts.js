@@ -10,3 +10,4 @@ export const LOGIN_ROUTE = '/';
 export const EDIT_USER = '/reports/:id';
 export const EDIT_CATHEDRA_REPORT = '/cathReports/:id';
 export const EDIT_CATHEDRA_RATING = '/cathRating';
+export const EDIT_DATE = '/editDate';

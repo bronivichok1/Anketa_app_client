@@ -391,8 +391,12 @@ html {
  margin-right: 10px;
 }
 
-/* .date {
-  border-radius: 5px; 
-  border: 2px solid #0b5ed7;
-  padding: 5px;
-} */
+.span_date {
+  font-family: 'Roboto';
+  font-size: 20px;
+}
+
+.button_date {
+  margin-top: 7rem;
+  margin-left: calc(50% - 50px);
+}

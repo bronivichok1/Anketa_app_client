@@ -1,16 +1,21 @@
 import { observer } from "mobx-react-lite";
 import { useContext, useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
+import { useMediaQuery } from "react-responsive";
 import { Context } from "..";
 import { convertDate } from "../functions";
 import { fetchCathedras } from "../http/CathedraApi";
 import { fetchCathResults } from "../http/CathResultApi";
 import { createRating } from "../http/RatingApi";
-import { fetchOneResult } from "../http/ResultApi";
 import { findUsers } from "../http/UserApi";
 import FindCathRating from "./FindCathRating";
 import FindCathResult from "./FindCathResult";
 import FindUser from "./FindUser";
+import moment from 'moment';
+import { fetchOneResult } from "../http/ResultApi";
+import { fetchDates } from "../http/DatesApi";
+moment().format(); 
+
 
 const Filter = observer(() => {
   const { cathedra } = useContext(Context);
@@ -18,6 +23,7 @@ const Filter = observer(() => {
   const { cath_report } = useContext(Context);
   const { rating } = useContext(Context);
   const { item } = useContext(Context);
+  const { dates } = useContext(Context);
 
   const [cathVal, setCathVal] = useState("");
   const [cathId, setCathId] = useState(0);
@@ -26,10 +32,15 @@ const Filter = observer(() => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
+  const mobile = useMediaQuery({ query: '(max-width: 770px)' })
+
   useEffect(() => {
     fetchCathedras().then((data) => {
       cathedra.setCathedras(data);
     });
+    fetchDates().then(data => {
+      dates.setDates(data[0]);
+    })
   }, []);
 
   useEffect(() => {
@@ -44,27 +55,47 @@ const Filter = observer(() => {
 
   useEffect(() => {
     if (cathId && type === "Индивидуальный отчёт") {
-      findUsers(cathId).then((data) => {
-        user.setUsers(data);
+      findUsers(cathId).then(async (data) => {
+       await user.setUsers(data);
+       
+       if(user.users && user.users.length) {
+        user.users.forEach((us) => {
+          fetchOneResult(us.id).then((data) => {
+           if(data === null) {
+            user.setUsers([...user.users.filter(u => u.id !== us.id)]);
+           } else {
+            user.setUsers([
+              ...user.users.map((u) =>
+                u.id === us.id
+                  ? { ...u, res: data.result, create: data.createdAt}
+                  : { ...u }
+              ),
+            ]);
+           }
+          
+          });
+        });
+       }
       });
+    
     }
-  }, [cathId, type, item.dateArr]);
+  }, [cathId, type, dates.startDate, dates.endDate
+  //  , item.dateArr
+  ]);
 
   useEffect(async () => {
     if (cathId && type === "Кафедральный отчёт") {
       await fetchCathResults(cathId).then((data) => {
-        // cath_report.setResult(data);
 
-        if(item.dateArr && item.dateArr.length) {
-            cath_report.setResult([...data.filter(el => item.dateArr.includes(convertDate(
-                new Date(el.createdAt).toISOString()
-              ).split(" ")[0]))]);
-        } else {
+        if(startDate && endDate) {
+          cath_report.setResult([...data.filter(el => moment(el.createdAt).isBetween(startDate, endDate, undefined, '[]'))]);
+      } 
+        else {
             cath_report.setResult(data);
         }
       });
     }
-  }, [cathId, type, item.dateArr]);
+  }, [cathId, type, startDate, endDate]);
 
   useEffect(async () => {
     if (cathId && type === "Рейтинг") {
@@ -75,25 +106,12 @@ const Filter = observer(() => {
     }
   }, [cathId, type]);
 
-  // console.log(startDate)
-  // console.log(endDate)
-
   useEffect(() => {
     if (startDate && endDate) {
-      const arr = [];
-      let start = Date.parse(startDate);
-      let end = Date.parse(endDate);
-
-      for (let i = start; i <= end; i = i + 24 * 60 * 60 * 1000) {
-        const dates = convertDate(new Date(i).toISOString()).split(" ");
-        // console.log(dates[0]);
-        arr.push(dates[0]);
-      }
-      item.setDateArr(arr);
+      dates.setStartDate(startDate);
+      dates.setEndDate(endDate);
     }
   }, [startDate, endDate]);
-
-  //console.log(item.dateArr);
 
   let types;
 
@@ -112,7 +130,7 @@ const Filter = observer(() => {
           <Col style={{ fontFamily: "Roboto" }} md={4}>
             Период:
           </Col>
-          <Col md={4}>
+          <Col style={mobile ? {marginTop: '0.5rem'} : {}} md={5}>
             <span className="date_span">С:</span>
             <input
               onChange={(e) => setStartDate(e.target.value)}
@@ -120,7 +138,7 @@ const Filter = observer(() => {
               type="date"
             />
           </Col>
-          <Col md={4}>
+          <Col style={mobile ? {marginTop: '0.5rem'} : {}} md={3}>
             <span className="date_span">По:</span>
             <input
               onChange={(e) => setEndDate(e.target.value)}
@@ -130,7 +148,7 @@ const Filter = observer(() => {
           </Col>
         </Row>
 
-        <Row style={{ marginTop: "1rem" }}>
+        <Row style={{ marginTop: "1.5rem" }}>
           <Col style={{ fontFamily: "Roboto" }} md={4}>
             Выберите тип отчёта:
           </Col>

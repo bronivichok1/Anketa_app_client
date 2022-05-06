@@ -39,3 +39,8 @@ export const getCathReportsByResult = async (cathResultId) => {
     const {data} = await $host.get('/cathReport/result/' + cathResultId);
     return data;
 }
+
+export const deleteCathReportByRes = async (id) => {
+    const {data} = await $host.delete('/cathReport/res/' + id);
+    return data;
+}

@@ -11,7 +11,6 @@ const FindCathRating = observer(({ cathId }) => {
 
   useEffect(() => {
     fetchTablesTrue().then(data => {
-      console.log(data)
       rating.setRatingTables(data);
     })
   }, [])
@@ -41,50 +40,21 @@ const FindCathRating = observer(({ cathId }) => {
           <thead>
             <tr>
 
-              {rating.ratingTables.map(el => {
+              {rating.ratingTables.map(el => 
                 <th key={el.id} > {el.name} </th>
-              })}
+              )}
 
-              {/* <th>№</th>
-              <th>Фамилия</th>
-              <th>Ставки</th>
-              <th>Учебная деят.</th>
-              <th>Учебно-мет.деят</th>
-              <th>Науч.-исслед.</th>
-              <th>Воспит. работа</th>
-              <th>Лечебн-диагн.</th>
-              <th>Международная работа</th>
-              <th>Индекс Хирша</th>
-              <th>Индекс Хирша (SCOPUS)</th>
-              <th>Кол-во статей (SCOPUS)</th>
-              <th>Кол-во статей (Web of Science)</th>
-              <th>Работа по COVID-19</th>
-              <th>Должность</th>
-              <th>Степень</th>
-              <th>Возраст</th> */}
             </tr>
           </thead>
           <tbody>
             {rating.rating && rating.rating.length ? (
               rating.rating.map((rat) => (
                 <tr key={rat.id}>
-                  <td>{rat.id ? rat.id : ''}</td>
-                  <td>{rat.fullname}</td>
-                  <td>{rat.stavka}</td>
-                  <td>{rat.uchWork}</td>
-                  <td>{rat.uchMetWork}</td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td>{rat.dolj}</td>
-                  <td>{rat.stepen}</td>
-                  <td>{rat.age}</td>
+
+                  {rating.ratingTables.map(el => 
+                   <td key={el.id} > {eval(el.formula)} </td>
+                  )}
+
                 </tr>
               ))
             ) : (

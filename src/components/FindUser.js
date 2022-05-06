@@ -6,12 +6,16 @@ import { Context } from "..";
 import { convertDate } from "../functions";
 import { fetchOneResult } from "../http/ResultApi";
 import edit from "./../imgs/edit_icon.svg";
+import moment from 'moment';
+moment().format(); 
+moment.locale("ru");
 
 const FindUser = observer(() => {
   const navigate = useNavigate();
 
   const { user } = useContext(Context);
   const { item } = useContext(Context);
+  const { dates } = useContext(Context);
   const [value, setValue] = useState("");
 
   const filteredUsers = useMemo(() => {
@@ -26,20 +30,24 @@ const FindUser = observer(() => {
         fetchOneResult(us.id).then((data) => {
           if (data === null) {
             user.setUsers([...user.users.filter((u) => u.id !== us.id)]);
-          } else if (item.dateArr && item.dateArr.length) {
-            const dates = convertDate(
-              new Date(data.createdAt).toISOString()
-            ).split(" ");
-            console.log(dates[0]);
-
-            if(!item.dateArr.includes(dates[0])) {
+          } 
+          else if (dates.startDate && dates.endDate) {
+            if(!moment(data.createdAt).isBetween(dates.startDate, dates.endDate, undefined, '[]')) {
               user.setUsers([...user.users.filter((u) => u.id !== us.id)]);
             }
           }
         });
       });
     }
-  }, [user.users, item.dateArr]);
+  }, [user.users, dates.startDate, dates.endDate]);
+
+  function editUser(id) {
+    if(moment(new Date()).isBetween(dates.dates.firstDate, dates.dates.lastDate, undefined, '[]')) {
+      navigate(`/reports/${id}`);
+    } else {
+      alert(`Редактировать анкету можно только с ${moment(dates.dates.firstDate).format("DD.MM.YYYY")} по ${moment(dates.dates.lastDate).format("DD.MM.YYYY")}!`)
+    }
+  }
 
   return (
     <Container>
@@ -73,14 +81,23 @@ const FindUser = observer(() => {
         )}
 
         {user.users && user.users.length ? (
-          filteredUsers.map((us) => (
+           <>
+            <Row style={{marginBottom: '1rem', marginTop: '1rem'}} className="blankHead" >
+            <Col md={5}>ФИО</Col>
+            <Col>Дата создания анкеты</Col>
+
+           </Row>
+           
+          {filteredUsers.map((us) => (
             <Row className="us_item" key={us.id}>
-              <Col md={11}>{us.fullname}</Col>
-              <Col onClick={() => navigate(`/reports/${us.id}`)} md={1}>
+              <Col md={5}>{us.fullname}</Col>
+              <Col >{moment(us.create).format("DD.MM.YYYY h:mm:ss")}</Col>
+              <Col onClick={() => editUser(us.id)} md={1}>
                 <img className="edit" src={edit} alt="" />
               </Col>
             </Row>
-          ))
+          ))}
+           </>
         ) : (
           <div>Сотрудники не найдены!</div>
         )}
