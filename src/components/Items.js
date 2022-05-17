@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { useState, useEffect, useContext, useRef } from "react";
+import { useState, useEffect, useContext, useRef, useMemo } from "react";
 import { Button, Col, Row } from "react-bootstrap";
 import { useMediaQuery } from "react-responsive";
 import Tippy from "@tippyjs/react";
@@ -227,15 +227,17 @@ const Items = observer(({ showFunc, data, setData }) => {
                     borderLeft: mobile ? "" : "1px solid #d1d1d1",
                   }
             }
-            onClick={() => showFunc(d.id)}
           >
-            {d.num.includes("0") ? (
+           <span style={{paddingLeft: '30px', marginLeft: '-30px', cursor: 'pointer'}}
+            onClick={() => showFunc(d.id)}
+           > 
+           {d.num.split('.')[0] === '0' ? (
               <> {d.name}</>
             ) : (
               <>
                 {d.num}. {d.name}
               </>
-            )}
+            )}</span>
           </Col>
           <Col
             style={d.type === 'Сумма'

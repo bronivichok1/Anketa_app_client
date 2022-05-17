@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import { useMediaQuery } from "react-responsive";
 import { createItem } from "../http/ItemApi";
@@ -8,15 +8,27 @@ import SelectModal from "./SelectModal";
 function AnketaModal({ setVisible, items }) {
   const mobile = useMediaQuery({ query: "(max-width: 900px)" });
 
+  const [type, setType] = useState("");
   const [ball, setBall] = useState("");
   const [name, setName] = useState("");
-  const [formula, setFormula] = useState("");
+  const [formula, setFormula] = useState('');
   const [help, setHelp] = useState("");
-  const [type, setType] = useState("");
   const [num, setNum] = useState("");
 
   const [show, setShow] = useState(false)
   const [item, setItem] = useState({});
+
+  useEffect(() => {
+    if(type) {
+      if(type === "Ввод данных") {
+        setFormula('Балл*Ввод');
+        setBall(1);
+      } else if(type === "Массив данных") {
+        setFormula('Балл/Ввод < 50 ? 50 : Балл/Ввод');
+        setBall(100);
+      }
+    }
+  }, [type])
 
   async function createItemFunc() {
     if (name && num && type) {

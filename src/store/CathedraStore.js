@@ -5,6 +5,7 @@ export default class CathedraStore {
         this._cathedras = [];
         this._types = [];
         this._faculties = [];
+        this._open = false;
         makeAutoObservable(this);
     }
 
@@ -31,7 +32,13 @@ export default class CathedraStore {
     get faculties() {
         return this._faculties;
     }
-    
+    setOpen(bool) {
+        this._open = bool;
+    }
+
+    get open() {
+        return this._open;
+    }
     
     
 }

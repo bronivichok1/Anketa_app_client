@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { Row, Col, Button } from "react-bootstrap";
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, useMemo } from "react";
 import { Context } from "../index";
 import { useMediaQuery } from "react-responsive";
 import Items from "./Items";
@@ -16,9 +16,9 @@ import { createReportLocal, deleteReportLocal, deleteReportLocalOne, findReports
 import { createMassivLocal, deleteMassivLocal, fetchMassivLocal, ownDeleteMassivLocal } from "../http/MassivLocalApi";
 import moment from 'moment';
 import { fetchDates } from "../http/DatesApi";
-import { deleteCathResult, fetchCathResultActive, fetchCathResults } from "../http/CathResultApi";
-import { createObj, deleteCathReport, deleteCathReportByRes } from "../http/CathReportApi";
-import { deleteColvo, deleteColvoByRes } from "../http/ColvoSelectsApi";
+import { deleteCathResult, fetchCathResultActive } from "../http/CathResultApi";
+import { createObj, deleteCathReportByRes } from "../http/CathReportApi";
+import { deleteColvoByRes } from "../http/ColvoSelectsApi";
 moment().format(); 
 
 const Blank = observer(() => {
@@ -107,47 +107,86 @@ const Blank = observer(() => {
     ]);
   };
 
+ // const testMemoFunc = async () => {
+    // item.items.forEach((el) => {
+    //   item.items.forEach( (el2) => {
+
+    //     let n = el2.num.split('.');
+    //     n.pop();
+    //     n = n.join('.')
+
+    //     if (
+    //       !el.clas &&
+    //       el.num === n &&
+    //       el2.num.split(".").length === el.num.split(".").length + 1 &&
+    //       el2.clas
+    //     ) {
+    //       setChild(el2.num);
+    //       setParent(el.num);
+    //       console.log(child);
+    //       console.log(parent)
+    //     }
+    //   });
+    // });
+
+  //   if (child && parent) {
+  //     await item.setItems([...item.items.map((dat) =>
+  //          dat.num === child
+  //            ? { ...dat, clas: false}
+  //            : dat.num === parent
+  //            ?  { ...dat, clasName: false}
+  //            : { ...dat }
+  //        ),
+  //      ])
+ 
+  //      setChild('');
+  //      setParent('');
+  //    }
+
+  //   console.log('memo');
+  // }
+
+  // const computed = useMemo(() => {
+  //   return testMemoFunc();
+  // }, [child, parent])
+
   useEffect(() => {
     item.items.forEach((el) => {
       item.items.forEach( (el2) => {
 
-        let n =  el2.num.split('.');
-         n.pop();
+        let n = el2.num.split('.');
+        n.pop();
         n = n.join('.')
 
         if (
           !el.clas &&
-          el2.num.includes(el.num) &&
+          el.num === n &&
           el2.num.split(".").length === el.num.split(".").length + 1 &&
           el2.clas
-          //!el.clas &&
-         // n === el.num &&
-          //el2.clas 
-         // el.id === el2.parentId
-        // el.num.split('.')[0] === el2.num.split('.')[0] && el2.num.split('.').length > el.num.split('.').length
         ) {
           setChild(el2.num);
           setParent(el.num);
-          //  console.log(`child: ${child}`)
-          //  console.log(`parent: ${parent}`)
+          console.log(child);
+          console.log(parent)
         }
       });
     });
   }, [item.items]);
 
-  useEffect(() => {
+
+  useEffect(async () => {
     if (child && parent) {
-      item.setItems([
-        ...item.items.map((dat) =>
+     await item.setItems([...item.items.map((dat) =>
           dat.num === child
-            ? { ...dat, clas: !dat.clas}
-            //{ ...dat, clas: !dat.clas }
+            ? { ...dat, clas: false}
             : dat.num === parent
-            ?  { ...dat, clasName: !dat.clasName}
-            //{ ...dat, clasName: false }
+            ?  { ...dat, clasName: false}
             : { ...dat }
         ),
-      ]);
+      ])
+
+      setChild('');
+      setParent('');
     }
   }, [child, parent]);
 
@@ -248,7 +287,7 @@ const Blank = observer(() => {
       alert(e.response.data.message);
     }
   }
-//moment(el.createdAt).isBetween(startDate, endDate, undefined, '[]')
+
   async function postAnketa() {
     if(moment(new Date()).isBetween(dates.dates.firstDate, dates.dates.lastDate, undefined, '[]')) {
       try {
@@ -274,6 +313,7 @@ const Blank = observer(() => {
                         value: el2.val,
                         userId: user.user.id,
                         itemId: d.id,
+                        result_id: res.id
                       }).then((end) => console.log("massiv"));
                     });
                   }
@@ -293,6 +333,7 @@ const Blank = observer(() => {
           });
 
           await fetchCathResultActive(localUser.cathedraId).then(async data => {
+            console.log(data);
             if(data && data.length) {
 
               await deleteCathResult(data[0].id).then(data => {

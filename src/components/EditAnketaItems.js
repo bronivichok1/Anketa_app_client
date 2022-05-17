@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { Button, Col, Row } from "react-bootstrap";
 import { Context } from "..";
 import { deleteItem, fetchItems, fetchOneItem } from "../http/ItemApi";
@@ -19,6 +19,13 @@ const EditAnketaItems = () => {
   const [ed, setEd] = useState(false);
   const [item, setItem] = useState({});
   const [modal, setModal] = useState(false);
+  const [value, setValue] = useState('');
+
+  const filteredItems = useMemo(() => {
+     return items.filter((us) => {
+       return us.num.toLowerCase().includes(value.toLowerCase());
+     });
+   });
 
   useEffect(() => {
     fetchItems().then((data) => setItems(data));
@@ -73,8 +80,22 @@ const EditAnketaItems = () => {
         </Col>
       </Row>
       
+      <Row style={{marginTop: '2rem'}} >
+            <Col md={4}></Col>
+            <Col md={4}>
+              <input
+                placeholder="Поиск пунктов..."
+                className="search"
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+                type="text"
+              />
+            </Col>
+            <Col md={4}></Col>
+          </Row>
+
       <Row
-        style={{ marginTop: "4rem", marginBottom: "1rem" }}
+        style={{ marginTop: "1rem", marginBottom: "1rem" }}
         className="blankHead"
       >
         <Col md={6}>Название</Col>
@@ -84,7 +105,7 @@ const EditAnketaItems = () => {
         <Col md={1}>Подсказка</Col>
       </Row>
 
-      {items.map((el) => (
+      {filteredItems.map((el) => (
         <Row className="blankItem" key={el.id}>
           <Col md={6}>
             <span style={{fontWeight: 'bold'}} >{el.num}.</span> {el.name}

@@ -5,13 +5,13 @@ import { useNavigate } from "react-router-dom";
 import { Context } from "..";
 import { convertDate } from "../functions";
 import { fetchCathedras } from "../http/CathedraApi";
-import { deleteMassiv } from "../http/MassivApi";
-import { deleteReport } from "../http/ReportApi";
-import { deleteResult, fetchOneResult } from "../http/ResultApi";
-import { findUsers } from "../http/UserApi";
+import { deleteMassiv, deleteMassivByRes } from "../http/MassivApi";
+import { deleteReport, deleteReportsByRes } from "../http/ReportApi";
+import { deleteResult, deleteResultOwn, fetchOneResult, findByCathResult } from "../http/ResultApi";
+import { fetchOneUser, findUsers } from "../http/UserApi";
 import trash from "./../imgs/trash_icon.svg";
 import moment from 'moment';
-import { deleteCathResult, fetchCathResultActive, fetchCathResults } from "../http/CathResultApi";
+import { countResAgain, deleteCathResult, fetchCathResultActive, fetchCathResults } from "../http/CathResultApi";
 import { createObj, deleteCathReport, deleteCathReportByRes } from "../http/CathReportApi";
 import { deleteColvo, deleteColvoByRes } from "../http/ColvoSelectsApi";
 moment().format(); 
@@ -20,6 +20,7 @@ moment.locale("ru");
 const DeleteAnketa = observer(() => {
   const { cathedra } = useContext(Context);
   const { user } = useContext(Context);
+  const { report } = useContext(Context);
 
   const [cathVal, setCathVal] = useState("");
   const [cathId, setCathId] = useState(0);
@@ -29,9 +30,15 @@ const DeleteAnketa = observer(() => {
   const [value, setValue] = useState("");
   const [bool, setBool] = useState(false);
 
-  const filteredUsers = useMemo(() => {
-    return user.users.filter((us) => {
-      return us.fullname.toLowerCase().includes(value.toLowerCase());
+  // const filteredUsers = useMemo(() => {
+  //   return user.users.filter((us) => {
+  //     return us.fullname.toLowerCase().includes(value.toLowerCase());
+  //   });
+  // });
+
+  const filteredResults = useMemo(() => {
+    return report.results.filter((us) => {
+      return us.fullname ? us.fullname.toLowerCase().includes(value.toLowerCase()) : '';
     });
   });
 
@@ -53,69 +60,72 @@ const DeleteAnketa = observer(() => {
 
   useEffect(() => {
     if (cathId) {
-      findUsers(cathId).then((data) => {
-        user.setUsers(data);
-      });
+      // findUsers(cathId).then((data) => {
+      //   user.setUsers(data);
+      // });
+
+      findByCathResult(cathId).then(data => {
+        report.setResults(data);
+      })
     }
   }, [cathId]);
 
 
   function findUser() {
     setBool(true);
-    if (user.users && user.users.length) {
-      user.users.forEach((us) => {
-        fetchOneResult(us.id).then((data) => {
-         if(data === null) {
-          user.setUsers([...user.users.filter(u => u.id !== us.id)]);
-         } else {
-          user.setUsers([
-            ...user.users.map((u) =>
-              u.id === us.id
-                ? { ...u, res: data.result, update: data.updatedAt}
-                : { ...u }
-            ),
-          ]);
-         }
+    // if (user.users && user.users.length) {
+    //   user.users.forEach((us) => {
+    //     fetchOneResult(us.id).then((data) => {
+    //      if(data === null) {
+    //       user.setUsers([...user.users.filter(u => u.id !== us.id)]);
+    //      } else {
+    //       user.setUsers([
+    //         ...user.users.map((u) =>
+    //           u.id === us.id
+    //             ? { ...u, res: data.result, update: data.updatedAt}
+    //             : { ...u }
+    //         ),
+    //       ]);
+    //      }
         
-        });
+    //     });
+    //   });
+    // }
+    if (report.results && report.results.length) {
+      report.results.forEach((res) => {
+       fetchOneUser(res.userId).then(data => {
+         report.setResults([...report.results.map(el => el.userId === data.id ? {...el, fullname: data.fullname}
+          : {...el})]);
+       })
       });
     }
   }
   
 
-  async function DeleteFunc(id) {
-   await deleteResult(id).then(data => {
-        console.log('result');
-    })
+  async function DeleteFunc(id, cath_result_id) {
+  console.log(id);
 
-   await deleteReport(id).then(data => {
-        console.log('report');
-    })
+await deleteReportsByRes(id).then(data => {
+    console.log('report');
+})
 
-   await deleteMassiv(id).then(data => {
-        console.log('massiv');
-    })
+await deleteMassivByRes(id).then(data => {
+  console.log('massiv');
+})
 
-    user.setUsers([...user.users.filter(u => u.id !== id)]);
+ deleteResultOwn(id).then(data => {
+    console.log('result');
+  })
 
-    await fetchCathResultActive(cathId).then(async data => {
-      if(data && data.length) {
 
-        await deleteCathResult(data[0].id).then(data => {
-        })
-       await deleteCathReportByRes(data[0].id).then(data => {});
-       await deleteColvoByRes(data[0].id).then(data => {});
+   report.setResults([...report.results.filter(u => u.id !== id)]);
 
-       createObj({cathedra_id: cathId}).then( data => {
-       console.log('create and update cath');
-      })
+   await deleteCathReportByRes(cath_result_id).then(data => {});
+   await deleteColvoByRes(cath_result_id).then(data => {});
 
-      } else {
-        createObj({cathedra_id: cathId}).then( data => {
-         console.log('create cath');
-        })
-      }
-    })
+   await countResAgain({cath_result_id: cath_result_id}).then(data => {
+     console.log('updated cath result');
+   })
     
   }
 
@@ -160,7 +170,7 @@ const DeleteAnketa = observer(() => {
             Сотрудники
           </h4>
 
-          {user.users && user.users.length && cathVal && bool ? (
+          {/* {user.users && user.users.length && cathVal && bool ? (
             <Row>
               <Col md={4}>
                 <input
@@ -175,10 +185,28 @@ const DeleteAnketa = observer(() => {
             </Row>
           ) : (
             <></>
-          )}
+          )} */}
+
+       {report.results && report.results.length && cathVal && bool ? (
+            <Row>
+              <Col md={4}></Col>
+              <Col md={4}>
+                <input
+                  placeholder="Поиск сотрудников..."
+                  className="search"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                  type="text"
+                />
+              </Col>
+              <Col md={4}></Col>
+            </Row>
+          ) : (
+            <></>
+          )} 
 
 
-          {user.users && user.users.length && cathVal && bool ? (
+          {/* {user.users && user.users.length && cathVal && bool ? (
 
            <>
 
@@ -194,7 +222,6 @@ const DeleteAnketa = observer(() => {
                 <Col md={4}>{us.fullname}</Col>
                 <Col md={3}>{us.res}</Col>
                 <Col md={4}>{ 
-               // convertDate(us.update) 
                moment(us.update).format("DD.MM.YYYY h:mm:ss")}</Col>
                 <Col md={1}>
                   <img
@@ -214,7 +241,44 @@ const DeleteAnketa = observer(() => {
            </>
           ) : cathVal && bool ? (
             <div>Сотрудники не найдены!</div>
-          ) : <></>}
+          ) : <></>} */}
+
+{report.results && report.results.length && cathVal && bool ? (
+
+<>
+
+ <Row style={{marginBottom: '1rem'}} className="blankHead" >
+     <Col md={4}>ФИО</Col>
+     <Col md={3}>Общий балл</Col>
+     <Col md={4}>Дата последнего редактирования</Col>
+
+ </Row>
+
+ {filteredResults.map((us) => (
+   <Row className="us_item" key={us.id}>
+     <Col md={4}>{us.fullname}</Col>
+     <Col md={3}>{us.result}</Col>
+     <Col md={4}>{ 
+    moment(us.updatedAt).format("DD.MM.YYYY h:mm:ss")}</Col>
+     <Col md={1}>
+       <img
+       onClick={() => DeleteFunc(us.id, us.cath_result_id)}
+         style={{
+           height: "30px",
+           marginLeft: "30px",
+           cursor: "pointer",
+         }}
+         md={1}
+         src={trash}
+         alt=""
+       />
+     </Col>
+   </Row>
+ ))}
+</>
+) : cathVal && bool ? (
+ <div>Сотрудники не найдены!</div>
+) : <></>}
         </div>
       </Container>
     </div>

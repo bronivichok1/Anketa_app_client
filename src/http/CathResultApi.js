@@ -29,3 +29,8 @@ export const fetchCathResultActive = async (id) => {
     const {data} = await $host.get('/cathResult/active/' + id);
     return data;
 }
+
+export const countResAgain = async (cath_result_id) => {
+    const {data} = await $host.post('/cathResult/count', cath_result_id);
+    return data;
+}

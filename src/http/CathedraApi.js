@@ -1,4 +1,4 @@
-import { $host } from ".";
+import { $authHost, $host } from ".";
 
 export const fetchCathedras = async () => {
     const {data} = await $host.get('/cathedra');
@@ -11,16 +11,16 @@ export const fetchOneCathedra = async (id) => {
 }
 
 export const createCathedra = async (cath) => {
-    const {data} = await $host.post('/cathedra', cath);
+    const {data} = await $authHost.post('/cathedra', cath);
     return data;
 }
 
 export const deleteCathedra = async (id) => {
-    const {data} = await $host.delete('/cathedra/' + id);
+    const {data} = await $authHost.delete('/cathedra/' + id);
     return data;
 }
 
 export const updateCathedra = async (id, cath) => {
-    const {data} = await $host.put('/cathedra/' + id, cath);
+    const {data} = await $authHost.put('/cathedra/' + id, cath);
     return data;
 }

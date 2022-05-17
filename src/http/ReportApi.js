@@ -34,3 +34,14 @@ export const findByCathReport = async (cathId) => {
     const {data} = await $host.get('/report/cath/' + cathId);
     return data;
 }
+
+export const findByResReport = async (resId) => {
+    const {data} = await $host.get('/report/res/' + resId);
+    return data;
+}
+
+export const deleteReportsByRes = async (id) => {
+    const {data} = await $host.delete('/report/ress/' + id);
+    return data;
+}
+

@@ -10,8 +10,18 @@ export const deleteMassiv = async (id) => {
     return data;
 }
 
+export const deleteMassivByRes = async (id) => {
+    const {data} = await $host.delete('/massiv/res/' + id);
+    return data;
+}
+
 export const fetchMassiv = async (id) => {
     const {data} = await $host.get('/massiv/' + id);
+    return data;
+}
+
+export const getMassivByRes = async (id) => {
+    const {data} = await $host.get('/massiv/res/' + id);
     return data;
 }
 

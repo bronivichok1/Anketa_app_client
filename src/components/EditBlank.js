@@ -8,10 +8,10 @@ import { fetchOneUser, updateUser } from "../http/UserApi";
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchCathedras, fetchOneCathedra } from "../http/CathedraApi";
 import EditItems from "./EditItems";
-import { createReport, deleteReportOne, findReports, findStavka, updateReport } from "../http/ReportApi";
+import { createReport, deleteReportOne, findByResReport, updateReport } from "../http/ReportApi";
 import { fetchSelectsAll } from "../http/SelectApi";
-import { deleteMassiv, fetchMassiv, createMassiv, ownDeleteMassiv } from "../http/MassivApi";
-import { fetchOneResult, updateResult } from "../http/ResultApi";
+import { createMassiv, ownDeleteMassiv, getMassivByRes } from "../http/MassivApi";
+import { fetchOneOwnResult, updateResult } from "../http/ResultApi";
 import { createMassivFunc, createTree2 } from "../functions";
 import { SEE_REPORTS_ROUTE } from "../utils/consts";
 import { deleteCathResult, fetchCathResultActive } from "../http/CathResultApi";
@@ -49,29 +49,32 @@ const EditBlank = observer(() => {
       item.setSelects(data);
     });
 
-    fetchOneResult(params.id).then((data) => {
+   await fetchOneOwnResult(params.id).then((data) => {
       item.setResult(data);
     });
 
-    fetchOneUser(params.id).then( (data) => {
-       setLocalUser(data);
-      fetchOneCathedra(data.cathedraId).then(cath => {
-        setCathValue(cath.name);
-      })
-    });
+    fetchOneUser(item.result.userId).then( (data) => {
+      setLocalUser(data);
+     fetchOneCathedra(data.cathedraId).then(cath => {
+       setCathValue(cath.name);
+     })
+   });
 
-    findReports(params.id).then(async (data) => {
-       report.setReports(data);
+    findByResReport(params.id).then(async (data) => {
+      report.setReports(data);
 
-      const itemId = await item.items.find(
-        (i) => i.name === "Количество занимаемых ставок"
-      ).id;
-      findStavka(itemId).then((data) => {
-        item.setStavka(data.selectvalue);
-      });
-    });
+     const itemId = await item.items.find(
+       (i) => i.name === "Количество занимаемых ставок"
+     ).id;
 
-    fetchMassiv(params.id).then((data) => {
+     const stavka = await data.find(d => d.itemId === itemId);
+
+     if(stavka) {
+      item.setStavka(stavka.selectvalue);
+     }
+   });
+
+    getMassivByRes(params.id).then((data) => {
       item.setMassiv(createMassivFunc(data));
       massiv.setMassiv(data);
     });
@@ -107,9 +110,10 @@ const EditBlank = observer(() => {
             selectvalue: d.select,
             value: d.vvod,
             ball_value: d.value,
-            userId: params.id,
+            userId: item.result.userId,
             itemId: d.id,
-            cathedra_id: localUser.cathedraId
+            cathedra_id: localUser.cathedraId,
+            resultId: params.id
           }).then( data => {
             console.log('good');
           })
@@ -143,7 +147,7 @@ const EditBlank = observer(() => {
             if(massiv.massiv.find(sm => sm.id === mas.id)) {
               console.log('yes');
              } else {
-               createMassiv({value: Number(mas.val), userId: params.id, itemId: itemId})
+               createMassiv({value: Number(mas.val), userId: localUser.id, itemId: itemId, result_id: params.id})
                .then(end => console.log('massiv'));
              }
           })

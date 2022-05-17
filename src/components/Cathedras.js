@@ -1,15 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import { Button, Col, Row } from "react-bootstrap";
 import { Context } from "..";
-import { deleteItem, fetchItems, fetchOneItem } from "../http/ItemApi";
-import { useMediaQuery } from "react-responsive";
-import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
 import trash from "./../imgs/trash_icon.svg";
 import edit from "./../imgs/edit_icon.svg";
 import MyModal from "../UI/MyModal/MyModal";
-import EditAnketaModal from "./EditAnketaModal";
-import AnketaModal from "./AnketaModal";
 import { deleteCathedra, fetchCathedras, fetchOneCathedra } from "../http/CathedraApi";
 import { fetchCath_type } from "../http/Cath_typeApi";
 import { fetchFaculties } from "../http/FacultyApi";
@@ -20,8 +15,6 @@ import CathedrasModal from "./CathedraModal";
 const Cathedras = observer( () => {
 
     const {cathedra} = useContext(Context);
-
-  const mobile = useMediaQuery({ query: "(max-width: 770px)" });
 
   const [cathBool, setCathBool] = useState(false);
   const [cath, setCath] = useState({});

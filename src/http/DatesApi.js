@@ -1,4 +1,4 @@
-import { $host } from ".";
+import { $authHost, $host } from ".";
 
 export const fetchDates = async () => {
     const {data} = await $host.get('/dates');
@@ -16,12 +16,12 @@ export const deleteDates = async (id) => {
 }
 
 export const createDates = async (d) => {
-    const {data} = await $host.post('/dates', d);
+    const {data} = await $authHost.post('/dates', d);
     return data;
 }
 
 export const updateDates = async (id, sel) => {
-    const {data} = await $host.put('/dates/' + id, sel);
+    const {data} = await $authHost.put('/dates/' + id, sel);
     return data;
 }
 

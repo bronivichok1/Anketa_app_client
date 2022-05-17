@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { useState, useEffect, useContext, useRef } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Button, Col, Row } from "react-bootstrap";
 import { useMediaQuery } from "react-responsive";
 import Tippy from "@tippyjs/react";
@@ -218,7 +218,7 @@ const EditItems = observer(() => {
             }
             
           >
-            {d.num.includes("0") ? (
+            {d.num.split('.')[0] === '0' ? (
               <> {d.name}</>
             ) : (
               <>

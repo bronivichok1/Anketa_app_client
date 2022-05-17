@@ -3,49 +3,66 @@ import { useContext, useEffect, useMemo, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { Context } from "..";
-import { convertDate } from "../functions";
-import { fetchOneResult } from "../http/ResultApi";
 import edit from "./../imgs/edit_icon.svg";
-import moment from 'moment';
-moment().format(); 
+import moment from "moment";
+moment().format();
 moment.locale("ru");
 
 const FindUser = observer(() => {
   const navigate = useNavigate();
 
   const { user } = useContext(Context);
-  const { item } = useContext(Context);
+  const { cathedra } = useContext(Context);
   const { dates } = useContext(Context);
   const [value, setValue] = useState("");
+  const { report } = useContext(Context);
 
-  const filteredUsers = useMemo(() => {
-    return user.users.filter((us) => {
-      return us.fullname.toLowerCase().includes(value.toLowerCase());
+  const filteredResults = useMemo(() => {
+   if(report.results) {
+    return report.results.filter((us) => {
+      return us.fullname ? us.fullname.toLowerCase().includes(value.toLowerCase()) : '';
     });
+   }
   });
 
   useEffect(() => {
-    if (user.users && user.users.length) {
-      user.users.forEach((us) => {
-        fetchOneResult(us.id).then((data) => {
-          if (data === null) {
-            user.setUsers([...user.users.filter((u) => u.id !== us.id)]);
-          } 
-          else if (dates.startDate && dates.endDate) {
-            if(!moment(data.createdAt).isBetween(dates.startDate, dates.endDate, undefined, '[]')) {
-              user.setUsers([...user.users.filter((u) => u.id !== us.id)]);
-            }
+
+    if (report.results && report.results.length) {
+      report.results.forEach((res) => {
+        if (dates.startDate && dates.endDate) {
+          if (
+            !moment(res.createdAt).isBetween(
+              dates.startDate,
+              dates.endDate,
+              undefined,
+              "[]"
+            )
+          ) {
+            report.setResults([...report.results.filter((u) => u.id !== res.id)]);
           }
-        });
+        }
       });
     }
-  }, [user.users, dates.startDate, dates.endDate]);
+  }, [dates.startDate, dates.endDate, report.results]);
 
   function editUser(id) {
-    if(moment(new Date()).isBetween(dates.dates.firstDate, dates.dates.lastDate, undefined, '[]')) {
+    if (
+      moment(new Date()).isBetween(
+        dates.dates.firstDate,
+        dates.dates.lastDate,
+        undefined,
+        "[]"
+      )
+    ) {
       navigate(`/reports/${id}`);
     } else {
-      alert(`Редактировать анкету можно только с ${moment(dates.dates.firstDate).format("DD.MM.YYYY")} по ${moment(dates.dates.lastDate).format("DD.MM.YYYY")}!`)
+      alert(
+        `Редактировать анкету можно только с ${moment(
+          dates.dates.firstDate
+        ).format("DD.MM.YYYY")} по ${moment(dates.dates.lastDate).format(
+          "DD.MM.YYYY"
+        )}!`
+      );
     }
   }
 
@@ -62,7 +79,7 @@ const FindUser = observer(() => {
           Сотрудники
         </h4>
 
-        {user.users && user.users.length ? (
+      {report.results && report.results.length ? (
           <Row>
             <Col md={4}></Col>
             <Col md={4}>
@@ -78,26 +95,48 @@ const FindUser = observer(() => {
           </Row>
         ) : (
           <></>
-        )}
+        )} 
 
-        {user.users && user.users.length ? (
-           <>
-            <Row style={{marginBottom: '1rem', marginTop: '1rem'}} className="blankHead" >
-            <Col md={5}>ФИО</Col>
-            <Col>Дата создания анкеты</Col>
-
-           </Row>
-           
-          {filteredUsers.map((us) => (
-            <Row className="us_item" key={us.id}>
-              <Col md={5}>{us.fullname}</Col>
-              <Col >{moment(us.create).format("DD.MM.YYYY h:mm:ss")}</Col>
-              <Col onClick={() => editUser(us.id)} md={1}>
-                <img className="edit" src={edit} alt="" />
-              </Col>
+       {report.results && report.results.length ? (
+          <>
+            <Row
+              style={{ marginBottom: "1rem", marginTop: "1rem" }}
+              className="blankHead"
+            >
+              <Col md={4}>ФИО</Col>
+              <Col md={4} >Дата создания анкеты</Col>
+              <Col md={3} >Общий балл</Col>
             </Row>
-          ))}
-           </>
+
+            {cathedra.open || user.isAuth
+              ? filteredResults.map((us) => (
+                  <Row className="us_item" key={us.id}>
+                    <Col md={4}>{us.fullname}</Col>
+                    <Col md={4} >{moment(us.createdAt).format("DD.MM.YYYY h:mm:ss")}</Col>
+                    <Col md={3} >{us.result}</Col>
+                    <Col onClick={() => editUser(us.id)} md={1}>
+                      <img className="edit" src={edit} alt="" />
+                    </Col>
+                  </Row>
+                ))
+              :
+                report.results.map((us) => {
+                  if (us.userId === user.user.id) {
+                    return (
+                      <Row key={us.id} className="us_item">
+                        <Col md={4}>{us.fullname}</Col>
+                        <Col md={4} >
+                          {moment(us.createdAt).format("DD.MM.YYYY h:mm:ss")}
+                        </Col>
+                        <Col md={3} >{us.result}</Col>
+                        <Col onClick={() => editUser(us.id)} md={1}>
+                          <img className="edit" src={edit} alt="" />
+                        </Col>
+                      </Row>
+                    );
+                  }
+                })}
+          </>
         ) : (
           <div>Сотрудники не найдены!</div>
         )}

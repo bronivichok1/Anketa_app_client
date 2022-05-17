@@ -5,11 +5,11 @@ import { Context } from "../index";
 import { useMediaQuery } from "react-responsive";
 import { fetchItems } from "../http/ItemApi";
 import { useNavigate, useParams } from "react-router-dom";
-import { fetchOneSelect, fetchSelectsAll } from "../http/SelectApi";
+import { fetchOneSelect } from "../http/SelectApi";
 import { createObjSelect, createTree2 } from "../functions";
 import { SEE_REPORTS_ROUTE } from "../utils/consts";
 import { fetchCathResultOwn } from "../http/CathResultApi";
-import { findCathStavka, getCathReportsByResult, updateCathReport } from "../http/CathReportApi";
+import { getCathReportsByResult, updateCathReport } from "../http/CathReportApi";
 import { fetchColvo } from "../http/ColvoSelectsApi";
 import { fetchOneCathedra } from "../http/CathedraApi";
 import EditCathItems from "./EditCathItems";
@@ -28,8 +28,8 @@ const EditCathBlank = observer(() => {
   const [cath, setCath] = useState('');
   const [cathId, setCathId] = useState(0);
 
-  useEffect( () => {
-     fetchItems().then((data) => {
+  useEffect(async () => {
+    await fetchItems().then((data) => {
       item.setItems(createTree2(data));
     });
 
@@ -45,9 +45,8 @@ const EditCathBlank = observer(() => {
             (i) => i.name === "Количество занимаемых ставок"
           ).id;
 
-        findCathStavka(itemId).then(data => {
-            item.setStavka(data.selectvalue);
-        })
+        const stavka = await data.find(el => el.itemId === itemId);
+        item.setStavka(stavka.selectvalue);
     })
 
     fetchColvo({id: params.id}).then(async data => {
@@ -81,13 +80,27 @@ const EditCathBlank = observer(() => {
       if(itemId) {
           const el = await cath_report.reports.find(c => c.itemId === itemId);
           if(el) {
-            updateCathReport(el.id, {...el, selectvalue: item.stavka}).then(data => {
-                alert('Кафедральный отчёт изменён!');
-                window.location.reload();
-            })
+            updateCathReport(el.id, {...el, selectvalue: item.stavka}).then(data => {})
           }
       }
 
+     await cath_report.reports.forEach(async rep => {
+        const itemm = await item.items.find(i => i.id === rep.itemId);
+
+        if (itemm) {
+          updateCathReport(rep.id, {...rep, colvo: itemm.colvo}).then(data => {})
+        }
+      })
+
+      alert('Кафедральный отчёт изменён!');
+      window.location.reload();
+
+  }
+
+  function cancellation() {
+    cath_report.setSelects([]);
+    cath_report.setReports([]);
+    navigate(SEE_REPORTS_ROUTE);
   }
 
   return (
@@ -141,7 +154,7 @@ const EditCathBlank = observer(() => {
           </Button>
 
           <Button
-          onClick={() => navigate(SEE_REPORTS_ROUTE)}
+          onClick={cancellation}
             style={
               {
                 fontFamily: "var(--bs-body-font-family)",

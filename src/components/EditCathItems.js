@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { useState, useEffect, useContext, useRef } from "react";
+import { useEffect, useContext } from "react";
 import { Col, Row } from "react-bootstrap";
 import { useMediaQuery } from "react-responsive";
 import { Context } from "..";
@@ -49,7 +49,8 @@ const EditCathItems = observer(() => {
                   }
             }
           >
-            {d.num.includes("0") ? (
+            {/* {d.num.includes("0") ? ( */}
+            {d.num.split('.')[0] === '0' ? (
               <> <div style={{marginBottom: '1rem'}} >{d.name}</div>
               {cath_report.selects && cath_report.selects.length 
               ? cath_report.selects.map(sel => {
@@ -122,12 +123,12 @@ const EditCathItems = observer(() => {
             {d.type === "Сумма"
               ? (Number(d.value) ? d.value : "")
               : d.type === "Массив данных"
-              ? d.value
+              ? Number(d.value)
                 ? Number(Number(d.value).toFixed(2))
                 : ""
               : d.type === 'Список' && d.name === 'Количество занимаемых ставок'
               ? <div style={{color: 'blue'}} >{item.stavka}</div>
-              : d.value
+              : Number(d.value)
               ? d.value
               : ""}
           </Col>
@@ -147,7 +148,7 @@ const EditCathItems = observer(() => {
               }}
               md={2}
             >
-              <div className="colvo">{d.colvo}</div>
+              <div className="colvo">{Number(d.colvo) ? d.colvo : ''}</div>
             </Col>
           ) : d.type === "Массив данных" ? (
             <Col
@@ -157,7 +158,8 @@ const EditCathItems = observer(() => {
               }}
               md={2}
             >
-              <div className="colvo">{d.colvo}</div>
+              <div className="colvo">{Number(d.colvo) ? d.colvo : ''}</div>
+              <input onChange={e => item.setItems([...item.items.map(i => i.id === d.id ? {...i, colvo: e.target.value} : {...i})])} value={d.colvo || ''} style={{marginBottom: '1rem'}} type="number" />
             </Col>
           ) : d.type === "Да/Нет" ? (
             <Col
@@ -168,7 +170,8 @@ const EditCathItems = observer(() => {
               }}
               md={2}
             >
-              <div className="colvo">{d.colvo}</div>
+              <div className="colvo">{Number(d.colvo) ? d.colvo : ''}</div>
+              <input onChange={e => item.setItems([...item.items.map(i => i.id === d.id ? {...i, colvo: e.target.value} : {...i})])} value={d.colvo || ''} style={{marginBottom: '1rem'}} type="number" />
             </Col>
           ) : (
             <Col
@@ -178,7 +181,7 @@ const EditCathItems = observer(() => {
               }}
               md={2}
             >
-              <div className="colvo">{d.colvo}</div>
+              <div className="colvo">{Number(d.colvo) ? d.colvo : ''}</div>
               {
                   d.name === 'Количество занимаемых ставок'
                   ? <input style={{marginTop: '1rem'}} value={item.stavka} onChange={(e) => item.setStavka(e.target.value)} type="text" />

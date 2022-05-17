@@ -10,6 +10,12 @@ export const fetchOneResult = async (id) => {
     return data;
 }
 
+export const fetchOneOwnResult = async (id) => {
+    const {data} = await $host.get('/result/own/' + id);
+    return data;
+}
+
+
 export const updateResult = async (id, res) => {
     const {data} = await $host.put('/result/' + id, res);
     return data;
@@ -24,3 +30,9 @@ export const findByCathResult = async (cathId) => {
     const {data} = await $host.get('/result/cath/' + cathId);
     return data;
 }
+
+export const deleteResultOwn = async (id) => {
+    const {data} = await $host.delete('/result/own/' + id);
+    return data;
+}
+

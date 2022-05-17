@@ -3,16 +3,15 @@ import { useContext, useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import { useMediaQuery } from "react-responsive";
 import { Context } from "..";
-import { convertDate } from "../functions";
 import { fetchCathedras } from "../http/CathedraApi";
 import { fetchCathResults } from "../http/CathResultApi";
 import { createRating } from "../http/RatingApi";
-import { findUsers } from "../http/UserApi";
+import { fetchOneUser } from "../http/UserApi";
 import FindCathRating from "./FindCathRating";
 import FindCathResult from "./FindCathResult";
 import FindUser from "./FindUser";
 import moment from 'moment';
-import { fetchOneResult } from "../http/ResultApi";
+import { findByCathResult } from "../http/ResultApi";
 import { fetchDates } from "../http/DatesApi";
 moment().format(); 
 
@@ -22,8 +21,8 @@ const Filter = observer(() => {
   const { user } = useContext(Context);
   const { cath_report } = useContext(Context);
   const { rating } = useContext(Context);
-  const { item } = useContext(Context);
   const { dates } = useContext(Context);
+  const { report } = useContext(Context);
 
   const [cathVal, setCathVal] = useState("");
   const [cathId, setCathId] = useState(0);
@@ -43,6 +42,19 @@ const Filter = observer(() => {
     })
   }, []);
 
+  useEffect(async () => {
+    if(cathedra.cathedras && cathedra.cathedras.length) {
+      const cand = await cathedra.cathedras.find(cath => cath.user_id === user.user.id);
+
+      if(cand && cand.id === cathId) {
+        cathedra.setOpen(true);
+      } else {
+        cathedra.setOpen(false);
+      }
+    }
+  }, [cathedra.cathedras, cathId])
+
+
   useEffect(() => {
     if (cathVal) {
       cathedra.cathedras.forEach((cath) => {
@@ -55,32 +67,20 @@ const Filter = observer(() => {
 
   useEffect(() => {
     if (cathId && type === "Индивидуальный отчёт") {
-      findUsers(cathId).then(async (data) => {
-       await user.setUsers(data);
-       
-       if(user.users && user.users.length) {
-        user.users.forEach((us) => {
-          fetchOneResult(us.id).then((data) => {
-           if(data === null) {
-            user.setUsers([...user.users.filter(u => u.id !== us.id)]);
-           } else {
-            user.setUsers([
-              ...user.users.map((u) =>
-                u.id === us.id
-                  ? { ...u, res: data.result, create: data.createdAt}
-                  : { ...u }
-              ),
-            ]);
-           }
-          
-          });
-        });
-       }
-      });
-    
+     findByCathResult(cathId).then(async data => {
+       await report.setResults(data);
+
+        if(report.results && report.results.length) {
+          report.results.forEach(res => {
+            fetchOneUser(res.userId).then(us => {
+              report.setResults([...report.results.map(el => el.userId === us.id ? {...el, fullname: us.fullname} : {...el})]);
+            })
+          })
+        }
+      })
+      console.log('st')
     }
   }, [cathId, type, dates.startDate, dates.endDate
-  //  , item.dateArr
   ]);
 
   useEffect(async () => {
@@ -99,12 +99,12 @@ const Filter = observer(() => {
 
   useEffect(async () => {
     if (cathId && type === "Рейтинг") {
-      await createRating({ cathId }).then((data) => {
+      await createRating({ cathId, startDate, endDate }).then((data) => {
         console.log(data);
         rating.setRating(data);
       });
     }
-  }, [cathId, type]);
+  }, [cathId, type, startDate, endDate]);
 
   useEffect(() => {
     if (startDate && endDate) {
@@ -131,20 +131,32 @@ const Filter = observer(() => {
             Период:
           </Col>
           <Col style={mobile ? {marginTop: '0.5rem'} : {}} md={5}>
-            <span className="date_span">С:</span>
-            <input
+           <Row>
+             <Col md={1} >
+             <span className="date_span ">С:</span>
+           </Col>
+           <Col md={5} >
+           <input
               onChange={(e) => setStartDate(e.target.value)}
-              className="date"
+              className="date select "
               type="date"
             />
+           </Col>
+           </Row>
           </Col>
           <Col style={mobile ? {marginTop: '0.5rem'} : {}} md={3}>
-            <span className="date_span">По:</span>
-            <input
+            <Row>
+              <Col md={2} >
+              <span className="date_span">По:</span>
+              </Col>
+              <Col md={8} >
+              <input
               onChange={(e) => setEndDate(e.target.value)}
-              className="date"
+              className="date select"
               type="date"
             />
+              </Col>
+            </Row>
           </Col>
         </Row>
 
