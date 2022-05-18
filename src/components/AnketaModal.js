@@ -52,6 +52,12 @@ function AnketaModal({ setVisible, items }) {
         return;
       }
 
+      const re = /([0-9])(\.[0-9])*/g;
+      if(!re.test(String(num).toLowerCase())) {
+        alert("Номер пункта не соответствует формату!");
+        return;
+      }
+
       createItem({
         num: num,
         name: name,
