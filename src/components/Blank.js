@@ -154,12 +154,14 @@ const Blank = observer(() => {
       try {
 
         if(localUser.cathedraId) {
-        postAnketaReport({userId: user.user.id, itemSym: item.sym, items: item.items, massivLocal: item.massivLocal, localUser: localUser}).then(() => {
-          createObj({cathedra_id: localUser.cathedraId}).then( data => {
-            console.log('create and update cath');
-            alert("Ваша анкета добавлена!");
-            window.location.reload();
-          })
+        let res;
+
+        res = await postAnketaReport({userId: user.user.id, itemSym: item.sym, items: item.items, massivLocal: item.massivLocal, localUser: localUser})
+
+        createObj({cathedra_id: localUser.cathedraId}).then( data => {
+          console.log('create and update cath');
+          alert("Ваша анкета добавлена!");
+          window.location.reload();
         })
         } else {
           alert('Выберите кафедру!');
