@@ -3,6 +3,7 @@ import { useEffect, useContext } from "react";
 import { Col, Row } from "react-bootstrap";
 import { useMediaQuery } from "react-responsive";
 import { Context } from "..";
+import { countCathReport } from "../http/CathReportApi";
 
 const EditCathItems = observer(() => {
   const { item } = useContext(Context);
@@ -11,15 +12,10 @@ const EditCathItems = observer(() => {
   const mobile = useMediaQuery({ query: "(max-width: 770px)" });
 
   useEffect(() => {
-    cath_report.reports.map((el) => {
-      item.setItems([
-        ...item.items.map((i) =>
-          i.id === el.itemId
-            ? { ...i, vvod: el.value, value: el.ball_value, colvo: el.colvo }
-            : { ...i }
-        ),
-      ]);
-    });
+   
+    countCathReport({items: item.items, reports: cath_report.reports}).then(data => {
+      item.setItems(data);
+    })
   }, [cath_report.reports]);
 
   return (

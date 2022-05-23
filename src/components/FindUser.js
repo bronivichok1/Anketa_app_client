@@ -79,7 +79,7 @@ const FindUser = observer(() => {
           Сотрудники
         </h4>
 
-      {report.results && report.results.length ? (
+      {(report.results && report.results.length && cathedra.open) || report.results && report.results.length && user.isAuth ? (
           <Row>
             <Col md={4}></Col>
             <Col md={4}>

@@ -30,12 +30,6 @@ const DeleteAnketa = observer(() => {
   const [value, setValue] = useState("");
   const [bool, setBool] = useState(false);
 
-  // const filteredUsers = useMemo(() => {
-  //   return user.users.filter((us) => {
-  //     return us.fullname.toLowerCase().includes(value.toLowerCase());
-  //   });
-  // });
-
   const filteredResults = useMemo(() => {
     return report.results.filter((us) => {
       return us.fullname ? us.fullname.toLowerCase().includes(value.toLowerCase()) : '';
@@ -60,10 +54,6 @@ const DeleteAnketa = observer(() => {
 
   useEffect(() => {
     if (cathId) {
-      // findUsers(cathId).then((data) => {
-      //   user.setUsers(data);
-      // });
-
       findByCathResult(cathId).then(data => {
         report.setResults(data);
       })
@@ -73,24 +63,6 @@ const DeleteAnketa = observer(() => {
 
   function findUser() {
     setBool(true);
-    // if (user.users && user.users.length) {
-    //   user.users.forEach((us) => {
-    //     fetchOneResult(us.id).then((data) => {
-    //      if(data === null) {
-    //       user.setUsers([...user.users.filter(u => u.id !== us.id)]);
-    //      } else {
-    //       user.setUsers([
-    //         ...user.users.map((u) =>
-    //           u.id === us.id
-    //             ? { ...u, res: data.result, update: data.updatedAt}
-    //             : { ...u }
-    //         ),
-    //       ]);
-    //      }
-        
-    //     });
-    //   });
-    // }
     if (report.results && report.results.length) {
       report.results.forEach((res) => {
        fetchOneUser(res.userId).then(data => {
@@ -170,23 +142,6 @@ await deleteMassivByRes(id).then(data => {
             Сотрудники
           </h4>
 
-          {/* {user.users && user.users.length && cathVal && bool ? (
-            <Row>
-              <Col md={4}>
-                <input
-                  placeholder="Поиск сотрудников..."
-                  className="search"
-                  value={value}
-                  onChange={(e) => setValue(e.target.value)}
-                  type="text"
-                />
-              </Col>
-              <Col md={8}></Col>
-            </Row>
-          ) : (
-            <></>
-          )} */}
-
        {report.results && report.results.length && cathVal && bool ? (
             <Row>
               <Col md={4}></Col>
@@ -204,44 +159,6 @@ await deleteMassivByRes(id).then(data => {
           ) : (
             <></>
           )} 
-
-
-          {/* {user.users && user.users.length && cathVal && bool ? (
-
-           <>
-
-            <Row style={{marginBottom: '1rem'}} className="blankHead" >
-                <Col md={4}>ФИО</Col>
-                <Col md={3}>Общий балл</Col>
-                <Col md={4}>Дата последнего редактирования</Col>
-
-            </Row>
-
-            {filteredUsers.map((us) => (
-              <Row className="us_item" key={us.id}>
-                <Col md={4}>{us.fullname}</Col>
-                <Col md={3}>{us.res}</Col>
-                <Col md={4}>{ 
-               moment(us.update).format("DD.MM.YYYY h:mm:ss")}</Col>
-                <Col md={1}>
-                  <img
-                  onClick={() => DeleteFunc(us.id)}
-                    style={{
-                      height: "30px",
-                      marginLeft: "30px",
-                      cursor: "pointer",
-                    }}
-                    md={1}
-                    src={trash}
-                    alt=""
-                  />
-                </Col>
-              </Row>
-            ))}
-           </>
-          ) : cathVal && bool ? (
-            <div>Сотрудники не найдены!</div>
-          ) : <></>} */}
 
 {report.results && report.results.length && cathVal && bool ? (
 

@@ -1,3 +1,4 @@
+
 import { $host, $authHost } from "./index";
 
 export const createItem = async (item) => {
@@ -24,3 +25,19 @@ export const deleteItem = async (id) => {
     const {data} = await $host.delete('/item/' + id);
     return data;
 }
+
+export const testItem = async (items) => {
+    const {data} = await $authHost.post('/item/test', items);
+    return data;
+}
+
+export const resItem = async (items) => {
+    const {data} = await $authHost.post('/item/res', items);
+    return data;
+}
+
+export const closeItem = async (items) => {
+    const {data} = await $authHost.post('/item/close', items);
+    return data;
+}
+

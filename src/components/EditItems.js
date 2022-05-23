@@ -6,6 +6,8 @@ import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
 import del from "./../imgs/delete.svg";
 import { Context } from "..";
+import { resItem, testItem } from "../http/ItemApi";
+import { checkReports } from "../http/ReportLocalApi";
 
 
 const EditItems = observer(() => {
@@ -30,48 +32,20 @@ const EditItems = observer(() => {
   const [selectId, setSelectId] = useState(0);
 
 
-  useEffect(() => {
-    let res = 0;
-    item.items.forEach((el) => {
-      if(el.type !== 'Сумма') {
-        res += Number(el.value ? el.value : 0);
-      }
-    });
-    item.setResult({...item.result, result: res});
-  }, [item.items]);
-
-  function test() {
-    item.items.forEach(async (el) => {
-      if(el.type === 'Сумма' && el.children && el.children.length && el.parentId === null) {
-       let res = 0;
-       let num = el.num;
- 
-       console.log('ok')
-
-       await item.items.forEach( child => {
-         if(child.num.split('.')[0] === num.split('.')[0] && child.num.split('.').length > num.split('.').length ) {
-          res += Number(child.value ? child.value : 0);
-         }
-       })
-    
-        item.setItems([...item.items.map(i => i.id === el.id 
-          ? {...i, value: Number(res.toFixed(2))}
-          : {...i}
-          )])
-      }
-     });
-  }
+  async function test() {
+    await testItem({items: item.items}).then(data => {
+      item.setItems(data);
+     })
+     
+     resItem({items: item.items}).then(res => {
+       item.setResult({...item.result, result: res});
+     })
+   }
 
   useEffect(() => {
- 
-    report.reports.map(el => {
-      item.setItems([
-          ...item.items.map(i =>
-              i.id === el.itemId
-              ? {...i, vvod: el.value, value: el.ball_value, select: el.selectvalue}
-              : {...i}
-              )
-      ])
+
+   checkReports({reports: report.reports, items: item.items}).then(data => {
+    item.setItems(data);
   })
    
   }, [report.reports])

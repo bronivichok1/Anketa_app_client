@@ -45,3 +45,14 @@ export const deleteReportsByRes = async (id) => {
     return data;
 }
 
+export const postAnketaReport = async (obj) => {
+    const {data} = await $host.post('/report/post', obj);
+    return data;
+}
+
+export const updateAnketaReport = async (obj) => {
+    const {data} = await $host.post('/report/update', obj);
+    return data;
+}
+
+

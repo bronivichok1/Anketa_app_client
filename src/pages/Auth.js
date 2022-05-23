@@ -69,6 +69,7 @@ const Auth = observer(() => {
         localStorage.setItem('name', data.name);
         user.setIsUserAuth(true);
         user.setUser(data);
+        user.setIsAuth(data.role === 'ADMIN');
         navigate(REPORT_ROUTE);
       } catch (e) {
         alert(e.response.data.message);

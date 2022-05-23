@@ -44,3 +44,13 @@ export const deleteCathReportByRes = async (id) => {
     const {data} = await $host.delete('/cathReport/res/' + id);
     return data;
 }
+
+export const countCathReport = async (items) => {
+    const {data} = await $host.post('/cathReport/countReps', items);
+    return data;
+}
+
+export const updateCathReportFunc = async (obj) => {
+    const {data} = await $host.post('/cathReport/update', obj);
+    return data;
+}

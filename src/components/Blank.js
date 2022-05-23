@@ -5,14 +5,14 @@ import { Context } from "../index";
 import { useMediaQuery } from "react-responsive";
 import Items from "./Items";
 import { createMassivFunc, createTree2 } from "../functions";
-import { fetchItems } from "../http/ItemApi";
+import { closeItem, fetchItems, resItem, testItem } from "../http/ItemApi";
 import { fetchSelectsAll } from "../http/SelectApi";
 import { fetchCathedras } from "../http/CathedraApi";
 import { createResult } from "../http/ResultApi";
-import { createReport } from "../http/ReportApi";
+import { createReport, postAnketaReport } from "../http/ReportApi";
 import { createMassiv } from "../http/MassivApi";
 import { fetchOneUser, updateUser } from "../http/UserApi";
-import { createReportLocal, deleteReportLocal, deleteReportLocalOne, findReportsLocal, findStavkaLocal, updateReportLocal } from "../http/ReportLocalApi";
+import { checkReports, createReportLocal, deleteReportLocal, deleteReportLocalOne, findReportsLocal, findStavkaLocal, saveReportsLoc, updateReportLocal } from "../http/ReportLocalApi";
 import { createMassivLocal, deleteMassivLocal, fetchMassivLocal, ownDeleteMassivLocal } from "../http/MassivLocalApi";
 import moment from 'moment';
 import { fetchDates } from "../http/DatesApi";
@@ -34,9 +34,6 @@ const Blank = observer(() => {
   const mobile = useMediaQuery({ query: "(max-width: 1400px)" });
   const mobile2 = useMediaQuery({ query: "(max-width: 410px)" });
 
-  const [child, setChild] = useState("");
-  const [parent, setParent] = useState("");
-
   const [name, setName] = useState("");
   const [localUser, setLocalUser] = useState({});
   const [cathValue, setCathValue] = useState("");
@@ -45,7 +42,7 @@ const Blank = observer(() => {
 
   useEffect(async () => {
 
-    await fetchItems().then((data) => {
+    await fetchItems().then( (data) => {
       item.setItems(
         createTree2([
           ...data.map((d) =>
@@ -60,21 +57,20 @@ const Blank = observer(() => {
     });
 
     findReportsLocal(user.user.id).then(async (data) => {
-      report.setReports(data);
+     await report.setReports(data.reports);
+      item.setStavka(data.stavka);
+      item.setMassivLocal(createMassivFunc(data.massivLocal));
+      massiv.setMassivLocal(data.massivLocal);
 
-      if(data && data.length) {
-        const itemId = await item.items.find(
-          (i) => i.name === "Количество занимаемых ставок"
-        ).id;
-        findStavkaLocal(itemId).then((data) => {
-          item.setStavka(data.selectvalue);
-        });
+      if(report.reports && report.reports.length) {
+       await checkReports({reports: report.reports, items: item.items}).then(data => {
+          item.setItems(data);
+        })
+       }
 
-        fetchMassivLocal(user.user.id).then((data) => {
-          item.setMassivLocal(createMassivFunc(data));
-          massiv.setMassivLocal(data);
-        });
-      }
+        resItem({items: item.items}).then(res => {
+        item.setSym(res)
+      })
    });
 
     fetchSelectsAll().then((data) => {
@@ -96,7 +92,7 @@ const Blank = observer(() => {
   }, []);
 
   const showFunc = async (id) => {
-    item.setItems([
+   await item.setItems([
       ...item.items.map((d) =>
         d.parentId === id
           ? { ...d, clas: !d.clas }
@@ -105,90 +101,12 @@ const Blank = observer(() => {
           : { ...d }
       ),
     ]);
+
+   await closeItem({items: item.items}).then(data => {
+      item.setItems(data);
+    })
   };
 
- // const testMemoFunc = async () => {
-    // item.items.forEach((el) => {
-    //   item.items.forEach( (el2) => {
-
-    //     let n = el2.num.split('.');
-    //     n.pop();
-    //     n = n.join('.')
-
-    //     if (
-    //       !el.clas &&
-    //       el.num === n &&
-    //       el2.num.split(".").length === el.num.split(".").length + 1 &&
-    //       el2.clas
-    //     ) {
-    //       setChild(el2.num);
-    //       setParent(el.num);
-    //       console.log(child);
-    //       console.log(parent)
-    //     }
-    //   });
-    // });
-
-  //   if (child && parent) {
-  //     await item.setItems([...item.items.map((dat) =>
-  //          dat.num === child
-  //            ? { ...dat, clas: false}
-  //            : dat.num === parent
-  //            ?  { ...dat, clasName: false}
-  //            : { ...dat }
-  //        ),
-  //      ])
- 
-  //      setChild('');
-  //      setParent('');
-  //    }
-
-  //   console.log('memo');
-  // }
-
-  // const computed = useMemo(() => {
-  //   return testMemoFunc();
-  // }, [child, parent])
-
-  useEffect(() => {
-    item.items.forEach((el) => {
-      item.items.forEach( (el2) => {
-
-        let n = el2.num.split('.');
-        n.pop();
-        n = n.join('.')
-
-        if (
-          !el.clas &&
-          el.num === n &&
-          el2.num.split(".").length === el.num.split(".").length + 1 &&
-          el2.clas
-        ) {
-          setChild(el2.num);
-          setParent(el.num);
-          console.log(child);
-          console.log(parent)
-        }
-      });
-    });
-  }, [item.items]);
-
-
-  useEffect(async () => {
-    if (child && parent) {
-     await item.setItems([...item.items.map((dat) =>
-          dat.num === child
-            ? { ...dat, clas: false}
-            : dat.num === parent
-            ?  { ...dat, clasName: false}
-            : { ...dat }
-        ),
-      ])
-
-      setChild('');
-      setParent('');
-    }
-  }, [child, parent]);
 
   useEffect(() => {
     if (cathValue) {
@@ -222,67 +140,10 @@ const Blank = observer(() => {
   async function saveData() {
     try {
 
-      if(item.items.length > report.reports.length) {
-        const arr = [];
-        await item.items.forEach( async el => {
-          const t = await report.reports.find(rep => rep.itemId === el.id);
-          if(!t) {
-            arr.push(el);
-          }
-        })
-
-         arr.forEach(async (d) => {
-         await createReportLocal({
-            selectvalue: d.select,
-            value: d.vvod,
-            ball_value: d.value,
-            userId: user.user.id,
-            itemId: d.id,
-          }).then( data => {
-            console.log('good');
-          })
-        })
-      }
-      
-      await report.reports.forEach(rep => {
-        const cont = item.items.find(i => i.id === rep.itemId);
-        if(cont) {
-          updateReportLocal(rep.id, {
-            ...rep,
-            selectvalue: cont.select,
-            value: cont.vvod,
-            ball_value: cont.value,
-          })
-        } else {
-          deleteReportLocalOne(rep.id).then(data => {
-            console.log('delete report');
-          })
-        }
-        
+      saveReportsLoc({items: item.items, reports: report.reports, userId: user.user.id, itemMassivLocal: item.massivLocal, massivMassivLocal: massiv.massivLocal, massivDeletedLocal: massiv.deletedLocal}).then(() => {
+        alert("Ваши данные сохранены!");
       })
 
-      for(let key in item.massivLocal) {
-        let itemId = await item.items.find(it => it.id == key).id;
-
-        if(itemId) {
-          item.massivLocal[key].forEach(mas => {
-            if(massiv.massivLocal.find(sm => sm.id === mas.id)) {
-              console.log('yes');
-             } else {
-               createMassivLocal({value: Number(mas.val), userId: user.user.id, itemId: itemId})
-               .then(end => console.log('massiv'));
-             }
-          })
-        }
-      }
-
-      if(massiv.deletedLocal && massiv.deletedLocal.length) {
-        massiv.deletedLocal.forEach(el => {
-          ownDeleteMassivLocal(el).then(d => console.log('yes'));
-        })
-      }
-
-      alert("Ваши данные сохранены!");
     } catch (e) {
       alert(e.response.data.message);
     }
@@ -293,71 +154,16 @@ const Blank = observer(() => {
       try {
 
         if(localUser.cathedraId) {
-          let res;
-          res = await createResult({ userId: user.user.id, result: item.sym, cathedra_id: localUser.cathedraId });
-          await item.items.forEach((d) => {
-            createReport({
-              selectvalue: d.select,
-              value: d.vvod,
-              ball_value: d.value,
-              userId: user.user.id,
-              itemId: d.id,
-              cathedra_id: localUser.cathedraId,
-              resultId: res.id
-            }).then((dat) => {
-              for (let key in item.massivLocal) {
-                if (item.massivLocal.hasOwnProperty(key)) {
-                  if (d.id == key) {
-                    item.massivLocal[key].forEach((el2) => {
-                      createMassiv({
-                        value: el2.val,
-                        userId: user.user.id,
-                        itemId: d.id,
-                        result_id: res.id
-                      }).then((end) => console.log("massiv"));
-                    });
-                  }
-                }
-              }
-            });
-          });
-    
-         await updateUser(localUser.id, localUser);
-    
-         await deleteReportLocal(user.user.id).then((data) => {
-            console.log("report");
-          });
-    
-         await deleteMassivLocal(user.user.id).then((data) => {
-            console.log("massiv");
-          });
-
-          await fetchCathResultActive(localUser.cathedraId).then(async data => {
-            console.log(data);
-            if(data && data.length) {
-
-              await deleteCathResult(data[0].id).then(data => {
-              })
-             await deleteCathReportByRes(data[0].id).then(data => {});
-             await deleteColvoByRes(data[0].id).then(data => {});
-
-             createObj({cathedra_id: localUser.cathedraId}).then( data => {
-             console.log('create and update cath');
-            })
-
-            } else {
-              createObj({cathedra_id: localUser.cathedraId}).then( data => {
-               console.log('create cath');
-              })
-            }
+        postAnketaReport({userId: user.user.id, itemSym: item.sym, items: item.items, massivLocal: item.massivLocal, localUser: localUser}).then(() => {
+          createObj({cathedra_id: localUser.cathedraId}).then( data => {
+            console.log('create and update cath');
+            alert("Ваша анкета добавлена!");
+            window.location.reload();
           })
-    
-          alert("Ваша анкета добавлена!");
-          window.location.reload();
+        })
         } else {
           alert('Выберите кафедру!');
         }
-       
       } catch (e) {
         alert(e.response.data.message);
       }
@@ -366,6 +172,7 @@ const Blank = observer(() => {
     }
   }
 
+ 
   return (
     <div className="blank" style={{ marginTop: "4rem" }}>
       <Row>

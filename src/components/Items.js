@@ -6,6 +6,9 @@ import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
 import del from "./../imgs/delete.svg";
 import { Context } from "..";
+import { resItem, testItem } from "../http/ItemApi";
+import { checkReports } from "../http/ReportLocalApi";
+
 
 const Items = observer(({ showFunc, data, setData }) => {
   const { item } = useContext(Context);
@@ -29,52 +32,16 @@ const Items = observer(({ showFunc, data, setData }) => {
   const [selectId, setSelectId] = useState(0);
 
 
-  useEffect(() => {
-    let res = 0;
-    item.items.forEach((el) => {
-      if(el.type !== 'Сумма') {
-        res += Number(el.value ? el.value : 0);
-      }
-    });
-    item.setSym(res);
-  }, [item.items]);
-
-
-  function test() {
-    item.items.forEach(async (el) => {
-      if(el.type === 'Сумма' && el.children && el.children.length && el.parentId === null) {
-       let res = 0;
-       let num = el.num;
- 
-       await item.items.forEach( child => {
-         if(child.num.split('.')[0] === num.split('.')[0] && child.num.split('.').length > num.split('.').length ) {
-          res += Number(child.value ? child.value : 0);
-         }
-       })
+  async function test() {
+   await testItem({items: item.items}).then(data => {
+     item.setItems(data);
+    })
     
-        item.setItems([...item.items.map(i => i.id === el.id 
-          ? {...i, value: Number(res.toFixed(2))}
-          : {...i}
-          )])
-      }
-     });
+    resItem({items: item.items}).then(res => {
+      item.setSym(res)
+    })
   }
 
-  useEffect(() => {
- 
-   if(report.reports && report.reports.length) {
-    report.reports.map(el => {
-      item.setItems([
-          ...item.items.map(i =>
-              i.id === el.itemId
-              ? {...i, vvod: el.value, value: el.ball_value, select: el.selectvalue}
-              : {...i}
-              )
-      ])
-  })
-   }
-   
-  }, [report.reports])
 
   function massivFunc(id) {
     if(Number(massValue) && Number(massValue) > 0) {
@@ -118,7 +85,7 @@ const Items = observer(({ showFunc, data, setData }) => {
         ),
       ]);
 
-      test();
+     test();
     }
   }
 
@@ -179,7 +146,7 @@ const Items = observer(({ showFunc, data, setData }) => {
         ),
       ]);
 
-    test();
+   test();
     }
   }
 

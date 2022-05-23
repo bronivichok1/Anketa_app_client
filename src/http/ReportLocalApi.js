@@ -29,3 +29,13 @@ export const deleteReportLocalOne = async (id) => {
     const {data} = await $host.delete('/reportLocal/one/' + id);
     return data;
 }
+
+export const checkReports = async (reportsAndItems) => {
+    const {data} = await $host.post('/reportLocal/check', reportsAndItems);
+    return data;
+}
+
+export const saveReportsLoc = async (obj) => {
+    const {data} = await $host.post('/reportLocal/save', obj);
+    return data;
+}

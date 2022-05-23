@@ -8,7 +8,7 @@ import { fetchOneUser, updateUser } from "../http/UserApi";
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchCathedras, fetchOneCathedra } from "../http/CathedraApi";
 import EditItems from "./EditItems";
-import { createReport, deleteReportOne, findByResReport, updateReport } from "../http/ReportApi";
+import { createReport, deleteReportOne, findByResReport, updateAnketaReport, updateReport } from "../http/ReportApi";
 import { fetchSelectsAll } from "../http/SelectApi";
 import { createMassiv, ownDeleteMassiv, getMassivByRes } from "../http/MassivApi";
 import { fetchOneOwnResult, updateResult } from "../http/ResultApi";
@@ -92,100 +92,16 @@ const EditBlank = observer(() => {
 
   async function updateAnketa() {
     try {
-      let res;
-     
-      res = await updateResult(item.result.id, {...item.result, cathedra_id: localUser.cathedraId});
 
-      if(item.items.length > report.reports.length) {
-        const arr = [];
-        await item.items.forEach( async el => {
-          const t = await report.reports.find(rep => rep.itemId === el.id);
-          if(!t) {
-            arr.push(el);
-          }
-        })
-
-         arr.forEach(async (d) => {
-         await createReport({
-            selectvalue: d.select,
-            value: d.vvod,
-            ball_value: d.value,
-            userId: item.result.userId,
-            itemId: d.id,
-            cathedra_id: localUser.cathedraId,
-            resultId: params.id
-          }).then( data => {
-            console.log('good');
-          })
-        })
-      }
-      
-      await report.reports.forEach(rep => {
-        const cont = item.items.find(i => i.id === rep.itemId);
-        if(cont) {
-          updateReport(rep.id, {
-            ...rep,
-            selectvalue: cont.select,
-            value: cont.vvod,
-            ball_value: cont.value,
-            cathedra_id: localUser.cathedraId
-          })
-        } else {
-          deleteReportOne(rep.id).then(data => {
-            console.log('delete report');
-          })
-        }
-        
-      })
-      
-
-      for(let key in item.massiv) {
-        let itemId = await item.items.find(it => it.id == key).id;
-
-        if(itemId) {
-          item.massiv[key].forEach(mas => {
-            if(massiv.massiv.find(sm => sm.id === mas.id)) {
-              console.log('yes');
-             } else {
-               createMassiv({value: Number(mas.val), userId: localUser.id, itemId: itemId, result_id: params.id})
-               .then(end => console.log('massiv'));
-             }
-          })
-        }
-      }
-      
-      if(massiv.deleted && massiv.deleted.length) {
-        massiv.deleted.forEach(el => {
-          ownDeleteMassiv(el).then(d => console.log('yes'));
-        })
-      }
-      
-      updateUser(localUser.id, localUser);
-
-      await fetchCathResultActive(localUser.cathedraId).then(async data => {
-        if(data && data.length) {
-
-          await deleteCathResult(data[0].id).then(data => {
-          })
-         await deleteCathReportByRes(data[0].id).then(data => {});
-         await deleteColvoByRes(data[0].id).then(data => {});
-
-        await createObj({cathedra_id: localUser.cathedraId}).then( data => {
-         console.log('create and update cath');
-
-         cath_report.setSelects( [] );
-        })
-
-        } else {
-         await createObj({cathedra_id: localUser.cathedraId}).then( data => {
+      await updateAnketaReport({itemResult: item.result, localUser: localUser, itemItems: item.items, reportReports: report.reports, itemMassiv: item.massiv, massivMassiv: massiv.massiv, massivDeleted: massiv.deleted}).then(() => {
+           createObj({cathedra_id: localUser.cathedraId}).then( data => {
            console.log('create cath');
 
            cath_report.setSelects( [] );
           })
-        }
       })
 
-       alert('Ваша анкета изменена!');
+      alert('Ваша анкета изменена!');
 
       navigate(SEE_REPORTS_ROUTE);
     } catch (e) {
