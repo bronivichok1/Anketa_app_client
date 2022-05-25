@@ -27,6 +27,7 @@ const EditCathBlank = observer(() => {
 
   const [cath, setCath] = useState('');
   const [cathId, setCathId] = useState(0);
+  const [bool, setBool] = useState(false);
 
   useEffect(async () => {
 
@@ -68,6 +69,7 @@ const EditCathBlank = observer(() => {
        }
     })
 
+    setBool(true);
 
   }, []);
 
@@ -127,7 +129,7 @@ const EditCathBlank = observer(() => {
 
       <div style={{ marginTop: "0.5rem" }} className="hr"></div>
 
-      <EditCathItems/>
+     {bool ? <EditCathItems/> : <></>}
 
       <Row style={{ marginTop: "3rem" }}>
         <Col lg={6}>

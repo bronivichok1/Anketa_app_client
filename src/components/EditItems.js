@@ -33,19 +33,23 @@ const EditItems = observer(() => {
 
 
   async function test() {
-    await testItem({items: item.items}).then(data => {
-      item.setItems(data);
-     })
-     
-     resItem({items: item.items}).then(res => {
-       item.setResult({...item.result, result: res});
-     })
+      await testItem({items: item.items}).then(data => {
+        item.setItems(data);
+       })
+       
+       resItem({items: item.items}).then(res => {
+         item.setResult({...item.result, result: res});
+       })
    }
 
-  useEffect(() => {
+  useEffect(async () => {
 
-   checkReports({reports: report.reports, items: item.items}).then(data => {
+  await checkReports({reports: report.reports, items: item.items}).then(data => {
     item.setItems(data);
+  })
+
+  resItem({items: item.items}).then(res => {
+    item.setResult({...item.result, result: res});
   })
    
   }, [report.reports])

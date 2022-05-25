@@ -14,7 +14,7 @@ html {
   overflow-x: hidden;
 }
 
-.auth_div {
+.auth_div, .firefox {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -399,4 +399,9 @@ html {
 .button_date {
   margin-top: 7rem;
   margin-left: calc(50% - 50px);
+}
+
+.firefox h2 {
+  color: #0b5ed7;
+  font-family: Roboto;
 }

@@ -3,20 +3,18 @@ import { Row, Col, Button } from "react-bootstrap";
 import { useContext, useState, useEffect } from "react";
 import { Context } from "../index";
 import { useMediaQuery } from "react-responsive";
-import { fetchItems } from "../http/ItemApi";
-import { fetchOneUser, updateUser } from "../http/UserApi";
+import { fetchItems, resItem } from "../http/ItemApi";
+import { fetchOneUser } from "../http/UserApi";
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchCathedras, fetchOneCathedra } from "../http/CathedraApi";
 import EditItems from "./EditItems";
-import { createReport, deleteReportOne, findByResReport, updateAnketaReport, updateReport } from "../http/ReportApi";
+import { findByResReport, updateAnketaReport } from "../http/ReportApi";
 import { fetchSelectsAll } from "../http/SelectApi";
-import { createMassiv, ownDeleteMassiv, getMassivByRes } from "../http/MassivApi";
-import { fetchOneOwnResult, updateResult } from "../http/ResultApi";
+import { getMassivByRes } from "../http/MassivApi";
+import { fetchOneOwnResult } from "../http/ResultApi";
 import { createMassivFunc, createTree2 } from "../functions";
 import { SEE_REPORTS_ROUTE } from "../utils/consts";
-import { deleteCathResult, fetchCathResultActive } from "../http/CathResultApi";
-import { createObj, deleteCathReportByRes } from "../http/CathReportApi";
-import { deleteColvoByRes } from "../http/ColvoSelectsApi";
+import { createObj } from "../http/CathReportApi";
 
 
 const EditBlank = observer(() => {
@@ -34,24 +32,32 @@ const EditBlank = observer(() => {
 
   const [localUser, setLocalUser] = useState({});
   const [cathValue, setCathValue] = useState("");
+  const [bool, setBool] = useState(false);
 
 
   useEffect(async () => {
-    await fetchItems().then((data) => {
+    let itemId;
+
+    await fetchItems().then(async (data) => {
       item.setItems(createTree2(data));
+
+      itemId = await data.find(
+        (i) => i.name === "Количество занимаемых ставок"
+      ).id;
+ 
     });
 
     fetchCathedras().then((data) => {
       cathedra.setCathedras(data);
     });
 
-    fetchSelectsAll().then((data) => {
+   fetchSelectsAll().then((data) => {
       item.setSelects(data);
     });
 
    await fetchOneOwnResult(params.id).then((data) => {
       item.setResult(data);
-    });
+    })
 
     fetchOneUser(item.result.userId).then( (data) => {
       setLocalUser(data);
@@ -62,10 +68,6 @@ const EditBlank = observer(() => {
 
     findByResReport(params.id).then(async (data) => {
       report.setReports(data);
-
-     const itemId = await item.items.find(
-       (i) => i.name === "Количество занимаемых ставок"
-     ).id;
 
      const stavka = await data.find(d => d.itemId === itemId);
 
@@ -78,6 +80,8 @@ const EditBlank = observer(() => {
       item.setMassiv(createMassivFunc(data));
       massiv.setMassiv(data);
     });
+
+    setBool(true)
   }, []);
 
   useEffect(() => {
@@ -166,7 +170,9 @@ const EditBlank = observer(() => {
 
       <div style={{ marginTop: "0.5rem" }} className="hr"></div>
 
-      <EditItems />
+       {bool
+       ? <EditItems />
+      : <></>}
 
       <Row style={{ marginTop: "3rem" }}>
         <Col lg={6}>
