@@ -12,7 +12,7 @@ function App() {
 
   const {user} = useContext(Context);
   const [loading, setLoading] = useState(true);
-  const [firefox, setFirefox] = useState(false);
+  //const [firefox, setFirefox] = useState(false);
 
   useEffect( () => {
     check().then( data => {
@@ -21,18 +21,18 @@ function App() {
       user.setIsAuth(data.role === 'ADMIN');
     }).finally( () => setLoading(false));
 
-    setFirefox(navigator.userAgent.toLowerCase().indexOf('firefox') > -1);
+    //setFirefox(navigator.userAgent.toLowerCase().indexOf('firefox') > -1);
   }, [])
 
   if (loading) {
     return <Spinner animation={'grow'} />
   }
 
-  if (firefox) {
-    return <Container className='firefox' >
-      <h2>Для входа в приложение, пожалуйста, используйте любой другой браузер!</h2>
-    </Container>
-  }
+  // if (firefox) {
+  //   return <Container className='firefox' >
+  //     <h2>Для входа в приложение, пожалуйста, используйте любой другой браузер!</h2>
+  //   </Container>
+  // }
 
   
   return (
