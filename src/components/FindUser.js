@@ -52,7 +52,7 @@ const FindUser = observer(() => {
         dates.dates.lastDate,
         undefined,
         "[]"
-      )
+      ) || cathedra.open || user.isAuth 
     ) {
       navigate(`/reports/${id}`);
     } else {

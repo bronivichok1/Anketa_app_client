@@ -8,6 +8,8 @@ import { fetchTablesTrue } from "../http/RatingTablesApi";
 
 const FindCathRating = observer(({ cathId }) => {
   const { rating } = useContext(Context);
+  const { cathedra } = useContext(Context);
+  const { user } = useContext(Context);
 
   useEffect(() => {
     fetchTablesTrue().then(data => {
@@ -35,37 +37,42 @@ const FindCathRating = observer(({ cathId }) => {
         Рейтинг
       </h4>
 
-      <div className="big-table">
-        <table>
-          <thead>
-            <tr>
+    {cathedra.open || user.isAuth 
+    ?  <>
+    <div className="big-table">
+    <table>
+      <thead>
+        <tr>
+
+          {rating.ratingTables.map(el => 
+            <th key={el.id} > {el.name} </th>
+          )}
+
+        </tr>
+      </thead>
+      <tbody>
+        {rating.rating && rating.rating.length ? (
+          rating.rating.map((rat) => (
+            <tr key={rat.id}>
 
               {rating.ratingTables.map(el => 
-                <th key={el.id} > {el.name} </th>
+               <td key={el.id} > {eval(el.formula)} </td>
               )}
 
             </tr>
-          </thead>
-          <tbody>
-            {rating.rating && rating.rating.length ? (
-              rating.rating.map((rat) => (
-                <tr key={rat.id}>
+          ))
+        ) : (
+          <></>
+        )}
+      </tbody>
+    </table>
+  </div>
 
-                  {rating.ratingTables.map(el => 
-                   <td key={el.id} > {eval(el.formula)} </td>
-                  )}
-
-                </tr>
-              ))
-            ) : (
-              <></>
-            )}
-          </tbody>
-        </table>
-        
-      </div>
-
-      <Button style={{marginTop: '2rem'}} onClick={createExcel} variant="primary" >Вывод в эксель</Button>
+  <Button style={{marginTop: '2rem'}} onClick={createExcel} variant="primary" >Вывод в эксель</Button>
+    </>
+    : <div>У Вас нет доступа!</div>
+    }
+     
     </div>
   );
 });

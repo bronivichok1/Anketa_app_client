@@ -112,10 +112,11 @@ const Items = observer(({ showFunc, data, setData }) => {
   }
 
   useEffect(() => {
-   if(vvod) {
+   if(Number(vvod) >= 0) {
     vvodFunc(vvodId);
    }
   }, [vvod, vvodId]);
+
 
   async function yesNoFunc(id) {
     await item.setItems([

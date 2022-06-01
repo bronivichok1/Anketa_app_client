@@ -122,7 +122,7 @@ const EditItems = observer(() => {
   }
 
   useEffect(() => {
-    if(vvod) {
+    if(Number(vvod) >= 0) {
       vvodFunc(vvodId);
     }
   }, [vvod, vvodId]);
