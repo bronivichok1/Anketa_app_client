@@ -10,7 +10,7 @@ import { resItem, testItem } from "../http/ItemApi";
 import { checkReports } from "../http/ReportLocalApi";
 
 
-const Items = observer(({ showFunc, data, setData }) => {
+const Items = observer(({ showFunc }) => {
   const { item } = useContext(Context);
   const { report } = useContext(Context);
   const { massiv } = useContext(Context);

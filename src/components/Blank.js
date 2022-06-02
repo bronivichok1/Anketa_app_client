@@ -38,6 +38,7 @@ const Blank = observer(() => {
   const [localUser, setLocalUser] = useState({});
   const [cathValue, setCathValue] = useState("");
   const [cathId, setCathId] = useState(0);
+  const [bool, setBool] = useState(false);
 
 
   useEffect(async () => {
@@ -89,6 +90,8 @@ const Blank = observer(() => {
     fetchDates().then(data => {
       dates.setDates(data[0]);
     })
+
+    setBool(true);
   }, []);
 
   const showFunc = async (id) => {
@@ -245,7 +248,9 @@ const Blank = observer(() => {
 
       <div style={{ marginTop: "0.5rem" }} className="hr"></div>
 
-      <Items showFunc={showFunc} data={data} setData={setData} />
+      {bool
+      ? <Items showFunc={showFunc} />
+      : <></>}
 
       <Row style={{ marginTop: "3rem" }}>
         <Col lg={6}>
