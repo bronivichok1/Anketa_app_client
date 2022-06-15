@@ -41,3 +41,8 @@ export const closeItem = async (items) => {
     return data;
 }
 
+export const fetchMassivItems = async () => {
+    const {data} = await $host.post('/item/massiv');
+    return data;
+}
+

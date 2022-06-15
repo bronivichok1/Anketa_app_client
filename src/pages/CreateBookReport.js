@@ -1,10 +1,10 @@
 import { observer } from "mobx-react-lite";
 import { Container } from "react-bootstrap";
-import EditBlank from "../components/EditBlank";
+import CreateBooks from "../components/CreateBooks";
 import Footer from "../components/Footer";
 import NavBar from "../components/NavBar";
 
-const EditUser = observer( () => {
+const CreateBookReport = observer( () => {
 
     return(
         <div className="wrapper" >
@@ -12,11 +12,11 @@ const EditUser = observer( () => {
       <div className="main" >
         <Container style={{ marginTop: "7rem" }}>
           <h2 style={{ textAlign: "center", color: "#0b5ed7" }}>
-            Редактировать сотрудника
+           Создать книжный отчёт
           </h2>
         </Container>
         <main>
-            <EditBlank/>
+            <CreateBooks/>
         </main>
       </div>
       <Footer />
@@ -24,4 +24,4 @@ const EditUser = observer( () => {
     );
 })
 
-export default EditUser;
+export default CreateBookReport;

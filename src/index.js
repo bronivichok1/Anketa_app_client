@@ -9,6 +9,7 @@ import MassivStore from './store/MassivStore';
 import CathReportStore from './store/CathReportStore';
 import RatingStore from './store/RatingStore';
 import DatesStore from './store/DatesStore';
+import BookStore from './store/BookStore';
 
 export const Context = createContext(null);
 
@@ -22,6 +23,7 @@ ReactDOM.render(
     cath_report: new CathReportStore(),
     rating: new RatingStore(),
     dates: new DatesStore(),
+    book: new BookStore(),
   }} >
     <App />
   </Context.Provider>,

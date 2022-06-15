@@ -13,6 +13,8 @@ import FindUser from "./FindUser";
 import moment from 'moment';
 import { findByCathResult } from "../http/ResultApi";
 import { fetchDates } from "../http/DatesApi";
+import FindBookReport from "./FindBookReport";
+import { fetchByCathBookReports } from "../http/BooksReportApi";
 moment().format(); 
 
 
@@ -23,6 +25,7 @@ const Filter = observer(() => {
   const { rating } = useContext(Context);
   const { dates } = useContext(Context);
   const { report } = useContext(Context);
+  const { book } = useContext(Context);
 
   const [cathVal, setCathVal] = useState("");
   const [cathId, setCathId] = useState(0);
@@ -98,6 +101,20 @@ const Filter = observer(() => {
   }, [cathId, type, startDate, endDate]);
 
   useEffect(async () => {
+    if (cathId && type === "Книжный отчёт") {
+      await fetchByCathBookReports(cathId).then((data) => {
+
+        if(startDate && endDate) {
+          book.setBookReports([...data.filter(el => moment(el.createdAt).isBetween(startDate, endDate, undefined, '[]'))]);
+      } 
+        else {
+          book.setBookReports(data);
+        }
+      });
+    }
+  }, [cathId, type, startDate, endDate]);
+
+  useEffect(async () => {
     if (cathId && type === "Рейтинг") {
       await createRating({ cathId, startDate, endDate }).then((data) => {
         console.log(data);
@@ -121,6 +138,8 @@ const Filter = observer(() => {
     types = <FindCathResult cathId={cathId} />;
   } else if (type === "Рейтинг" && cathVal) {
     types = <FindCathRating cathId={cathId} />;
+  } else {
+    types = <FindBookReport cathId={cathId} />;
   }
 
   return (
@@ -174,6 +193,7 @@ const Filter = observer(() => {
               <option value="Индивидуальный отчёт">Индивидуальный отчёт</option>
               <option value="Кафедральный отчёт">Кафедральный отчёт</option>
               <option value="Рейтинг">Рейтинг</option>
+              <option value="Книжный отчёт">Книжный отчёт</option>
             </select>
           </Col>
         </Row>
