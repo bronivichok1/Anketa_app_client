@@ -6,7 +6,6 @@ import { Context } from "..";
 import edit from "./../imgs/edit_icon.svg";
 import trash from "./../imgs/trash_icon.svg";
 import moment from 'moment';
-import { CREATE_BOOK } from "../utils/consts";
 moment().format(); 
 moment.locale("ru");
 
@@ -35,7 +34,7 @@ const FindBookReport = observer(({ cathId }) => {
        {cathedra.open || user.isAuth 
        ?
        <>
-        <Button onClick={() => navigate(CREATE_BOOK)} style={{marginBottom: '1rem'}} variant="primary" >Создать книжный отчёт</Button>
+        <Button onClick={() => navigate(`/createBook/${cathId}`)} style={{marginBottom: '1rem'}} variant="primary" >Создать книжный отчёт</Button>
        { book.bookReports.map((b) => (
         <Row className="us_item" key={b.id}>
            <Col md={6}>
@@ -62,7 +61,7 @@ const FindBookReport = observer(({ cathId }) => {
         </div>
       ) : (
         <>
-         <Button onClick={() => navigate(CREATE_BOOK)} style={{marginBottom: '1rem'}} variant="primary" >Создать книжный отчёт</Button>
+         <Button onClick={() => navigate(`/createBook/${cathId}`)} style={{marginBottom: '1rem'}} variant="primary" >Создать книжный отчёт</Button>
         <div>
           Книжных отчётов ещё нет!
         </div>

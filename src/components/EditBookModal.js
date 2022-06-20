@@ -5,18 +5,9 @@ import { Context } from "..";
 import { useMediaQuery } from "react-responsive";
 import trash from "./../imgs/trash_icon.svg";
 
-const CreateBookModal = observer(({ setVisible, id }) => {
+const EditBookModal = observer(({ setVisible, bookObj, setBookObj }) => {
   const { book } = useContext(Context);
 
-  const [bookObj, setBookObj] = useState({
-    name: '',
-    type: '',
-    protocol_num: '',
-    magaz_or_collection: null,
-    database: null,
-    colvo_authors: '',
-    authors: []
-  });
   const [author, setAuthor] = useState('');
   const mobile = useMediaQuery({ query: "(max-width: 900px)" });
 
@@ -31,22 +22,13 @@ const CreateBookModal = observer(({ setVisible, id }) => {
   }
  }
 
- const addBook = () => {
+ const editBook = () => {
   if (bookObj.name && bookObj.type && bookObj.protocol_num && bookObj.colvo_authors && bookObj.authors && bookObj.authors.length) {
     let stringAuthors = '';
     bookObj.authors.forEach(el => {
       stringAuthors += el.author + ', ';
     }) 
-    book.setBooks([...book.books, {...bookObj, item_id: id, id: Date.now(), stringAuthors}]);
-    setBookObj({
-      name: '',
-      type: '',
-      protocol_num: '',
-      magaz_or_collection: null,
-      database: null,
-      colvo_authors: '',
-      authors: []
-    });
+    book.setBooks([...book.books.map(el => el.id === bookObj.id ? {...bookObj, stringAuthors: stringAuthors} : {...el})]);
     setVisible(false);
   } else {
     alert('Название, тип, номер протокола, кол-во авторов и ФИО авторов не могут быть пустыми!');
@@ -60,13 +42,13 @@ const CreateBookModal = observer(({ setVisible, id }) => {
   return (
     <div>
       <h3 style={{ textAlign: "center", marginTop: "2rem" }}>
-        Добавить книгу/статью
+        Редактировать книгу/статью
       </h3>
       <div className="cath_modal">
         <input
           style={mobile ? {} : { minWidth: "850px" }}
           onChange={(e) => setBookObj({ ...bookObj, name: e.target.value })}
-          value={bookObj.name}
+          value={bookObj.name || ''}
           type="text"
           placeholder="Введите название..."
           className="cusInput"
@@ -126,7 +108,7 @@ const CreateBookModal = observer(({ setVisible, id }) => {
           onChange={(e) =>
             setBookObj({ ...bookObj, protocol_num: e.target.value })
           }
-          value={bookObj.protocol_num}
+          value={bookObj.protocol_num || ''}
           type="text"
           placeholder="Введите номер протокола НМС..."
           className="cusInput"
@@ -207,7 +189,7 @@ const CreateBookModal = observer(({ setVisible, id }) => {
           onChange={(e) =>
             setBookObj({ ...bookObj, colvo_authors: Number(e.target.value) })
           }
-          value={bookObj.colvo_authors}
+          value={bookObj.colvo_authors || ''}
           type="number"
           placeholder="Введите кол-во авторов..."
           className="cusInput"
@@ -245,7 +227,7 @@ const CreateBookModal = observer(({ setVisible, id }) => {
         <Button variant="dark" onClick={() => setVisible(false)}>
           Отменить
         </Button>
-        <Button onClick={addBook} style={{ marginLeft: "5px" }} variant="primary">
+        <Button onClick={editBook} style={{ marginLeft: "5px" }} variant="primary">
           Сохранить
         </Button>
       </div>
@@ -253,4 +235,4 @@ const CreateBookModal = observer(({ setVisible, id }) => {
   );
 });
 
-export default CreateBookModal;
+export default EditBookModal;

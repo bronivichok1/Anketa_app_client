@@ -24,3 +24,8 @@ export const fetchByCathBookReports = async (id) => {
     const {data} = await $host.get('/book_report/byCath/' + id);
     return data;
 }
+
+export const createBook = async (books) => {
+    const {data} = await $host.post('/book_report/create', books);
+    return data;
+}

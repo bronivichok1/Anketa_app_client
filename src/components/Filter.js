@@ -138,7 +138,7 @@ const Filter = observer(() => {
     types = <FindCathResult cathId={cathId} />;
   } else if (type === "Рейтинг" && cathVal) {
     types = <FindCathRating cathId={cathId} />;
-  } else {
+  } else if (type === "Книжный отчёт" && cathVal) {
     types = <FindBookReport cathId={cathId} />;
   }
 

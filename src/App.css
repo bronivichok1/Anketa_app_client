@@ -331,6 +331,13 @@ html {
   margin-top: 4rem;
 }
 
+.authors {
+  border-radius: 20px;
+  background-color: rgb(231 227 227);
+  margin-top: 2rem;
+  padding: 1rem;
+}
+
 .cath_p {
   margin-top: 2rem;
   font-family: Roboto;
@@ -413,5 +420,16 @@ html {
   background-color: white;
   font-size: 20px;
   font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  margin-bottom: 1rem;
+}
+
+.books {
+  padding: 0.5rem;
+  box-shadow: 0px 0px 18px rgb(124, 121, 121);
+  border-radius: 10px;
+  /* background-color: rgb(240, 237, 237); */
+  background-color: rgb(240, 237, 237);
+  font-size: 20px;
+  /* font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif; */
   margin-bottom: 1rem;
 }
