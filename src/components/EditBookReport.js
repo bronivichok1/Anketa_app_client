@@ -13,9 +13,11 @@ import trash from "./../imgs/trash_icon.svg";
 import edit from "./../imgs/edit_icon.svg";
 import { useMediaQuery } from "react-responsive";
 import EditBookModal from "./EditBookModal";
-import { createBook } from "../http/BooksReportApi";
+import { getAuthorsByReport } from "../http/AuthorsApi";
+import { getBooksByReport } from "../http/BooksApi";
+import { editBookApi } from "../http/BooksReportApi";
 
-const CreateBooks = observer(() => {
+const EditBookReport = observer(() => {
   const navigate = useNavigate();
   const params = useParams();
 
@@ -34,13 +36,26 @@ const CreateBooks = observer(() => {
     colvo_authors: '',
     authors: []
   });
-  const [cathId, setCathId] = useState(0);
+  const [bookReportId, setBookReportId] = useState(0);
 
   useEffect(() => {
     fetchMassivItems().then(data => {
         book.setMassivItems(data);
     })
-    setCathId(Number(params.id));
+    setBookReportId(Number(params.id));
+    getAuthorsByReport(Number(params.id)).then(authors => {
+        getBooksByReport(Number(params.id)).then(async books => {
+           await books.forEach( async el => {
+                el.stringAuthors = '';
+                const bookAuthors = await authors.filter(a => a.books_id === el.id);
+                el.authors = bookAuthors;
+                bookAuthors.forEach(b => {
+                    el.stringAuthors += b.name + ', '; 
+                })
+            })
+            book.setBooks(books);
+        })
+    })
   }, [])
 
   const addBook = (id) => {
@@ -54,19 +69,16 @@ const CreateBooks = observer(() => {
   }
 
   const deleteBook = (id) => {
+    book.setDeletedBooks([...book.deletedBooks, id]);
     book.setBooks([...book.books.filter(el => el.id !== id)]);
   }
 
   const saveResult = () => {
-    if(book.books && book.books.length) {
-      createBook({books: book.books, cathId}).then(data => {
-        alert('Книжный отчёт сохранён!');
+    editBookApi({books: book.books, deletedBooks: book.deletedBooks, deletedAuthors: book.deletedAuthors, bookReportId}).then(data => {
+        alert('Книжный отчёт изменён!');
         book.setBooks([]);
         navigate(SEE_REPORTS_ROUTE);
-      })
-    } else {
-      alert('Добавьте книги/статьи в книжный отчёт!');
-    }
+    })
   }
 
   const cansel = () => {
@@ -150,4 +162,4 @@ const CreateBooks = observer(() => {
   );
 });
 
-export default CreateBooks;
+export default EditBookReport;

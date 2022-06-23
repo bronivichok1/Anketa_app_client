@@ -24,3 +24,13 @@ export const createAuthor = async (author) => {
     const {data} = await $host.post('/authors', author);
     return data;
 }
+
+export const getAuthorsByReport = async (id) => {
+    const {data} = await $host.get('/authors/report/' + id);
+    return data;
+}
+
+export const deleteAuthorByReport = async (id) => {
+    const {data} = await $host.delete('/authors/report/' + id);
+    return data;
+}

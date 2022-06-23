@@ -1,24 +1,20 @@
 import { observer } from "mobx-react-lite";
 import { Row, Col, Button } from "react-bootstrap";
-import { useContext, useState, useEffect, useMemo } from "react";
+import { useContext, useState, useEffect } from "react";
 import { Context } from "../index";
 import { useMediaQuery } from "react-responsive";
 import Items from "./Items";
 import { createMassivFunc, createTree2 } from "../functions";
-import { closeItem, fetchItems, resItem, testItem } from "../http/ItemApi";
+import { closeItem, fetchItems, resItem } from "../http/ItemApi";
 import { fetchSelectsAll } from "../http/SelectApi";
 import { fetchCathedras } from "../http/CathedraApi";
-import { createResult } from "../http/ResultApi";
-import { createReport, postAnketaReport } from "../http/ReportApi";
-import { createMassiv } from "../http/MassivApi";
-import { fetchOneUser, updateUser } from "../http/UserApi";
-import { checkReports, createReportLocal, deleteReportLocal, deleteReportLocalOne, findReportsLocal, findStavkaLocal, saveReportsLoc, updateReportLocal } from "../http/ReportLocalApi";
-import { createMassivLocal, deleteMassivLocal, fetchMassivLocal, ownDeleteMassivLocal } from "../http/MassivLocalApi";
+import { postAnketaReport } from "../http/ReportApi";
+import { fetchOneUser } from "../http/UserApi";
+import { checkReports, deleteReportLocal, findReportsLocal, saveReportsLoc } from "../http/ReportLocalApi";
+import { deleteMassivLocal } from "../http/MassivLocalApi";
 import moment from 'moment';
 import { fetchDates } from "../http/DatesApi";
-import { deleteCathResult, fetchCathResultActive } from "../http/CathResultApi";
-import { createObj, deleteCathReportByRes } from "../http/CathReportApi";
-import { deleteColvoByRes } from "../http/ColvoSelectsApi";
+import { createObj } from "../http/CathReportApi";
 moment().format(); 
 
 const Blank = observer(() => {
@@ -28,8 +24,6 @@ const Blank = observer(() => {
   const { report } = useContext(Context);
   const { massiv } = useContext(Context);
   const { dates } = useContext(Context);
-
-  const [data, setData] = useState([]);
 
   const mobile = useMediaQuery({ query: "(max-width: 1400px)" });
   const mobile2 = useMediaQuery({ query: "(max-width: 410px)" });
@@ -84,7 +78,7 @@ const Blank = observer(() => {
 
     fetchOneUser(user.user.id).then((data) => {
       setLocalUser(data);
-      setName(data.fullname)
+      setName(data.fullname);
     });
 
     fetchDates().then(data => {
@@ -182,6 +176,7 @@ const Blank = observer(() => {
     <div className="blank" style={{ marginTop: "4rem" }}>
       <Row>
         <Col
+        // className="colClass"
           style={{
             textAlign: "center",
             backgroundColor: "#e9eff9",
@@ -190,7 +185,8 @@ const Blank = observer(() => {
         >
           Ставка: {item.stavka}{" "}
         </Col>
-        <Col
+        <Col 
+        //className="colClass"
           style={{
             textAlign: "center",
             backgroundColor: "#e9eff9",
@@ -256,6 +252,7 @@ const Blank = observer(() => {
         <Col lg={6}>
           <Button
             onClick={postAnketa}
+           // className='buttonClass'
             style={{
               fontFamily: "var(--bs-body-font-family)",
               fontWeight: "500",
@@ -267,7 +264,8 @@ const Blank = observer(() => {
           </Button>
         </Col>
         <Col lg={6}>
-          <Button
+          <Button 
+          //className='buttonClass'
             onClick={clearData}
             style={
               mobile
@@ -283,14 +281,25 @@ const Blank = observer(() => {
                     marginTop: "15px",
                   }
             }
+            // style={
+            //     mobile
+            //       ? {}
+            //       : {marginLeft: "35%"}
+            //   }
             variant="dark"
           >
             Сброс данных анкеты
           </Button>
-          <Button
+          <Button 
+          //className='buttonClass'
             onClick={saveData}
+            // style={
+            //   mobile2
+            //     ? {}
+            //     : {marginLeft: "10px"}
+            // }
             style={
-              mobile2
+              mobile
                 ? {
                     fontFamily: "var(--bs-body-font-family)",
                     fontWeight: "500",

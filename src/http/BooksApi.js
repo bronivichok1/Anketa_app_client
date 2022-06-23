@@ -24,3 +24,13 @@ export const createBook = async (book) => {
     const {data} = await $host.post('/books', book);
     return data;
 }
+
+export const getBooksByReport = async (id) => {
+    const {data} = await $host.get('/books/report/' + id);
+    return data;
+}
+
+export const deleteBookByReport = async (id) => {
+    const {data} = await $host.delete('/books/report/' + id);
+    return data;
+}

@@ -29,3 +29,8 @@ export const createBook = async (books) => {
     const {data} = await $host.post('/book_report/create', books);
     return data;
 }
+
+export const editBookApi = async (books) => {
+    const {data} = await $host.post('/book_report/edit', books);
+    return data;
+}

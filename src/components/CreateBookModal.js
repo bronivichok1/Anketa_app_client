@@ -24,7 +24,7 @@ const CreateBookModal = observer(({ setVisible, id }) => {
   if(author) {
     const newAuthor = {
       id: Date.now(),
-      author
+      name: author
     }
     setBookObj({...bookObj, authors: [...bookObj.authors, newAuthor]});
     setAuthor('');
@@ -35,7 +35,7 @@ const CreateBookModal = observer(({ setVisible, id }) => {
   if (bookObj.name && bookObj.type && bookObj.protocol_num && bookObj.colvo_authors && bookObj.authors && bookObj.authors.length) {
     let stringAuthors = '';
     bookObj.authors.forEach(el => {
-      stringAuthors += el.author + ', ';
+      stringAuthors += el.name + ', ';
     }) 
     book.setBooks([...book.books, {...bookObj, item_id: id, id: Date.now(), stringAuthors}]);
     setBookObj({
@@ -234,7 +234,7 @@ const CreateBookModal = observer(({ setVisible, id }) => {
 
           { bookObj.authors.map(auth =>
             <Row style={{fontWeight: '600', fontSize: '18px'}} key={auth.id} >
-              <Col md={10} > <p style={{textAlign: 'center', marginBottom: '0'}} > {auth.author}</p></Col>
+              <Col md={10} > <p style={{textAlign: 'center', marginBottom: '0'}} > {auth.name}</p></Col>
               <Col><img onClick={() => deleteAuth(auth.id)} style={{ height: "28px", cursor: "pointer", marginLeft: '0.5rem' }} src={trash} alt="" /></Col>
             </Row>
             )}

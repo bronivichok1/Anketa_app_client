@@ -6,6 +6,8 @@ export default class BookStore {
         this._authors = [];
         this._bookReports = [];
         this._massivItems = [];
+        this._deletedBooks = [];
+        this._deletedAuthors = [];
         makeAutoObservable(this);
     }
 
@@ -15,6 +17,22 @@ export default class BookStore {
 
     get books() {
         return this._books;
+    }
+
+    setDeletedBooks(books) {
+        this._deletedBooks = books;
+    }
+
+    get deletedBooks() {
+        return this._deletedBooks;
+    }
+
+    setDeletedAuthors(auth) {
+        this._deletedAuthors = auth;
+    }
+
+    get deletedAuthors() {
+        return this._deletedAuthors;
     }
 
     setMassivItems(i) {

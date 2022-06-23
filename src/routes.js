@@ -1,9 +1,11 @@
+
 import Admin from "./pages/Admin"
 import Auth from "./pages/Auth"
 import CreateBookReport from "./pages/CreateBookReport"
 import DeleteReports from "./pages/DeleteReports"
 import EditAdmins from "./pages/EditAdmins"
 import EditAnketa from "./pages/EditAnketa"
+import EditBook from "./pages/EditBook"
 import EditCafedras from "./pages/EditCafedras"
 import EditCafedrasUsers from "./pages/EditCafedrasUsers"
 import EditCathRating from "./pages/EditCathRating"
@@ -12,7 +14,7 @@ import EditDate from "./pages/EditDate"
 import EditUser from "./pages/EditUser"
 import Report from "./pages/Report"
 import SeeReports from "./pages/SeeReports"
-import { ADMIN_ROUTE, CREATE_BOOK, DELETE_REPORTS_ROUTE, EDIT_ADMINS_ROUTE, EDIT_BLANK_ROUTE, EDIT_CAFEDRAS_ROUTE, EDIT_CAFEDRAS_USERS_ROUTE, EDIT_CATHEDRA_RATING, EDIT_CATHEDRA_REPORT, EDIT_DATE, EDIT_USER, LOGIN_ROUTE, REPORT_ROUTE, SEE_REPORTS_ROUTE } from "./utils/consts"
+import { ADMIN_ROUTE, CREATE_BOOK, DELETE_REPORTS_ROUTE, EDIT_ADMINS_ROUTE, EDIT_BLANK_ROUTE, EDIT_BOOK_REPORT, EDIT_CAFEDRAS_ROUTE, EDIT_CAFEDRAS_USERS_ROUTE, EDIT_CATHEDRA_RATING, EDIT_CATHEDRA_REPORT, EDIT_DATE, EDIT_USER, LOGIN_ROUTE, REPORT_ROUTE, SEE_REPORTS_ROUTE } from "./utils/consts"
 
 export const authRoutes = [
     {
@@ -78,6 +80,10 @@ export const publicAuthRoutes = [
     {
         path: CREATE_BOOK,
         Component: <CreateBookReport/>
+    },
+    {
+        path: EDIT_BOOK_REPORT,
+        Component: <EditBook/>
     },
 
 ]

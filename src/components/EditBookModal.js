@@ -15,7 +15,7 @@ const EditBookModal = observer(({ setVisible, bookObj, setBookObj }) => {
   if(author) {
     const newAuthor = {
       id: Date.now(),
-      author
+      name: author
     }
     setBookObj({...bookObj, authors: [...bookObj.authors, newAuthor]});
     setAuthor('');
@@ -26,7 +26,7 @@ const EditBookModal = observer(({ setVisible, bookObj, setBookObj }) => {
   if (bookObj.name && bookObj.type && bookObj.protocol_num && bookObj.colvo_authors && bookObj.authors && bookObj.authors.length) {
     let stringAuthors = '';
     bookObj.authors.forEach(el => {
-      stringAuthors += el.author + ', ';
+      stringAuthors += el.name + ', ';
     }) 
     book.setBooks([...book.books.map(el => el.id === bookObj.id ? {...bookObj, stringAuthors: stringAuthors} : {...el})]);
     setVisible(false);
@@ -36,6 +36,7 @@ const EditBookModal = observer(({ setVisible, bookObj, setBookObj }) => {
  }
 
  const deleteAuth = (id) => {
+  book.setDeletedAuthors([...book.deletedAuthors, id]);
   setBookObj({...bookObj, authors: [...bookObj.authors.filter(el => el.id !== id)]});
  }
 
@@ -216,7 +217,7 @@ const EditBookModal = observer(({ setVisible, bookObj, setBookObj }) => {
 
           { bookObj.authors.map(auth =>
             <Row style={{fontWeight: '600', fontSize: '18px'}} key={auth.id} >
-              <Col md={10} > <p style={{textAlign: 'center', marginBottom: '0'}} > {auth.author}</p></Col>
+              <Col md={10} > <p style={{textAlign: 'center', marginBottom: '0'}} > {auth.name}</p></Col>
               <Col><img onClick={() => deleteAuth(auth.id)} style={{ height: "28px", cursor: "pointer", marginLeft: '0.5rem' }} src={trash} alt="" /></Col>
             </Row>
             )}
