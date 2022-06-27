@@ -12,7 +12,7 @@ import { checkReports } from "../http/ReportLocalApi";
 
 const Items = observer(({ showFunc }) => {
   const { item } = useContext(Context);
-  const { report } = useContext(Context);
+  const { book } = useContext(Context);
   const { massiv } = useContext(Context);
 
   const mobile = useMediaQuery({ query: "(max-width: 770px)" });
@@ -31,6 +31,21 @@ const Items = observer(({ showFunc }) => {
   const [select, setSelect] = useState(0);
   const [selectId, setSelectId] = useState(0);
 
+  const [isOpen, setIsOpen] = useState(false);
+
+
+  async function autocompleteItemHandler(book, id, massFormula, massBall) {
+     await item.setMassivLocal(
+        item.massivLocal.hasOwnProperty(id)
+          ? {
+              ...item.massivLocal,
+              [id]: [...item.massivLocal[id], book],
+            }
+          : { ...item.massivLocal, [id]: [book] }
+      );
+      setIsOpen(!isOpen);
+      countResMassiv(id, massFormula, massBall);
+  }
 
   async function test() {
    await testItem({items: item.items}).then(data => {
@@ -60,23 +75,44 @@ const Items = observer(({ showFunc }) => {
   }
 
 
-  function deleteMassivFunc(idMas, idEl) {
-    item.setMassivLocal({
+  async function deleteMassivFunc(idMas, idEl, formula, ball) {
+    await item.setMassivLocal({
       ...item.massivLocal,
       [idMas]: [...item.massivLocal[idMas].filter((el) => el.id !== idEl)],
     });
     massiv.setDeletedLocal([...massiv.deletedLocal, idEl]);
+    countResMassiv(idMas, formula, ball);
   }
 
+
+  // async function countResMassiv(id, formula, ball) {
+  //   let res = 0;
+  //   if (item.massivLocal.hasOwnProperty(id) && item.massivLocal[id]) {
+  //     await item.massivLocal[id].map((el) => {
+  //       res += formula
+  //         ? eval(formula.replace(/Балл/gi, ball).replace(/Ввод/gi, el.val))
+  //         : 0;
+  //       console.log(formula.replace(/Балл/gi, ball).replace(/Ввод/gi, el.val));
+  //     });
+
+  //     await item.setItems([
+  //       ...item.items.map((dat) =>
+  //         dat.id === id ? { ...dat, value: Number(res.toFixed(2)) } : { ...dat }
+  //       ),
+  //     ]);
+
+  //    test();
+  //   }
+  // }
 
   async function countResMassiv(id, formula, ball) {
     let res = 0;
     if (item.massivLocal.hasOwnProperty(id) && item.massivLocal[id]) {
       await item.massivLocal[id].map((el) => {
         res += formula
-          ? eval(formula.replace(/Балл/gi, ball).replace(/Ввод/gi, el.val))
+          ? eval(formula.replace(/Балл/gi, ball).replace(/Ввод/gi, el.colvo_authors))
           : 0;
-        console.log(formula.replace(/Балл/gi, ball).replace(/Ввод/gi, el.val));
+        console.log(ball);
       });
 
       await item.setItems([
@@ -89,9 +125,9 @@ const Items = observer(({ showFunc }) => {
     }
   }
 
-  useEffect(() => {
-    countResMassiv(massId, massFormula, massBall);
-  }, [massId, item.massivLocal]);
+  // useEffect(() => {
+  //   countResMassiv(massId, massFormula, massBall);
+  // }, [massId, item.massivLocal]);
 
   async function vvodFunc(id) {
     await item.setItems([
@@ -170,17 +206,11 @@ const Items = observer(({ showFunc }) => {
           <Col
             md={8}
             className={
-              d.children && d.children.length
-                ? d.clasName
-                  ? mobile
-                    ? "show it"
-                    : "show item"
-                  : mobile
-                  ? "hide it"
-                  : "hide item"
-                : mobile
-                ? "it"
-                : "item"
+               (d.children && d.children.length)
+                ? (d.clasName)
+                  ? (mobile ? "show it": "show item")
+                  : (mobile ? "hide it": "hide item")
+                : (mobile ? "it": "item")
             }
             hidden={d.clas ? false : true}
             style={
@@ -251,18 +281,18 @@ const Items = observer(({ showFunc }) => {
             >
               <input
                 value={
-                  item.items.find((el) => el.id === d.id).vvod
-                    ? item.items.find((el) => el.id === d.id).vvod
+                  d.vvod
+                    ? d.vvod
                     : ""
                 }
                 style={{ marginTop: "0.5rem" }}
                 onChange={(e) => {
-                  setVvod(e.target.value);
+                  setVvod(Number(e.target.value) > 0 ? e.target.value : '') ;
                   setVvodId(d.id);
                   item.setItems([
                     ...item.items.map((dat) =>
                       dat.id === d.id
-                        ? { ...dat, vvod: e.target.value }
+                        ? { ...dat, vvod: Number(e.target.value) > 0 ? e.target.value : '' }
                         : { ...dat }
                     ),
                   ]);
@@ -279,15 +309,40 @@ const Items = observer(({ showFunc }) => {
               md={2}
               hidden={d.clas ? false : true}
             >
-              <div style={{ marginTop: "0.5rem", display: "flex" }}>
-                <input
+             <div className="mas_input" >
+              {/* <div style={{ marginTop: "0.5rem", display: "flex" }}> */}
+                {/* <input
                   style={{ marginBottom: "0.5rem" }}
                   onChange={(e) => {
                     setMassValue(e.target.value);
                   }}
+                  onClick={() => {
+                    setIsOpen(!isOpen);
+                    setMassId(d.id);
+                  }}
                   type="number"
-                />
-                <Button
+                /> */}
+
+                {/* <input
+                  value={d.masVal || ''}
+                  style={{ marginBottom: "0.5rem" }}
+                  onChange={(e) => {
+                    item.setItems([
+                      ...item.items.map((dat) =>
+                        dat.id === d.id
+                          ? { ...dat, masVal: e.target.value }
+                          : { ...dat }
+                      ),
+                    ]);
+                  }}
+                  onClick={() => {
+                    setIsOpen(!isOpen);
+                    setMassId(d.id);
+                  }}
+                  type="text"
+                /> */}
+
+                {/* <Button
                   className="mas_but"
                   variant="primary"
                   onClick={() => {
@@ -298,23 +353,71 @@ const Items = observer(({ showFunc }) => {
                   }}
                 >
                   +
+                </Button> */}
+
+              {/* </div> */}
+
+              <div style={{display: 'flex', justifyContent: 'center'}} >
+              <Button
+                style={{margin: '8px 0'}}
+                  // className="mas_but"
+                  variant="primary"
+                  onClick={() => {
+                    setIsOpen(!isOpen);
+                    setMassId(d.id);
+                  }}
+                >
+                  +
                 </Button>
               </div>
+          
+                <ul className="autocomplete">
+                  {isOpen && massId === d.id ? <div className="divCross" ><img onClick={() => setIsOpen(!isOpen)} className='cross' src={del} alt="" /></div> : ''}
+                 {isOpen
+                 ? book.books.map((b) => {
+                  if (b.item_id === massId && massId === d.id) {
+                    return (
+                      <li
+                        onClick={() => autocompleteItemHandler(b, d.id, d.formula, d.ball)}
+                        key={b.id}
+                        className="autocomplete_item"
+                      >
+                        {b.name}
+                      </li>
+                    );
+                  }
+                  })
+                 : null}
+                 </ul>
+              </div>
+           
+              {/* {book.books.map(b => {
+                if(b.item_id === d.id) {
+                  return(
+                    <div key={b.id} >
+                      {b.name}
+                    </div>
+                  )
+                }
+              })} */}
+
               {item.massivLocal.hasOwnProperty(`${d.id}`) &&
               item.massivLocal[`${d.id}`] &&
               item.massivLocal[`${d.id}`].length ? (
                 item.massivLocal[`${d.id}`].map((dat) => (
                   <div key={dat.id} style={{ display: "flex" }}>
-                    <div className="mas_val">{dat.val}</div>
+                    <div className="mas_val">
+                      {/* {dat.val} */} {dat.name}
+                      </div>
                     <img
                       alt=""
                       src={del}
                       className="mas_del"
                       onClick={() => {
-                        deleteMassivFunc(d.id, dat.id);
-                        setMassId(d.id);
-                        setMassBall(d.ball);
-                        setMassFormula(d.formula);
+                        deleteMassivFunc(d.id, dat.id, d.formula, d.ball);
+                        // setMassId(d.id);
+                        // setMassBall(d.ball);
+                        // setMassFormula(d.formula);
                       }}
                     />
                   </div>
@@ -398,7 +501,7 @@ const Items = observer(({ showFunc }) => {
                     ),
                   ]);
 
-                  if (d.name === "Количество занимаемых ставок") {
+                  if (d.name.trim() === "Количество занимаемых ставок") {
                     item.setStavka(
                       e.target.value
                     );

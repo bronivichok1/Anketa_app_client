@@ -15,6 +15,7 @@ import { deleteMassivLocal } from "../http/MassivLocalApi";
 import moment from 'moment';
 import { fetchDates } from "../http/DatesApi";
 import { createObj } from "../http/CathReportApi";
+import { getBooks } from "../http/BooksReportApi";
 moment().format(); 
 
 const Blank = observer(() => {
@@ -24,6 +25,7 @@ const Blank = observer(() => {
   const { report } = useContext(Context);
   const { massiv } = useContext(Context);
   const { dates } = useContext(Context);
+  const { book } = useContext(Context);
 
   const mobile = useMediaQuery({ query: "(max-width: 1400px)" });
   const mobile2 = useMediaQuery({ query: "(max-width: 410px)" });
@@ -74,12 +76,22 @@ const Blank = observer(() => {
 
     fetchCathedras().then((data) => {
       cathedra.setCathedras(data);
+      fetchOneUser(user.user.id).then((userData) => {
+        setLocalUser(userData);
+        setName(userData.fullname);
+        if (userData.cathedraId) {
+          setCathValue(data.find(el => el.id === userData.cathedraId).name);
+          getBooks(userData.cathedraId).then(books => {
+            book.setBooks(books);
+          })
+        }
+      });
     });
 
-    fetchOneUser(user.user.id).then((data) => {
-      setLocalUser(data);
-      setName(data.fullname);
-    });
+    // fetchOneUser(user.user.id).then((data) => {
+    //   setLocalUser(data);
+    //   setName(data.fullname);
+    // });
 
     fetchDates().then(data => {
       dates.setDates(data[0]);
@@ -176,22 +188,12 @@ const Blank = observer(() => {
     <div className="blank" style={{ marginTop: "4rem" }}>
       <Row>
         <Col
-        // className="colClass"
-          style={{
-            textAlign: "center",
-            backgroundColor: "#e9eff9",
-            borderRadius: "15px",
-          }}
+        className="colClass"
         >
-          Ставка: {item.stavka}{" "}
+        Ставка: {item.stavka}{" "} 
         </Col>
         <Col 
-        //className="colClass"
-          style={{
-            textAlign: "center",
-            backgroundColor: "#e9eff9",
-            borderRadius: "15px",
-          }}
+        className="colClass"
         >
           Общий балл: {item.sym ? Number(item.sym.toFixed(2)) : ""}{" "}
         </Col>
@@ -252,12 +254,7 @@ const Blank = observer(() => {
         <Col lg={6}>
           <Button
             onClick={postAnketa}
-           // className='buttonClass'
-            style={{
-              fontFamily: "var(--bs-body-font-family)",
-              fontWeight: "500",
-              marginTop: "15px",
-            }}
+            className='buttonClass'
             variant="primary"
           >
             Добавить анкету
@@ -265,52 +262,24 @@ const Blank = observer(() => {
         </Col>
         <Col lg={6}>
           <Button 
-          //className='buttonClass'
+          className='buttonClass'
             onClick={clearData}
             style={
-              mobile
-                ? {
-                    fontFamily: "var(--bs-body-font-family)",
-                    fontWeight: "500",
-                    marginTop: "15px",
-                  }
-                : {
-                    fontFamily: "var(--bs-body-font-family)",
-                    fontWeight: "500",
-                    marginLeft: "35%",
-                    marginTop: "15px",
-                  }
-            }
-            // style={
-            //     mobile
-            //       ? {}
-            //       : {marginLeft: "35%"}
-            //   }
+                mobile
+                  ? {}
+                  : {marginLeft: "35%"}
+              }
             variant="dark"
           >
             Сброс данных анкеты
           </Button>
           <Button 
-          //className='buttonClass'
+          className='buttonClass'
             onClick={saveData}
-            // style={
-            //   mobile2
-            //     ? {}
-            //     : {marginLeft: "10px"}
-            // }
             style={
-              mobile
-                ? {
-                    fontFamily: "var(--bs-body-font-family)",
-                    fontWeight: "500",
-                    marginTop: "15px",
-                  }
-                : {
-                    fontFamily: "var(--bs-body-font-family)",
-                    fontWeight: "500",
-                    marginLeft: "10px",
-                    marginTop: "15px",
-                  }
+              mobile2
+                ? {}
+                : {marginLeft: "10px"}
             }
             variant="primary"
           >

@@ -45,7 +45,6 @@ const EditCathItems = observer(() => {
                   }
             }
           >
-            {/* {d.num.includes("0") ? ( */}
             {d.num.split('.')[0] === '0' ? (
               <> <div style={{marginBottom: '1rem'}} >{d.name}</div>
               {cath_report.selects && cath_report.selects.length 
@@ -122,7 +121,7 @@ const EditCathItems = observer(() => {
               ? Number(d.value)
                 ? Number(Number(d.value).toFixed(2))
                 : ""
-              : d.type === 'Список' && d.name === 'Количество занимаемых ставок'
+              : d.type === 'Список' && d.name.trim() === 'Количество занимаемых ставок'
               ? <div style={{color: 'blue'}} >{item.stavka}</div>
               : Number(d.value)
               ? d.value
@@ -179,7 +178,7 @@ const EditCathItems = observer(() => {
             >
               <div className="colvo">{Number(d.colvo) ? d.colvo : ''}</div>
               {
-                  d.name === 'Количество занимаемых ставок'
+                  d.name.trim() === 'Количество занимаемых ставок'
                   ? <input style={{marginTop: '1rem'}} value={item.stavka} onChange={(e) => item.setStavka(e.target.value)} type="text" />
                   : <></>
               }

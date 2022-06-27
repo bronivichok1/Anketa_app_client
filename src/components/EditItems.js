@@ -251,12 +251,12 @@ const EditItems = observer(() => {
                 }
                 style={{ marginTop: "0.5rem" }}
                 onChange={(e) => {
-                  setVvod(e.target.value);
+                  setVvod(Number(e.target.value) > 0 ? e.target.value : '');
                   setVvodId(d.id);
                   item.setItems([
                     ...item.items.map((dat) =>
                       dat.id === d.id
-                        ? { ...dat, vvod: e.target.value }
+                        ? { ...dat, vvod: Number(e.target.value) > 0 ? e.target.value : '' }
                         : { ...dat }
                     ),
                   ]);
@@ -392,7 +392,7 @@ const EditItems = observer(() => {
                     ),
                   ]);
 
-                  if (d.name === "Количество занимаемых ставок") {
+                  if (d.name.trim() === "Количество занимаемых ставок") {
                     item.setStavka(
                       e.target.value
                     );

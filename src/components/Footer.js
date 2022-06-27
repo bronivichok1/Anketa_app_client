@@ -15,7 +15,7 @@ const Footer = observer( () => {
     const mobile = useMediaQuery({ query: '(max-width: 770px)' })
 
     return(
-        <div style={{marginTop: '7rem', backgroundColor: '#212529', paddingTop: '2rem', paddingBottom: '2rem', color: '#e9eff9'}}>
+        <footer style={{marginTop: '7rem', backgroundColor: '#212529', paddingTop: '2rem', paddingBottom: '2rem', color: '#e9eff9'}}>
             <Container>
                 <Row>
                     <Col md={8}>
@@ -33,7 +33,7 @@ const Footer = observer( () => {
                     </Col>
                 </Row>
             </Container>
-        </div>
+        </footer>
     );
 })
 

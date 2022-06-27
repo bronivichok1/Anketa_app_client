@@ -42,7 +42,7 @@ const EditBlank = observer(() => {
       item.setItems(createTree2(data));
 
       itemId = await data.find(
-        (i) => i.name === "Количество занимаемых ставок"
+        (i) => i.name.trim() === "Количество занимаемых ставок"
       ).id;
  
     });
@@ -116,9 +116,11 @@ const EditBlank = observer(() => {
   return (
     <div className="blank" style={{ marginTop: "4rem" }}>
       <Row >
-        <Col style={{ textAlign: "center", backgroundColor: "#e9eff9", borderRadius: "15px"  }}>Ставка: {item.stavka} </Col>
-        <Col style={{ textAlign: "center", backgroundColor: "#e9eff9", borderRadius: "15px"  }}>Общий балл: 
-         {item.result.result} </Col>
+        <Col className="colClass"
+        >Ставка: {item.stavka} </Col>
+        <Col className="colClass">
+          Общий балл: {item.result.result} 
+         </Col>
       </Row>
       <Row className="row" style={{ marginTop: "1rem" }}>
         <Col md={6}>ФИО</Col>
@@ -177,12 +179,8 @@ const EditBlank = observer(() => {
       <Row style={{ marginTop: "3rem" }}>
         <Col lg={6}>
           <Button
+           className='buttonClass'
           onClick={updateAnketa}
-            style={{
-              fontFamily: "var(--bs-body-font-family)",
-              fontWeight: "500",
-              marginTop: "15px",
-            }}
             variant="primary"
           >
             Сохранить анкету
@@ -190,13 +188,9 @@ const EditBlank = observer(() => {
 
           <Button
           onClick={() => navigate(SEE_REPORTS_ROUTE)}
+          className='buttonClass'
             style={
-              {
-                fontFamily: "var(--bs-body-font-family)",
-                fontWeight: "500",
-                marginTop: "15px",
-                marginLeft: '10px',
-              }
+              {marginLeft: '10px'}
             }
             variant="dark"
           >

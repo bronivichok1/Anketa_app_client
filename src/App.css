@@ -433,13 +433,57 @@ html {
 }
 
 .colClass {
-  text-align: "center";
-  background-color: "#e9eff9";
-  border-radius: "15px";
+  text-align: center;
+  background-color: #e9eff9;
+  border-radius: 15px;
 }
 
 .buttonClass {
-  font-family: "var(--bs-body-font-family)" !important;
-  font-weight: "500";
-  margin-top: "15px";
+  font-family: var(--bs-body-font-family);
+  font-weight: 500 !important;
+  margin-top: 15px;
+}
+
+.mas_input {
+  position: relative;
+}
+
+
+.autocomplete {
+  position: absolute;
+  left: 0;
+  top: 50px;
+  background-color: white;
+  width: 100%;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-radius: 15px;
+  font-size: 16px;
+  box-shadow: 0px 0px 18px #0b5ed7;
+ z-index: 20;
+ max-height: 220px;
+ height: auto;
+ overflow: auto;
+}
+
+.autocomplete_item {
+  padding: 10px;
+}
+
+.autocomplete_item:hover {
+  background-color: rgb(218, 218, 218);
+  cursor: pointer; 
+}
+
+.divCross {
+  display: flex;
+  justify-content: end;
+  margin-right: 10px; 
+  margin-top: 5px;
+}
+
+.cross {
+  cursor: pointer;
+  width: 15px;
 }

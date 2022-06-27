@@ -37,7 +37,7 @@ const EditCathBlank = observer(() => {
       item.setItems(createTree2(data));
 
        itemId = data.find(
-        (i) => i.name === "Количество занимаемых ставок"
+        (i) => i.name.trim() === "Количество занимаемых ставок"
       ).id;
     });
 
@@ -98,9 +98,10 @@ const EditCathBlank = observer(() => {
   return (
     <div className="blank" style={{ marginTop: "4rem" }}>
       <Row >
-        <Col style={{ textAlign: "center", backgroundColor: "#e9eff9", borderRadius: "15px"  }}>Ставка: {item.stavka} </Col>
-        <Col style={{ textAlign: "center", backgroundColor: "#e9eff9", borderRadius: "15px"  }}>Общий балл: 
-         {cath_report.resultOne.result} </Col>
+        <Col className="colClass"
+        >Ставка: {item.stavka} </Col>
+        <Col className="colClass"
+        >Общий балл: {cath_report.resultOne.result} </Col>
       </Row>
 
       <Row className="row" style={{ marginTop: "1rem" }}>
@@ -133,25 +134,17 @@ const EditCathBlank = observer(() => {
 
       <Row style={{ marginTop: "3rem" }}>
         <Col lg={6}>
-          <Button
+          <Button className='buttonClass'
           onClick={updateReport}
-            style={{
-              fontFamily: "var(--bs-body-font-family)",
-              fontWeight: "500",
-              marginTop: "15px",
-            }}
             variant="primary"
           >
             Сохранить отчёт
           </Button>
 
-          <Button
+          <Button className='buttonClass'
           onClick={cancellation}
             style={
               {
-                fontFamily: "var(--bs-body-font-family)",
-                fontWeight: "500",
-                marginTop: "15px",
                 marginLeft: '10px',
               }
             }
