@@ -1,36 +1,23 @@
 import { observer } from "mobx-react-lite";
-import { useState, useEffect, useContext } from "react";
-import { Button, Col, Row } from "react-bootstrap";
+import { useEffect, useContext } from "react";
+import { Col, Row } from "react-bootstrap";
 import { useMediaQuery } from "react-responsive";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
-import del from "./../imgs/delete.svg";
 import { Context } from "..";
 import { resItem, testItem } from "../http/ItemApi";
 import { checkReports } from "../http/ReportLocalApi";
+import VvodComp from "./VvodComp";
+import MassivComp from "./MassivComp";
+import YesNoComp from "./YesNoComp";
+import SelectComp from "./SelectComp";
 
 
 const EditItems = observer(() => {
   const { item } = useContext(Context);
   const { report } = useContext(Context);
-  const { massiv } = useContext(Context);
 
   const mobile = useMediaQuery({ query: "(max-width: 770px)" });
-
-  const [massValue, setMassValue] = useState(0);
-  const [massId, setMassId] = useState(0);
-  const [massFormula, setMassFormula] = useState("");
-  const [massBall, setMassBall] = useState(0);
-
-  const [vvod, setVvod] = useState(0);
-  const [vvodId, setVvodId] = useState(0);
-
-  const [yesNo, setYesNo] = useState(0);
-  const [yesNoId, setYesNoId] = useState(0);
-
-  const [select, setSelect] = useState(0);
-  const [selectId, setSelectId] = useState(0);
-
 
   async function test() {
       await testItem({items: item.items}).then(data => {
@@ -43,7 +30,6 @@ const EditItems = observer(() => {
    }
 
   useEffect(async () => {
-
   await checkReports({reports: report.reports, items: item.items}).then(data => {
     item.setItems(data);
   })
@@ -51,116 +37,7 @@ const EditItems = observer(() => {
   resItem({items: item.items}).then(res => {
     item.setResult({...item.result, result: res});
   })
-   
   }, [report.reports])
- 
-
-  function massivFunc(id) {
-    if(Number(massValue) && Number(massValue) > 0) {
-      item.setMassiv(
-        item.massiv.hasOwnProperty(id)
-          ? {
-              ...item.massiv,
-              [id]: [...item.massiv[id], { val: massValue, id: Date.now() }],
-            }
-          : { ...item.massiv, [id]: [{ val: massValue, id: Date.now() }] }
-      );
-    } else {
-      return;
-    }
-    
-  }
-
-  function deleteMassivFunc(idMas, idEl) {
-    item.setMassiv({
-      ...item.massiv,
-      [idMas]: [...item.massiv[idMas].filter((el) => el.id !== idEl)],
-    });
-    massiv.setDeleted([...massiv.deleted, idEl]);
-  }
-
-
-  async function countResMassiv(id, formula, ball) {
-    let res = 0;
-    if (item.massiv.hasOwnProperty(id) && item.massiv[id]) {
-      await item.massiv[id].map((el) => {
-        res += formula
-          ? eval(formula.replace(/Балл/gi, ball).replace(/Ввод/gi, el.val))
-          : 0;
-        console.log(formula.replace(/Балл/gi, ball).replace(/Ввод/gi, el.val));
-      });
-
-      await item.setItems([
-        ...item.items.map((dat) =>
-          dat.id === id ? { ...dat, value: Number(res.toFixed(2)) } : { ...dat }
-        )
-      ]);
-      test();
-    }
-  }
-
-  useEffect(() => {
-    countResMassiv(massId, massFormula, massBall);
-  }, [massId, item.massiv]);
-
-  async function vvodFunc(id) {
-    await item.setItems([
-      ...item.items.map((dat) =>
-        dat.id === id
-          ? {
-              ...dat,
-              value: vvod
-                ? eval(
-                    dat.formula.replace("Балл", dat.ball).replace("Ввод", vvod)
-                  )
-                : 0,
-            }
-          : { ...dat }
-      ),
-    ]);
-    test();
-  }
-
-  useEffect(() => {
-    if(Number(vvod) >= 0) {
-      vvodFunc(vvodId);
-    }
-  }, [vvod, vvodId]);
-
-  async function yesNoFunc(id) {
-    await item.setItems([
-      ...item.items.map((dat) =>
-        dat.id === id ? { ...dat, value: Number(yesNo) } : { ...dat }
-      ),
-    ]);
-    test();
-  }
-
-  useEffect(() => {
-   
-    yesNoFunc(yesNoId);
-   
-  }, [yesNo, yesNoId]);
-
-  async function selectFunc(id) {
-    if (select) {
-      const ball = await item.selects.find(
-        (sel) => sel.itemId === id && sel.name === select
-      ).ball;
-
-      await item.setItems([
-        ...item.items.map((dat) =>
-          dat.id === id ? { ...dat, value: Number(ball) } : { ...dat }
-        ),
-      ]);
-      test();
-    }
-  }
-
-  useEffect(() => {
-    selectFunc(selectId);
-  }, [select, selectId]);
-
 
 
   return (
@@ -236,186 +113,13 @@ const EditItems = observer(() => {
               md={2}
             ></Col>
           ) : d.type === "Ввод данных" ? (
-            <Col
-              style={{
-                borderBottom: mobile ? "" : "1px solid #d1d1d1",
-                borderRight: mobile ? "" : "1px solid #d1d1d1",
-              }}
-              md={2}
-            >
-              <input
-                value={
-                d.vvod
-                ? d.vvod
-                : ""
-                }
-                style={{ marginTop: "0.5rem" }}
-                onChange={(e) => {
-                  setVvod(Number(e.target.value) > 0 ? e.target.value : '');
-                  setVvodId(d.id);
-                  item.setItems([
-                    ...item.items.map((dat) =>
-                      dat.id === d.id
-                        ? { ...dat, vvod: Number(e.target.value) > 0 ? e.target.value : '' }
-                        : { ...dat }
-                    ),
-                  ]);
-                }}
-                type="number"
-              />
-            </Col>
+            <VvodComp d={d} test={test} type={'edit'} />
           ) : d.type === "Массив данных" ? (
-            <Col
-              style={{
-                borderBottom: mobile ? "" : "1px solid #d1d1d1",
-                borderRight: mobile ? "" : "1px solid #d1d1d1",
-              }}
-              md={2}
-              
-            >
-              <div style={{ marginTop: "0.5rem", display: "flex" }}>
-                <input
-                  style={{ marginBottom: "0.5rem" }}
-                  onChange={(e) => {
-                    setMassValue(e.target.value);
-                  }}
-                  type="number"
-                />
-                <Button
-                  className="mas_but"
-                  variant="primary"
-                  onClick={() => {
-                    setMassId(d.id);
-                    massivFunc(d.id);
-                    setMassBall(d.ball);
-                    setMassFormula(d.formula);
-                  }}
-                >
-                  +
-                </Button>
-              </div>
-              {item.massiv.hasOwnProperty(`${d.id}`) &&
-              item.massiv[`${d.id}`] &&
-              item.massiv[`${d.id}`].length ? (
-                item.massiv[`${d.id}`].map((dat) => (
-                  <div key={dat.id} style={{ display: "flex" }}>
-                    <div className="mas_val">{dat.val}</div>
-                    <img
-                      alt=""
-                      src={del}
-                      className="mas_del"
-                      onClick={() => {
-                        deleteMassivFunc(d.id, dat.id);
-                        setMassId(d.id);
-                        setMassBall(d.ball);
-                        setMassFormula(d.formula);
-                      }}
-                    />
-                  </div>
-                ))
-              ) : (
-                <></>
-              )}
-            </Col>
+            <MassivComp d={d} test={test} type={'edit'} massivv={'massiv'} setMassivv={'setMassiv'} deleted={'deleted'} setDeleted={'setDeleted'} />
           ) : d.type === "Да/Нет" ? (
-            <Col
-              style={{
-                borderBottom: mobile ? "" : "1px solid #d1d1d1",
-                borderRight: mobile ? "" : "1px solid #d1d1d1",
-                textAlign: "center",
-              }}
-              md={2}
-            >
-              <input
-                checked={
-                 d.value
-                  ? true
-                  : false
-                }
-                onChange={(e) => {
-                  setYesNo(e.target.value);
-                  setYesNoId(d.id);
-                }}
-                name={d.num}
-                style={mobile ? { width: "10%" } : { width: "10%" }}
-                type="radio"
-                id={d.num}
-                value={d.ball}
-                className="yes_no"
-              />
-              <label className="yes_no" htmlFor={d.num}>
-                Да
-              </label>
-
-              <input
-                checked={
-                  d.value == '0' ? true : false
-               
-                }
-                className="yes_no"
-                onChange={(e) => {
-                  setYesNo(e.target.value);
-                  setYesNoId(d.id);
-                }}
-                name={d.num}
-                style={mobile ? { width: "10%" } : { width: "10%" }}
-                type="radio"
-                id={d.name}
-                value="0"
-              />
-              <label className="yes_no" htmlFor={d.name}>
-                Нет
-              </label>
-            </Col>
+            <YesNoComp d={d} test={test} type={'edit'} />
           ) : (
-            <Col
-              style={{
-                borderBottom: mobile ? "" : "1px solid #d1d1d1",
-                borderRight: mobile ? "" : "1px solid #d1d1d1",
-              }}
-              md={2}
-              
-            >
-              <select
-                value={d.select || ''}
-                onChange={(e) => {
-                  setSelect(e.target.value);
-                  setSelectId(d.id);
-                  item.setItems([
-                    ...item.items.map((dat) =>
-                      dat.id === d.id
-                        ? {
-                            ...dat,
-                            select: e.target.value,
-                          }
-                        : { ...dat }
-                    ),
-                  ]);
-
-                  if (d.name.trim() === "Количество занимаемых ставок") {
-                    item.setStavka(
-                      e.target.value
-                    );
-                  }
-                }}
-                style={{ marginTop: "0.5rem" }}
-              >
-                <option value=""></option>
-
-                {item.selects.map((sel) => {
-                  if (sel.itemId === d.id) {
-                    return (
-                      <option
-                        key={sel.id}
-                        value={sel.name}
-                      >
-                        {sel.name}
-                      </option>
-                    );
-                  }
-                })}
-              </select>
-            </Col>
+            <SelectComp d={d} test={test} type={'edit'} />
           )}
           <Col
             className={mobile ? "item2" : "item"}

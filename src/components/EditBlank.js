@@ -2,8 +2,7 @@ import { observer } from "mobx-react-lite";
 import { Row, Col, Button } from "react-bootstrap";
 import { useContext, useState, useEffect } from "react";
 import { Context } from "../index";
-import { useMediaQuery } from "react-responsive";
-import { fetchItems, resItem } from "../http/ItemApi";
+import { fetchItems } from "../http/ItemApi";
 import { fetchOneUser } from "../http/UserApi";
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchCathedras, fetchOneCathedra } from "../http/CathedraApi";
@@ -15,6 +14,7 @@ import { fetchOneOwnResult } from "../http/ResultApi";
 import { createMassivFunc, createTree2 } from "../functions";
 import { SEE_REPORTS_ROUTE } from "../utils/consts";
 import { createObj } from "../http/CathReportApi";
+import { getBooks } from "../http/BooksReportApi";
 
 
 const EditBlank = observer(() => {
@@ -23,17 +23,15 @@ const EditBlank = observer(() => {
   const { report } = useContext(Context);
   const { massiv } = useContext(Context);
   const { cath_report } = useContext(Context);
+  const { book } = useContext(Context);
 
   const navigate = useNavigate();
 
   const params = useParams();
 
-  const mobile = useMediaQuery({ query: "(max-width: 1400px)" });
-
   const [localUser, setLocalUser] = useState({});
   const [cathValue, setCathValue] = useState("");
   const [bool, setBool] = useState(false);
-
 
   useEffect(async () => {
     let itemId;
@@ -64,6 +62,9 @@ const EditBlank = observer(() => {
      fetchOneCathedra(data.cathedraId).then(cath => {
        setCathValue(cath.name);
      })
+     getBooks(data.cathedraId).then(books => {
+      book.setBooks(books);
+    })
    });
 
     findByResReport(params.id).then(async (data) => {
@@ -88,6 +89,9 @@ const EditBlank = observer(() => {
       cathedra.cathedras.map((cath) => {
         if (cath.name === cathValue) {
           setLocalUser({...localUser, cathedraId: cath.id});
+          getBooks(cath.id).then(books => {
+            book.setBooks(books);
+          })
         }
       });
     

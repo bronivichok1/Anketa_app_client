@@ -179,7 +179,7 @@ const EditCathItems = observer(() => {
               <div className="colvo">{Number(d.colvo) ? d.colvo : ''}</div>
               {
                   d.name.trim() === 'Количество занимаемых ставок'
-                  ? <input style={{marginTop: '1rem'}} value={item.stavka} onChange={(e) => item.setStavka(e.target.value)} type="text" />
+                  ? <input style={{marginTop: '1rem'}} value={item.stavka || ''} onChange={(e) => item.setStavka(e.target.value)} type="text" />
                   : <></>
               }
             </Col>

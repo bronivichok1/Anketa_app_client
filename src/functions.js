@@ -24,8 +24,8 @@ export const createMassivFunc = (arr) => {
   if (arr && arr.length) {
     arr.forEach((el) => {
       obj.hasOwnProperty(el.itemId)
-        ? obj[el.itemId].push({ val: el.value, id: el.id })
-        : (obj[el.itemId] = [{ val: el.value, id: el.id }]);
+        ? obj[el.itemId].push({ val: el.value, id: el.id, name: el.name })
+        : (obj[el.itemId] = [{ val: el.value, id: el.id, name: el.name }]);
     });
   }
   return obj;

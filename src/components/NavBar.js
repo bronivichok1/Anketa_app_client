@@ -2,11 +2,13 @@ import { Button, Container, Nav, Navbar } from "react-bootstrap";
 import icon from './../imgs/anketa_iconn.svg';
 import { useMediaQuery } from 'react-responsive';
 import {  useNavigate } from "react-router-dom";
-import { REPORT_ROUTE, SEE_REPORTS_ROUTE } from "../utils/consts";
+import { ADMIN_ROUTE, REPORT_ROUTE, SEE_REPORTS_ROUTE } from "../utils/consts";
+import { useContext } from "react";
+import { Context } from "..";
 
 const NavBar = () => {
     const mobile = useMediaQuery({ query: '(max-width: 980px)' })
-
+    const { user } = useContext(Context);
     const navigate = useNavigate();
 
     function out() {
@@ -46,6 +48,15 @@ const NavBar = () => {
               } variant="outline-primary">
                 Выход
               </Button>
+              {user.isAuth
+              ? <Button onClick={() => navigate(ADMIN_ROUTE)} style={
+                mobile
+                ? { marginLeft: "0px" }
+                : { marginLeft: "10px" }
+               } variant="outline-primary">
+                Админ
+                </Button>
+              : <></>}
             </Nav>
           </Navbar.Collapse>
         </Container>

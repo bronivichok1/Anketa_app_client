@@ -35,49 +35,45 @@ const FindBookReport = observer(({ cathId }) => {
         Книжные отчёты
       </h4>
 
-      {book.bookReports && book.bookReports.length ? (
-        <div>
-          <Button onClick={() => navigate(`/createBook/${cathId}`)} style={{marginBottom: '2rem'}} variant="primary" >Создать книжный отчёт</Button>
-         <Row style={{marginBottom: '1rem'}} className="blankHead" >
-         <Col md={11}>Дата создания</Col>
-     </Row>
-
-       {cathedra.open || user.isAuth 
-       ?
-       <>
-       { book.bookReports.map((b) => (
-        <Row className="us_item" key={b.id}>
-           <Col md={11}>
-            {moment(b.createdAt).format("DD.MM.YYYY h:mm:ss")}
-          </Col>
-          <Col style={{display: 'flex'}} md={1}>
-            <img onClick={() => navigate(`/book_report/${b.id}`)} className="edit" src={edit} alt="" />
-            <img
-                  onClick={() => deleteReportFunc(b.id)}
-                  style={{
-                    height: "30px",
-                    marginLeft: "10px",
-                    cursor: "pointer",
-                  }}
-                  src={trash}
-                  alt=""
-                  />
-          </Col>
-        </Row>
-      ))}
-       </>
-      : <div>
-        У Вас нет доступа!
-        </div>}
-        </div>
-      ) : (
-        <>
-         <Button onClick={() => navigate(`/createBook/${cathId}`)} style={{marginBottom: '1rem'}} variant="primary" >Создать книжный отчёт</Button>
-        <div>
-          Книжных отчётов ещё нет!
-        </div>
+      {cathedra.open || user.isAuth 
+      ? book.bookReports && book.bookReports.length
+        ?  <>
+          <Button onClick={() => navigate(`/createBook/${cathId}`)} style={{marginBottom: '1.5rem'}} variant="primary" >Создать книжный отчёт</Button>
+          <Row style={{marginBottom: '1rem'}} className="blankHead" >
+            <Col md={11}>Дата создания</Col>
+          </Row>
+         
+         { book.bookReports.map((b) => (
+         <Row className="us_item" key={b.id}>
+            <Col md={11}>
+             {moment(b.createdAt).format("DD.MM.YYYY h:mm:ss")}
+           </Col>
+           <Col style={{display: 'flex'}} md={1}>
+             <img onClick={() => navigate(`/book_report/${b.id}`)} className="edit" src={edit} alt="" />
+             <img
+                   onClick={() => deleteReportFunc(b.id)}
+                   style={{
+                     height: "30px",
+                     marginLeft: "10px",
+                     cursor: "pointer",
+                   }}
+                   src={trash}
+                   alt=""
+                   />
+           </Col>
+         </Row>
+         ))}
         </>
-      )}
+        : <>
+           <Button onClick={() => navigate(`/createBook/${cathId}`)} style={{marginBottom: '1rem'}} variant="primary" >Создать книжный отчёт</Button>
+         <div>
+           Книжных отчётов ещё нет!
+          </div>
+          </>
+      : <div>
+         У Вас нет доступа!
+        </div>
+    }
     </div>
    </Container>
   );

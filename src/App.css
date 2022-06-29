@@ -74,9 +74,6 @@ html {
   border-radius: 15px;
   font-size: 16px;
   border: 2px solid #0b5ed7;
-  /* background-color: white; */
-  /* background-color: rgba(255, 255, 255, 0);
-  color: rgb(193, 193, 193); */
 }
 
 .hr {
@@ -486,4 +483,10 @@ html {
 .cross {
   cursor: pointer;
   width: 15px;
+}
+
+.navWrap {
+  width: 80%;
+  margin-left: 10%;
+  display: flex;
 }

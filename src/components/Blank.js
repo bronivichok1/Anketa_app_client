@@ -84,14 +84,11 @@ const Blank = observer(() => {
           getBooks(userData.cathedraId).then(books => {
             book.setBooks(books);
           })
+        } else {
+          alert('Пожалуйста выберите кафедру перед заполнением анкеты!');
         }
       });
     });
-
-    // fetchOneUser(user.user.id).then((data) => {
-    //   setLocalUser(data);
-    //   setName(data.fullname);
-    // });
 
     fetchDates().then(data => {
       dates.setDates(data[0]);
@@ -130,6 +127,9 @@ const Blank = observer(() => {
   useEffect(() => {
     if (cathId) {
       setLocalUser({ ...localUser, cathedraId: cathId });
+      getBooks(cathId).then(books => {
+        book.setBooks(books);
+      })
     }
   }, [cathId]);
 
@@ -149,7 +149,7 @@ const Blank = observer(() => {
   async function saveData() {
     try {
 
-      saveReportsLoc({items: item.items, reports: report.reports, userId: user.user.id, itemMassivLocal: item.massivLocal, massivMassivLocal: massiv.massivLocal, massivDeletedLocal: massiv.deletedLocal}).then(() => {
+      saveReportsLoc({items: item.items, reports: report.reports, userId: user.user.id, itemMassivLocal: item.massivLocal, massivMassivLocal: massiv.massivLocal, massivDeletedLocal: massiv.deletedLocal, localUser: localUser}).then(() => {
         alert("Ваши данные сохранены!");
       })
 
