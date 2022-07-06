@@ -15,7 +15,10 @@ import { useMediaQuery } from "react-responsive";
 import EditBookModal from "./EditBookModal";
 import { getAuthorsByReport } from "../http/AuthorsApi";
 import { getBooksByReport } from "../http/BooksApi";
-import { editBookApi } from "../http/BooksReportApi";
+import { editBookApi, fetchOneBookReport } from "../http/BooksReportApi";
+import axios from "axios";
+import { saveAs } from "file-saver";
+import { fetchOneCathedra } from "../http/CathedraApi";
 
 const EditBookReport = observer(() => {
   const navigate = useNavigate();
@@ -37,6 +40,7 @@ const EditBookReport = observer(() => {
     authors: []
   });
   const [bookReportId, setBookReportId] = useState(0);
+  const [cath, setCath] = useState('');
 
   useEffect(() => {
     fetchMassivItems().then(data => {
@@ -56,6 +60,11 @@ const EditBookReport = observer(() => {
             book.setBooks(books);
         })
     })
+   fetchOneBookReport(Number(params.id)).then(report => {
+    fetchOneCathedra(report.cathedra_id).then( data => {
+      setCath(data.name);
+    });
+   })
   }, [])
 
   const addBook = (id) => {
@@ -86,6 +95,27 @@ const EditBookReport = observer(() => {
     navigate(SEE_REPORTS_ROUTE);
   }
 
+  function createExcel() {
+    const arr = book.books;
+
+    arr.forEach(el => {
+      const punkt = book.massivItems.find(p => p.id === el.item_id);
+      if (punkt) {
+        el.punkt = punkt.num;
+      }
+    })
+
+    axios
+      .post(process.env.REACT_APP_HOST + "/excelBook", {arr})
+      .then(() =>
+        axios.get(process.env.REACT_APP_HOST + "/excelBookRes", { responseType: "blob" })
+      )
+      .then((res) => {
+        const xlsxBlob = new Blob([res.data], { type: "application/xlsx" });
+        saveAs(xlsxBlob, `bookReport.xlsx`);
+      });
+  }
+
   return (
     <div>
         <MyModal visible={modal} setVisible={setModal}>
@@ -96,7 +126,8 @@ const EditBookReport = observer(() => {
       </MyModal>
       <Container>
 
-       <div style={{marginTop: '3rem'}} >
+       <div style={{marginTop: '0.5rem'}} >
+       <h5 style={{marginBottom: '3rem'}} >Кафедра: {cath}</h5>
        {book.massivItems.map(item =>
            <div key={item.id}>
              <Row className="bookItem" >
@@ -155,7 +186,19 @@ const EditBookReport = observer(() => {
               Отмена
             </Button>
           </Col>
-          <Col lg={6}></Col>
+          <Col style={{display: 'flex', justifyContent: 'end'}} lg={6}>
+          <Button
+              onClick={createExcel}
+              style={{
+                fontFamily: "var(--bs-body-font-family)",
+                fontWeight: "500",
+                marginTop: "15px",
+              }}
+              variant="dark"
+            >
+              Вывод в эксель
+            </Button>
+          </Col>
         </Row>
       </Container>
     </div>

@@ -22,7 +22,7 @@ const MassivComp = ({d, test, type, massivv, setMassivv, deleted, setDeleted}) =
            item[massivv].hasOwnProperty(id)
              ? {
                  ...item[massivv],
-                 [id]: [...item[massivv][id], {id: book.id, val: book.colvo_authors, name: book.name}],
+                [id]: item[massivv][id].find(el => el.id === book.id) ? [...item[massivv][id]] : [...item[massivv][id], {id: book.id, val: book.colvo_authors, name: book.name}]
                }
              : { ...item[massivv], [id]: [{id: book.id, val: book.colvo_authors, name: book.name}] }
          );
