@@ -1,13 +1,8 @@
-
 import { Button } from "react-bootstrap";
-import { useMediaQuery } from "react-responsive";
 import { observer } from "mobx-react-lite";
 import { updateTable } from "../http/RatingTablesApi";
 
 const EditRatingModal = observer( ({ setVisible, setTable, table }) => {
-
-  const mobile = useMediaQuery({ query: "(max-width: 900px)" });
-
 
   const updateTableFunc = () => {
     updateTable(table.id, table).then((data) => {
@@ -16,7 +11,6 @@ const EditRatingModal = observer( ({ setVisible, setTable, table }) => {
       window.location.reload();
     });
   };
-
 
   return (
     <div >

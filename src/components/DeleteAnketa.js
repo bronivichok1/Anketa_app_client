@@ -19,7 +19,6 @@ moment.locale("ru");
 
 const DeleteAnketa = observer(() => {
   const { cathedra } = useContext(Context);
-  const { user } = useContext(Context);
   const { report } = useContext(Context);
 
   const [cathVal, setCathVal] = useState("");

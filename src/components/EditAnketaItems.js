@@ -1,8 +1,6 @@
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button, Col, Row } from "react-bootstrap";
-import { Context } from "..";
 import { deleteItem, fetchItems, fetchOneItem } from "../http/ItemApi";
-import { useMediaQuery } from "react-responsive";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
 import trash from "./../imgs/trash_icon.svg";
@@ -12,8 +10,6 @@ import EditAnketaModal from "./EditAnketaModal";
 import AnketaModal from "./AnketaModal";
 
 const EditAnketaItems = () => {
-
-  const mobile = useMediaQuery({ query: "(max-width: 770px)" });
 
   const [items, setItems] = useState([]);
   const [ed, setEd] = useState(false);

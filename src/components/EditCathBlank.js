@@ -2,14 +2,13 @@ import { observer } from "mobx-react-lite";
 import { Row, Col, Button } from "react-bootstrap";
 import { useContext, useState, useEffect } from "react";
 import { Context } from "../index";
-import { useMediaQuery } from "react-responsive";
 import { fetchItems } from "../http/ItemApi";
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchOneSelect } from "../http/SelectApi";
 import { createObjSelect, createTree2 } from "../functions";
 import { SEE_REPORTS_ROUTE } from "../utils/consts";
 import { fetchCathResultOwn } from "../http/CathResultApi";
-import { getCathReportsByResult, updateCathReport, updateCathReportFunc } from "../http/CathReportApi";
+import { getCathReportsByResult, updateCathReportFunc } from "../http/CathReportApi";
 import { fetchColvo } from "../http/ColvoSelectsApi";
 import { fetchOneCathedra } from "../http/CathedraApi";
 import EditCathItems from "./EditCathItems";
@@ -22,8 +21,6 @@ const EditCathBlank = observer(() => {
   const navigate = useNavigate();
 
   const params = useParams();
-
-  const mobile = useMediaQuery({ query: "(max-width: 1400px)" });
 
   const [cath, setCath] = useState('');
   const [cathId, setCathId] = useState(0);

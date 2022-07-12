@@ -68,8 +68,9 @@ function EditAnketaModal({ setVisible, setItem, item }) {
         Редактировать пункт
       </h3>
       <div className="cath_modal">
+        <div style={{fontFamily: 'Roboto', fontSize: '18px'}} >Название:</div>
         <textarea
-          style={mobile ? {} : {minWidth: '800px'}}
+          style={mobile ? {marginTop: '0.5rem'} : {minWidth: '800px', marginTop: '0.5rem'}}
           onChange={(e) => setItem({ ...item, name: e.target.value })}
           value={item.name || ""}
           type="text"
@@ -79,29 +80,39 @@ function EditAnketaModal({ setVisible, setItem, item }) {
 
         {
             item.type === 'Ввод данных' || item.type === 'Массив данных' || item.type === 'Да/Нет'
-            ? <input
+            ? <>
+              <div style={{fontFamily: 'Roboto', fontSize: '18px', marginTop: '1rem'}} >Балл:</div>
+            <input
+            style={{marginTop: '0.5rem'}}
             className="sel"
             onChange={(e) => setItem({ ...item, ball: e.target.value })}
             value={item.ball || ""}
             type="number"
             placeholder="Введите балл..."
-          />
+            />
+            </>
             : <></>
         }
 
         {
              item.type === 'Ввод данных' || item.type === 'Массив данных'
-            ? <input
+            ? <>
+             <div style={{fontFamily: 'Roboto', fontSize: '18px', marginTop: '1rem'}} >Формула:</div>
+            <input
+            style={{marginTop: '0.5rem'}}
             className="sel"
             onChange={(e) => setItem({ ...item, formula: e.target.value })}
             value={item.formula || ""}
             type="text"
             placeholder="Введите формулу..."
-          />
+            />
+            </>
             : <></>
         }
-
+        
+        <div style={{fontFamily: 'Roboto', fontSize: '18px', marginTop: '1rem'}} >Подсказка:</div>
         <textarea
+          style={{marginTop: '0.5rem'}}
           onChange={(e) => setItem({ ...item, help: e.target.value })}
           value={item.help || ""}
           type="text"
@@ -109,7 +120,9 @@ function EditAnketaModal({ setVisible, setItem, item }) {
           className="text_edit"
         />
 
+        <div style={{fontFamily: 'Roboto', fontSize: '18px', marginTop: '1rem'}} >Тип:</div>
         <select
+          style={{marginTop: '0.5rem'}}
           className="sel"
           onChange={(e) => setItem({ ...item, type: e.target.value })}
           value={item.type || ""}

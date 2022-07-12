@@ -25,7 +25,6 @@ const AdminUsers = observer( () => {
             user.users.forEach(adm => {
                 if(adm.login.toLowerCase() === login.toLowerCase() + '@bsmu.by') {
                    updateUser(adm.id, {...adm, role: 'ADMIN'}).then(data => {
-                    //    user.setAdmins([...user.admins, {...adm, role: 'ADMIN'}]);
                     window.location.reload();
                        setLogin('');
 
@@ -44,8 +43,6 @@ const AdminUsers = observer( () => {
             }
         })
     }
-
-    console.log(login)
 
     return(
         <Container style={{marginTop: '3rem'}} >

@@ -37,7 +37,7 @@ const FindCathRating = observer(({ cathId }) => {
         Рейтинг
       </h4>
 
-    {cathedra.open || user.isAuth 
+    {user.isAuth 
     ?  <>
     <div className="big-table">
     <table>

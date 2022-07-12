@@ -24,7 +24,7 @@ const EditDate = observer(() => {
         })
     }
 
-    console.log(moment("2022-05-05 09:53:48.163+03").isBetween('2022-05-02', '2022-05-07', undefined, '[]'))
+    //console.log(moment("2022-05-05 09:53:48.163+03").isBetween('2022-05-02', '2022-05-07', undefined, '[]'))
 
     return(
         <div className="wrapper" >

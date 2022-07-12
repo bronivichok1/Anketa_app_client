@@ -81,7 +81,6 @@ const Filter = observer(() => {
           })
         }
       })
-      console.log('st')
     }
   }, [cathId, type, dates.startDate, dates.endDate
   ]);

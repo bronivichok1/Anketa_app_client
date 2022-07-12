@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import { Context } from "..";
-import { useMediaQuery } from "react-responsive";
 import { observer } from "mobx-react-lite";
 import { fetchOneTable, fetchTables } from "../http/RatingTablesApi";
 import edit from "./../imgs/edit_icon.svg";
@@ -12,7 +11,6 @@ import EditRatingModal from "./EditRatingModal";
 
 
 const EditRating = observer(() => {
-  const mobile = useMediaQuery({ query: "(max-width: 770px)" });
 
   const { rating } = useContext(Context);
 
