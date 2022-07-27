@@ -28,7 +28,7 @@ const Footer = observer( () => {
                     } md={4}>
                     <a className="footer_link" href="https://www.bsmu.by/page/18/1481/">
                      Контактная информация</a>
-                     <div>220116, г. Минск, пр. Дзержинского, 83</div>
+                     <div>220083, г. Минск, пр. Дзержинского, 83</div>
                      <div>Тел: +375 17 252-12-01. Факс: +375 17 348-12-02</div>
                     </Col>
                 </Row>

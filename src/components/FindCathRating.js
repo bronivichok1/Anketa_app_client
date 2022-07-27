@@ -8,7 +8,6 @@ import { fetchTablesTrue } from "../http/RatingTablesApi";
 
 const FindCathRating = observer(({ cathId }) => {
   const { rating } = useContext(Context);
-  const { cathedra } = useContext(Context);
   const { user } = useContext(Context);
 
   useEffect(() => {
