@@ -67,12 +67,12 @@ const CreateBooks = observer(() => {
   const saveResult = () => {
     if(book.books && book.books.length) {
       createBook({books: book.books, cathId}).then(data => {
-        alert('Книжный отчёт сохранён!');
+        alert('Приложение к отчету кафедры сохранено!');
         book.setBooks([]);
         navigate(SEE_REPORTS_ROUTE);
       })
     } else {
-      alert('Добавьте книги/статьи в книжный отчёт!');
+      alert('Добавьте элементы в приложение к отчету (книги, статьи и т.д.)!');
     }
   }
 

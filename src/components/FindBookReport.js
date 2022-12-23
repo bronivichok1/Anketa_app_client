@@ -32,13 +32,13 @@ const FindBookReport = observer(({ cathId }) => {
       <h4
         style={{ textAlign: "center", marginTop: "3rem", marginBottom: "3rem" }}
       >
-        Книжные отчёты
+        Приложения к отчету кафедры
       </h4>
 
       {cathedra.open || user.isAuth 
       ? book.bookReports && book.bookReports.length
         ?  <>
-          <Button onClick={() => navigate(`/createBook/${cathId}`)} style={{marginBottom: '1.5rem'}} variant="primary" >Создать книжный отчёт</Button>
+          <Button onClick={() => navigate(`/createBook/${cathId}`)} style={{marginBottom: '1.5rem'}} variant="primary" >Создать приложение к отчету кафедры</Button>
           <Row style={{marginBottom: '1rem'}} className="blankHead" >
             <Col md={11}>Дата создания</Col>
           </Row>
@@ -65,9 +65,9 @@ const FindBookReport = observer(({ cathId }) => {
          ))}
         </>
         : <>
-           <Button onClick={() => navigate(`/createBook/${cathId}`)} style={{marginBottom: '1rem'}} variant="primary" >Создать книжный отчёт</Button>
+           <Button onClick={() => navigate(`/createBook/${cathId}`)} style={{marginBottom: '1rem'}} variant="primary" >Создать приложение к отчету кафедры</Button>
          <div>
-           Книжных отчётов ещё нет!
+          Приложений к отчету ещё нет!
           </div>
           </>
       : <div>

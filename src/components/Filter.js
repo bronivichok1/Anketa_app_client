@@ -100,7 +100,7 @@ const Filter = observer(() => {
   }, [cathId, type, startDate, endDate]);
 
   useEffect(async () => {
-    if (cathId && type === "Книжный отчёт") {
+    if (cathId && type === "Приложения к отчету кафедры") {
       await fetchByCathBookReports(cathId).then((data) => {
 
         if(startDate && endDate) {
@@ -137,7 +137,7 @@ const Filter = observer(() => {
     types = <FindCathResult cathId={cathId} />;
   } else if (type === "Рейтинг" && cathVal) {
     types = <FindCathRating cathId={cathId} />;
-  } else if (type === "Книжный отчёт" && cathVal) {
+  } else if (type === "Приложения к отчету кафедры" && cathVal) {
     types = <FindBookReport cathId={cathId} />;
   }
 
@@ -192,7 +192,7 @@ const Filter = observer(() => {
               <option value="Индивидуальный отчёт">Индивидуальный отчёт</option>
               <option value="Кафедральный отчёт">Кафедральный отчёт</option>
               <option value="Рейтинг">Рейтинг</option>
-              <option value="Книжный отчёт">Книжный отчёт</option>
+              <option value="Приложения к отчету кафедры">Приложения к отчету кафедры</option>
             </select>
           </Col>
         </Row>

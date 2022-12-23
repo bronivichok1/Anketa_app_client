@@ -32,7 +32,7 @@ const CreateBookModal = observer(({ setVisible, id }) => {
  }
 
  const addBook = () => {
-  if (bookObj.name && bookObj.type && bookObj.protocol_num && bookObj.colvo_authors && bookObj.authors && bookObj.authors.length) {
+  if (bookObj.name && bookObj.type && bookObj.colvo_authors && bookObj.authors && bookObj.authors.length) {
     let stringAuthors = '';
     bookObj.authors.forEach(el => {
       stringAuthors += el.name + ', ';
@@ -49,7 +49,7 @@ const CreateBookModal = observer(({ setVisible, id }) => {
     });
     setVisible(false);
   } else {
-    alert('Название, тип, номер протокола, кол-во авторов и ФИО авторов не могут быть пустыми!');
+    alert('Название, тип, кол-во авторов и ФИО авторов не могут быть пустыми!');
   }
  }
 
@@ -60,7 +60,7 @@ const CreateBookModal = observer(({ setVisible, id }) => {
   return (
     <div>
       <h3 style={{ textAlign: "center", marginTop: "2rem" }}>
-        Добавить книгу/статью
+        Добавить элемент
       </h3>
       <div className="cath_modal">
         <input
@@ -68,7 +68,7 @@ const CreateBookModal = observer(({ setVisible, id }) => {
           onChange={(e) => setBookObj({ ...bookObj, name: e.target.value })}
           value={bookObj.name}
           type="text"
-          placeholder="Введите название..."
+          placeholder="Введите библиографическую запись..."
           className="cusInput"
         />
 
@@ -86,18 +86,18 @@ const CreateBookModal = observer(({ setVisible, id }) => {
               marginLeft: "15px",
               marginTop: "14px",
             }}
-            checked={bookObj.type === "книга"}
+            checked={bookObj.type === "книжное издание, учебно-программная документация"}
             onChange={() => {
-              setBookObj({ ...bookObj, type: "книга" });
+              setBookObj({ ...bookObj, type: "книжное издание, учебно-программная документация" });
             }}
             name=""
             type="radio"
-            id={"книга"}
-            value="книга"
+            id={"booktype"}
+            value="книжное издание, учебно-программная документация"
             className="yes_no"
           />
-          <label className="yes_no" htmlFor={"книга"}>
-            книга
+          <label className="yes_no" htmlFor={"booktype"}>
+          книжное издание, учебно-программная документация
           </label>
 
           <input
@@ -106,18 +106,18 @@ const CreateBookModal = observer(({ setVisible, id }) => {
               marginLeft: "15px",
               marginTop: "14px",
             }}
-            checked={bookObj.type === "статья"}
+            checked={bookObj.type === "статья, тезисы, доклад"}
             className="yes_no"
             onChange={() => {
-              setBookObj({ ...bookObj, type: "статья" });
+              setBookObj({ ...bookObj, type: "статья, тезисы, доклад" });
             }}
             name=""
             type="radio"
-            id={"статья"}
-            value="статья"
+            id={"articletype"}
+            value="статья, тезисы, доклад"
           />
-          <label className="yes_no" htmlFor={"статья"}>
-            статья
+          <label className="yes_no" htmlFor={"articletype"}>
+          статья, тезисы, доклад
           </label>
         </div>
 
@@ -128,11 +128,11 @@ const CreateBookModal = observer(({ setVisible, id }) => {
           }
           value={bookObj.protocol_num}
           type="text"
-          placeholder="Введите номер протокола НМС..."
+          placeholder="Введите номер протокола НМС (при наличии)..."
           className="cusInput"
         />
 
-        {bookObj && bookObj.type === "статья" ? (
+        {bookObj && bookObj.type === "статья, тезисы, доклад" ? (
           <div
             style={{
               fontWeight: "bold",
@@ -185,7 +185,7 @@ const CreateBookModal = observer(({ setVisible, id }) => {
           <></>
         )}
 
-        {bookObj && bookObj.type === "статья" ? (
+        {bookObj && bookObj.type === "статья, тезисы, доклад" ? (
           <select
             style={{ marginTop: "0.5rem" }}
             onChange={(e) =>

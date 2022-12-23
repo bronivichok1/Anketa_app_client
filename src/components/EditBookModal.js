@@ -23,7 +23,7 @@ const EditBookModal = observer(({ setVisible, bookObj, setBookObj }) => {
  }
 
  const editBook = () => {
-  if (bookObj.name && bookObj.type && bookObj.protocol_num && bookObj.colvo_authors && bookObj.authors && bookObj.authors.length) {
+  if (bookObj.name && bookObj.type && bookObj.colvo_authors && bookObj.authors && bookObj.authors.length) {
     let stringAuthors = '';
     bookObj.authors.forEach(el => {
       stringAuthors += el.name + ', ';
@@ -31,7 +31,7 @@ const EditBookModal = observer(({ setVisible, bookObj, setBookObj }) => {
     book.setBooks([...book.books.map(el => el.id === bookObj.id ? {...bookObj, stringAuthors: stringAuthors} : {...el})]);
     setVisible(false);
   } else {
-    alert('Название, тип, номер протокола, кол-во авторов и ФИО авторов не могут быть пустыми!');
+    alert('Название, тип, кол-во авторов и ФИО авторов не могут быть пустыми!');
   }
  }
 
@@ -43,7 +43,7 @@ const EditBookModal = observer(({ setVisible, bookObj, setBookObj }) => {
   return (
     <div>
       <h3 style={{ textAlign: "center", marginTop: "2rem" }}>
-        Редактировать книгу/статью
+        Редактировать элемент
       </h3>
       <div className="cath_modal">
         <input
@@ -51,7 +51,7 @@ const EditBookModal = observer(({ setVisible, bookObj, setBookObj }) => {
           onChange={(e) => setBookObj({ ...bookObj, name: e.target.value })}
           value={bookObj.name || ''}
           type="text"
-          placeholder="Введите название..."
+          placeholder="Введите библиографическую запись..."
           className="cusInput"
         />
 
@@ -69,18 +69,18 @@ const EditBookModal = observer(({ setVisible, bookObj, setBookObj }) => {
               marginLeft: "15px",
               marginTop: "14px",
             }}
-            checked={bookObj.type === "книга"}
+            checked={bookObj.type === "книжное издание, учебно-программная документация"}
             onChange={() => {
-              setBookObj({ ...bookObj, type: "книга" });
+              setBookObj({ ...bookObj, type: "книжное издание, учебно-программная документация" });
             }}
             name=""
             type="radio"
-            id={"книга"}
-            value="книга"
+            id={"booktype"}
+            value="книжное издание, учебно-программная документация"
             className="yes_no"
           />
-          <label className="yes_no" htmlFor={"книга"}>
-            книга
+          <label className="yes_no" htmlFor={"booktype"}>
+          книжное издание, учебно-программная документация
           </label>
 
           <input
@@ -89,18 +89,18 @@ const EditBookModal = observer(({ setVisible, bookObj, setBookObj }) => {
               marginLeft: "15px",
               marginTop: "14px",
             }}
-            checked={bookObj.type === "статья"}
+            checked={bookObj.type === "статья, тезисы, доклад"}
             className="yes_no"
             onChange={() => {
-              setBookObj({ ...bookObj, type: "статья" });
+              setBookObj({ ...bookObj, type: "статья, тезисы, доклад" });
             }}
             name=""
             type="radio"
-            id={"статья"}
-            value="статья"
+            id={"articletype"}
+            value="статья, тезисы, доклад"
           />
-          <label className="yes_no" htmlFor={"статья"}>
-            статья
+          <label className="yes_no" htmlFor={"articletype"}>
+          статья, тезисы, доклад
           </label>
         </div>
 
@@ -111,11 +111,11 @@ const EditBookModal = observer(({ setVisible, bookObj, setBookObj }) => {
           }
           value={bookObj.protocol_num || ''}
           type="text"
-          placeholder="Введите номер протокола НМС..."
+          placeholder="Введите номер протокола НМС (при наличии)..."
           className="cusInput"
         />
 
-        {bookObj && bookObj.type === "статья" ? (
+        {bookObj && bookObj.type === "статья, тезисы, доклад" ? (
           <div
             style={{
               fontWeight: "bold",
@@ -168,7 +168,7 @@ const EditBookModal = observer(({ setVisible, bookObj, setBookObj }) => {
           <></>
         )}
 
-        {bookObj && bookObj.type === "статья" ? (
+        {bookObj && bookObj.type === "статья, тезисы, доклад" ? (
           <select
             style={{ marginTop: "0.5rem" }}
             onChange={(e) =>

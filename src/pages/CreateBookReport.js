@@ -12,7 +12,7 @@ const CreateBookReport = observer( () => {
       <div className="main" >
         <Container style={{ marginTop: "7rem" }}>
           <h2 style={{ textAlign: "center", color: "#0b5ed7" }}>
-           Создать книжный отчёт
+           Создать приложение к отчету кафедры
           </h2>
         </Container>
         <main>

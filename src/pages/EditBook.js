@@ -12,7 +12,7 @@ const EditBook = observer( () => {
       <div className="main" >
         <Container style={{ marginTop: "7rem" }}>
           <h2 style={{ textAlign: "center", color: "#0b5ed7" }}>
-           Редактировать книжный отчёт
+           Редактировать приложение к отчету кафедры
           </h2>
         </Container>
         <main>

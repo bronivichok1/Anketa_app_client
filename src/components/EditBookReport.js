@@ -84,7 +84,7 @@ const EditBookReport = observer(() => {
 
   const saveResult = () => {
     editBookApi({books: book.books, deletedBooks: book.deletedBooks, deletedAuthors: book.deletedAuthors, bookReportId}).then(data => {
-        alert('Книжный отчёт изменён!');
+        alert('Приложение к отчету кафедры изменено!');
         book.setBooks([]);
         navigate(SEE_REPORTS_ROUTE);
     })
