@@ -15,6 +15,7 @@ import { findByCathResult } from "../http/ResultApi";
 import { fetchDates } from "../http/DatesApi";
 import FindBookReport from "./FindBookReport";
 import { fetchByCathBookReports } from "../http/BooksReportApi";
+import { fetchUserCathedras } from "../http/UserCathedraApi";
 moment().format();
 
 
@@ -34,11 +35,28 @@ const Filter = observer(() => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
+  const [userCathedras, setUserCathedras] = useState([]);
+
   const mobile = useMediaQuery({ query: '(max-width: 770px)' })
 
   useEffect(() => {
+
     fetchCathedras().then((data) => {
       cathedra.setCathedras(data);
+      if (!user.isAuth) {
+        fetchUserCathedras(user.user.id).then((cathedrasIDs) => {
+          if (cathedrasIDs && cathedrasIDs.length > 0) {
+            let array = [];
+            cathedrasIDs.forEach((id) => {
+              let cathedra = data.find(cath => cath.id === id);
+              array.push(cathedra);
+            });
+            setUserCathedras(array);
+          } else {
+            setUserCathedras(data);
+          }
+        });
+      } else setUserCathedras(data);
     });
     fetchDates().then(data => {
       dates.setDates(data[0]);
@@ -46,8 +64,8 @@ const Filter = observer(() => {
   }, []);
 
   useEffect(async () => {
-    if (cathedra.cathedras && cathedra.cathedras.length) {
-      const cand = await cathedra.cathedras.find(cath => cath.user_id === user.user.id);
+    if (userCathedras && userCathedras.length) {
+      const cand = await userCathedras.find(cath => cath.user_id === user.user.id);
 
       if (cand && cand.id === cathId) {
         cathedra.setOpen(true);
@@ -55,12 +73,12 @@ const Filter = observer(() => {
         cathedra.setOpen(false);
       }
     }
-  }, [cathedra.cathedras, cathId])
+  }, [userCathedras, cathId])
 
 
   useEffect(() => {
     if (cathVal) {
-      cathedra.cathedras.forEach((cath) => {
+      userCathedras.forEach((cath) => {
         if (cath.name === cathVal) {
           setCathId(cath.id);
         }
@@ -207,7 +225,7 @@ const Filter = observer(() => {
               className="select"
             >
               <option value=""></option>
-              {cathedra.cathedras.map((cath) => (
+              {userCathedras.map((cath) => (
                 <option key={cath.id} value={cath.name}>
                   {cath.name}
                 </option>
