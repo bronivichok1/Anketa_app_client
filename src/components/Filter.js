@@ -15,7 +15,7 @@ import { findByCathResult } from "../http/ResultApi";
 import { fetchDates } from "../http/DatesApi";
 import FindBookReport from "./FindBookReport";
 import { fetchByCathBookReports } from "../http/BooksReportApi";
-moment().format(); 
+moment().format();
 
 
 const Filter = observer(() => {
@@ -46,10 +46,10 @@ const Filter = observer(() => {
   }, []);
 
   useEffect(async () => {
-    if(cathedra.cathedras && cathedra.cathedras.length) {
+    if (cathedra.cathedras && cathedra.cathedras.length) {
       const cand = await cathedra.cathedras.find(cath => cath.user_id === user.user.id);
 
-      if(cand && cand.id === cathId) {
+      if (cand && cand.id === cathId) {
         cathedra.setOpen(true);
       } else {
         cathedra.setOpen(false);
@@ -70,30 +70,29 @@ const Filter = observer(() => {
 
   useEffect(() => {
     if (cathId && type === "Индивидуальный отчёт") {
-     findByCathResult(cathId).then(async data => {
-       await report.setResults(data);
+      findByCathResult(cathId).then(async data => {
+        await report.setResults(data);
 
-        if(report.results && report.results.length) {
+        if (report.results && report.results.length) {
           report.results.forEach(res => {
             fetchOneUser(res.userId).then(us => {
-              report.setResults([...report.results.map(el => el.userId === us.id ? {...el, fullname: us.fullname} : {...el})]);
+              report.setResults([...report.results.map(el => el.userId === us.id ? { ...el, fullname: us.fullname } : { ...el })]);
             })
           })
         }
       })
     }
-  }, [cathId, type, dates.startDate, dates.endDate
-  ]);
+  }, [cathId, type, dates.startDate, dates.endDate]);
 
   useEffect(async () => {
     if (cathId && type === "Кафедральный отчёт") {
       await fetchCathResults(cathId).then((data) => {
 
-        if(startDate && endDate) {
+        if (startDate && endDate) {
           cath_report.setResult([...data.filter(el => moment(el.createdAt).isBetween(startDate, endDate, undefined, '[]'))]);
-      } 
+        }
         else {
-            cath_report.setResult(data);
+          cath_report.setResult(data);
         }
       });
     }
@@ -103,9 +102,9 @@ const Filter = observer(() => {
     if (cathId && type === "Приложения к отчету кафедры") {
       await fetchByCathBookReports(cathId).then((data) => {
 
-        if(startDate && endDate) {
+        if (startDate && endDate) {
           book.setBookReports([...data.filter(el => moment(el.createdAt).isBetween(startDate, endDate, undefined, '[]'))]);
-      } 
+        }
         else {
           book.setBookReports(data);
         }
@@ -148,31 +147,31 @@ const Filter = observer(() => {
           <Col style={{ fontFamily: "Roboto" }} md={4}>
             Период:
           </Col>
-          <Col style={mobile ? {marginTop: '0.5rem'} : {}} md={5}>
-           <Row>
-             <Col md={1} >
-             <span className="date_span ">С:</span>
-           </Col>
-           <Col md={5} >
-           <input
-              onChange={(e) => setStartDate(e.target.value)}
-              className="date select "
-              type="date"
-            />
-           </Col>
-           </Row>
+          <Col style={mobile ? { marginTop: '0.5rem' } : {}} md={5}>
+            <Row>
+              <Col md={1} >
+                <span className="date_span ">С:</span>
+              </Col>
+              <Col md={5} >
+                <input
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="date select "
+                  type="date"
+                />
+              </Col>
+            </Row>
           </Col>
-          <Col style={mobile ? {marginTop: '0.5rem'} : {}} md={3}>
+          <Col style={mobile ? { marginTop: '0.5rem' } : {}} md={3}>
             <Row>
               <Col md={2} >
-              <span className="date_span">По:</span>
+                <span className="date_span">По:</span>
               </Col>
               <Col md={8} >
-              <input
-              onChange={(e) => setEndDate(e.target.value)}
-              className="date select"
-              type="date"
-            />
+                <input
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className="date select"
+                  type="date"
+                />
               </Col>
             </Row>
           </Col>
