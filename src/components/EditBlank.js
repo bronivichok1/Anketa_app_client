@@ -42,40 +42,42 @@ const EditBlank = observer(() => {
       itemId = await data.find(
         (i) => i.name.trim() === "Количество занимаемых ставок"
       ).id;
- 
+
     });
 
     fetchCathedras().then((data) => {
       cathedra.setCathedras(data);
     });
 
-   fetchSelectsAll().then((data) => {
+    fetchSelectsAll().then((data) => {
       item.setSelects(data);
     });
 
-   await fetchOneOwnResult(params.id).then((data) => {
+    await fetchOneOwnResult(params.id).then((data) => {
       item.setResult(data);
+      if (data) {
+        let cathId = data.cathedra_id;
+        fetchOneCathedra(cathId).then(cath => {
+          setCathValue(cath.name);
+        });
+      }
     })
 
-    fetchOneUser(item.result.userId).then( (data) => {
-      setLocalUser(data);
-     fetchOneCathedra(data.cathedraId).then(cath => {
-       setCathValue(cath.name);
-     })
-     getBooks(data.cathedraId).then(books => {
-      book.setBooks(books);
-    })
-   });
+    fetchOneUser(item.result.userId).then((data) => {
+      if (data) {
+        setLocalUser(data);
+      }
+    });
 
     findByResReport(params.id).then(async (data) => {
       report.setReports(data);
 
-     const stavka = await data.find(d => d.itemId === itemId);
+      const stavka = await data.find(d => d.itemId === itemId);
 
-     if(stavka) {
-      item.setStavka(stavka.selectvalue);
-     }
-   });
+      if (stavka) {
+        item.setStavka(stavka.selectvalue);
+      }
+    });
 
     getMassivByRes(params.id).then((data) => {
       item.setMassiv(createMassivFunc(data));
@@ -86,34 +88,34 @@ const EditBlank = observer(() => {
   }, []);
 
   useEffect(() => {
-      cathedra.cathedras.map((cath) => {
-        if (cath.name === cathValue) {
-          setLocalUser({...localUser, cathedraId: cath.id});
-          getBooks(cath.id).then(books => {
-            book.setBooks(books);
-          })
-        }
-      });
-    
+    cathedra.cathedras.map((cath) => {
+      if (cath.name === cathValue) {
+        setLocalUser({ ...localUser, cathedraId: cath.id });
+        getBooks(cath.id).then(books => {
+          book.setBooks(books);
+        })
+      }
+    });
+
   }, [cathValue]);
 
 
   async function updateAnketa() {
     try {
 
-      await updateAnketaReport({itemResult: item.result, localUser: localUser, itemItems: item.items, reportReports: report.reports, itemMassiv: item.massiv, massivMassiv: massiv.massiv, massivDeleted: massiv.deleted}).then(() => {
-           createObj({cathedra_id: localUser.cathedraId}).then( data => {
-           console.log('create cath');
+      await updateAnketaReport({ itemResult: item.result, localUser: localUser, itemItems: item.items, reportReports: report.reports, itemMassiv: item.massiv, massivMassiv: massiv.massiv, massivDeleted: massiv.deleted }).then(() => {
+        createObj({ cathedra_id: localUser.cathedraId }).then(data => {
+          console.log('create cath');
 
-           cath_report.setSelects( [] );
-          })
+          cath_report.setSelects([]);
+        })
       })
 
       alert('Ваша анкета изменена!');
 
       navigate(SEE_REPORTS_ROUTE);
     } catch (e) {
-       alert(e.response.data.message);
+      alert(e.response.data.message);
     }
   }
 
@@ -123,8 +125,8 @@ const EditBlank = observer(() => {
         <Col className="colClass"
         >Ставка: {item.stavka} </Col>
         <Col className="colClass">
-          Общий балл: {item.result.result} 
-         </Col>
+          Общий балл: {item.result.result}
+        </Col>
       </Row>
       <Row className="row" style={{ marginTop: "1rem" }}>
         <Col md={6}>ФИО</Col>
@@ -176,25 +178,25 @@ const EditBlank = observer(() => {
 
       <div style={{ marginTop: "0.5rem" }} className="hr"></div>
 
-       {bool
-       ? <EditItems />
-      : <></>}
+      {bool
+        ? <EditItems />
+        : <></>}
 
       <Row style={{ marginTop: "3rem" }}>
         <Col lg={6}>
           <Button
-           className='buttonClass'
-          onClick={updateAnketa}
+            className='buttonClass'
+            onClick={updateAnketa}
             variant="primary"
           >
             Сохранить анкету
           </Button>
 
           <Button
-          onClick={() => navigate(SEE_REPORTS_ROUTE)}
-          className='buttonClass'
+            onClick={() => navigate(SEE_REPORTS_ROUTE)}
+            className='buttonClass'
             style={
-              {marginLeft: '10px'}
+              { marginLeft: '10px' }
             }
             variant="dark"
           >
@@ -202,7 +204,7 @@ const EditBlank = observer(() => {
           </Button>
         </Col>
         <Col lg={6}>
-         
+
         </Col>
       </Row>
     </div>
