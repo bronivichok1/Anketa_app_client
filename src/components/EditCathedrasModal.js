@@ -10,7 +10,6 @@ const EditCathedrasModal = observer(({ setVisible, setCath, cath }) => {
 
   const mobile = useMediaQuery({ query: "(max-width: 900px)" });
 
-
   const updateCathFunc = () => {
     updateCathedra(cath.id, cath).then((data) => {
       setCath({});
@@ -38,21 +37,22 @@ const EditCathedrasModal = observer(({ setVisible, setCath, cath }) => {
         <div
           style={{ fontWeight: 'bold' }}
         >
-          {cathedra.values.map((value, index) => (
+          {cathedra.values && cathedra.values.map((value, index) => (
             <div>
               <input
                 style={{ marginRight: '5px', marginLeft: '10px' }}
                 checked={cath.clin_or_teor === value.id}
                 onChange={(e) => {
-                  setCath({ ...cath, clin_or_teor: parseInt(e.target.value) })
+                  const select = parseInt(e.target.value);
+                  setCath({ ...cath, clin_or_teor: select });
                 }}
                 name={value.name}
                 type="radio"
-                id={cath.id}
+                id={index}
                 value={value.id}
                 className="yes_no"
               />
-              <label className="yes_no" htmlFor={cath.id}>
+              <label className="yes_no" htmlFor={value.id}>
                 {value.name}
               </label>
             </div>
