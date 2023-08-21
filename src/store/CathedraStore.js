@@ -4,6 +4,7 @@ export default class CathedraStore {
     constructor() {
         this._cathedras = [];
         this._types = [];
+        this._values = [];
         this._faculties = [];
         this._open = false;
         makeAutoObservable(this);
@@ -25,6 +26,22 @@ export default class CathedraStore {
         return this._types;
     }
 
+    typeNameById(id) {
+        return this._types.map(t => t.id === id ? t.name : '')
+    }
+
+    setValues(values) {
+        this._values = values;
+    }
+
+    get values() {
+        return this._values;
+    }
+
+    valueNameById(id) {
+        return this._values.map(t => t.id === id ? t.name : '')
+    }
+
     setFaculties(faculties) {
         this._faculties = faculties;
     }
@@ -32,6 +49,11 @@ export default class CathedraStore {
     get faculties() {
         return this._faculties;
     }
+
+    facultyNameById(id) {
+        return this._faculties.map(t => t.id === id ? t.name : '')
+    }
+
     setOpen(bool) {
         this._open = bool;
     }
@@ -39,6 +61,6 @@ export default class CathedraStore {
     get open() {
         return this._open;
     }
-    
-    
+
+
 }

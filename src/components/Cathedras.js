@@ -7,6 +7,7 @@ import edit from "./../imgs/edit_icon.svg";
 import MyModal from "../UI/MyModal/MyModal";
 import { deleteCathedra, fetchCathedras, fetchOneCathedra } from "../http/CathedraApi";
 import { fetchCath_type } from "../http/Cath_typeApi";
+import { fetchCathValues } from "../http/CathValueApi";
 import { fetchFaculties } from "../http/FacultyApi";
 import { observer } from "mobx-react-lite";
 import EditCathedrasModal from "./EditCathedrasModal";
@@ -14,7 +15,7 @@ import CathedrasModal from "./CathedraModal";
 
 const Cathedras = observer( () => {
 
-    const {cathedra} = useContext(Context);
+  const {cathedra} = useContext(Context);
 
   const [cathBool, setCathBool] = useState(false);
   const [cath, setCath] = useState({});
@@ -24,6 +25,7 @@ const Cathedras = observer( () => {
   useEffect(() => {
     fetchCathedras().then((data) => cathedra.setCathedras(data));
     fetchCath_type().then((data) => cathedra.setTypes(data));
+    fetchCathValues().then((data) => cathedra.setValues(data));
     fetchFaculties().then(data => cathedra.setFaculties(data));
   }, []);
 
@@ -88,21 +90,12 @@ const Cathedras = observer( () => {
              {el.name}
           </Col>
           <Col  md={2}>
-            {el.clin_or_teor}
+            {cathedra.valueNameById(el.clin_or_teor)}
           </Col>
           <Col md={2}>
-            {cathedra.types.map(t => 
-                t.id === el.cath_type_id
-                ? t.name
-                : ''
-                )}
+            {cathedra.typeNameById(el.cath_type_id)}
           </Col>
-          <Col md={2}>
-          {cathedra.faculties.map(t => 
-            t.id === el.faculty_id
-            ? t.name
-            : ''
-            )}</Col>
+          <Col md={2}>{cathedra.facultyNameById(el.faculty_id)}</Col>
          
           <Col md={1} >
             <img
