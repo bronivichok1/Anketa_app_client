@@ -14,7 +14,8 @@ html {
   overflow-x: hidden;
 }
 
-.auth_div, .firefox {
+.auth_div,
+.firefox {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -86,13 +87,13 @@ html {
   list-style-type: none;
 }
 
- .hide::before {
-  content: "" ;
+.hide::before {
+  content: "";
   display: inline-block;
-  border: 9px solid transparent ;
-  border-left: 11px solid #0b5ed7 ;
-  margin-bottom: -2px ;
-  cursor: pointer ;
+  border: 9px solid transparent;
+  border-left: 11px solid #0b5ed7;
+  margin-bottom: -2px;
+  cursor: pointer;
 }
 
 .show::before {
@@ -106,12 +107,12 @@ html {
 }
 
 .ques {
- width: 30px;
- height: 30px;
+  width: 30px;
+  height: 30px;
   box-shadow: 0px 0px 18px #0b5ed7;
   border-radius: 50%;
   margin: 0 auto;
-  font-family:"Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
 }
 
 .footer_link {
@@ -119,18 +120,19 @@ html {
   color: #e9eff9;
   font-size: 20px;
 }
+
 .footer_link:hover {
   color: #0b5ed7;
 }
 
 
 .hr2 {
-	height: 6px;
-	border: none;
-	border-bottom: 1px solid #d1d1d1;
-	box-shadow: 0 20px 20px -20px rgb(92, 91, 91);
-	width: 100%;
-  
+  height: 6px;
+  border: none;
+  border-bottom: 1px solid #d1d1d1;
+  box-shadow: 0 20px 20px -20px rgb(92, 91, 91);
+  width: 100%;
+
 }
 
 .item {
@@ -161,7 +163,7 @@ html {
 }
 
 .mas_val {
- 
+
   border-radius: 20px;
   font-family: 'Times New Roman', Times, serif;
   width: 83%;
@@ -170,19 +172,20 @@ html {
   margin-bottom: 0.5rem;
   font-size: 21px;
   height: 36px;
-  
+
 }
+
 .mas_del {
- margin-left: 1rem;
- cursor: pointer;
- height: 1.1rem;
- width: 1.1rem;
- margin-top: 0.5rem;
+  margin-left: 1rem;
+  cursor: pointer;
+  height: 1.1rem;
+  width: 1.1rem;
+  margin-top: 0.5rem;
 }
 
 .it {
   font-size: 19px;
-  
+
 }
 
 .second {
@@ -215,7 +218,7 @@ html {
 }
 
 .select {
-   font-size: 17px;
+  font-size: 17px;
 }
 
 .btn1 {
@@ -243,7 +246,7 @@ html {
   padding: 10px 15px;
   font-size: 16px;
   margin-bottom: 2rem;
-  border-radius: 15px; 
+  border-radius: 15px;
   border: 2px solid #0b5ed7;
 }
 
@@ -285,7 +288,7 @@ html {
   height: 7rem;
 }
 
-.cath_modal{
+.cath_modal {
   margin-top: 3rem;
 }
 
@@ -299,9 +302,9 @@ html {
 
 .select_name {
   width: 100%;
-  
+
   padding: 10px;
- 
+
   box-shadow: 0px 0px 18px #0b5ed7;
   border-radius: 20px;
   margin-bottom: 1rem;
@@ -317,10 +320,10 @@ html {
   background-color: white;
 }
 
-.admHead{
+.admHead {
   padding: 10px;
   font-size: 20px;
-  
+
   font-weight: 500;
   box-shadow: 0px 0px 18px #0b5ed7;
   border-radius: 20px;
@@ -339,7 +342,7 @@ html {
   margin-top: 2rem;
   font-family: Roboto;
   margin-bottom: 0.5rem;
- 
+
 }
 
 .colvo {
@@ -348,41 +351,45 @@ html {
 }
 
 .big-table {
-	overflow: auto;
-	position: relative;
-	table-layout: fixed;
-	width: 100%;
-	margin-bottom: 20px;
+  overflow: auto;
+  position: relative;
+  table-layout: fixed;
+  width: 100%;
+  margin-bottom: 20px;
   border-radius: 10px;
   box-shadow: 0px 0px 18px #0b5ed7;
 }
+
 .big-table table {
-	display: inline-block;
-	vertical-align: top;
-	max-width: 100%;
-	overflow-x: auto;
-	white-space: nowrap;
-	-webkit-overflow-scrolling: touch;
+  display: inline-block;
+  vertical-align: top;
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
 }
 
 .big-table th {
-	font-weight: bold;
-	padding: 10px;
-	background: #b2c4df;
-	border: 1px solid #dddddd;
+  font-weight: bold;
+  padding: 10px;
+  background: #b2c4df;
+  border: 1px solid #dddddd;
 }
-.big-table td{
-	padding: 10px 10px;
-	border: 1px solid #eee;
-	text-align: left;
+
+.big-table td {
+  padding: 10px 10px;
+  border: 1px solid #eee;
+  text-align: left;
   font-size: 18px;
   font-weight: 500;
 }
-.big-table tbody tr:nth-child(odd){
-	background: #fff;
+
+.big-table tbody tr:nth-child(odd) {
+  background: #fff;
 }
-.big-table tbody tr:nth-child(even){
-	background: #f2f5fb;
+
+.big-table tbody tr:nth-child(even) {
+  background: #f2f5fb;
 }
 
 .wrapp {
@@ -392,7 +399,7 @@ html {
 
 .date_span {
   font-family: 'Roboto';
- margin-right: 10px;
+  margin-right: 10px;
 }
 
 .span_date {
@@ -458,17 +465,15 @@ html {
   left: 0;
   top: 50px;
   background-color: white;
-  width: 100%;
   list-style: none;
-  margin: 0;
   padding: 0;
   border-radius: 15px;
   font-size: 16px;
   box-shadow: 0px 0px 18px #0b5ed7;
- z-index: 20;
- max-height: 220px;
- height: auto;
- overflow: auto;
+  z-index: 20;
+  max-height: 320px;
+  height: auto;
+  overflow: auto;
 }
 
 .autocomplete_item {
@@ -477,13 +482,13 @@ html {
 
 .autocomplete_item:hover {
   background-color: rgb(218, 218, 218);
-  cursor: pointer; 
+  cursor: pointer;
 }
 
 .divCross {
   display: flex;
   justify-content: end;
-  margin-right: 10px; 
+  margin-right: 10px;
   margin-top: 5px;
 }
 
