@@ -8,6 +8,7 @@ import { createMassivFunc, createTree2 } from "../functions";
 import { closeItem, fetchItems, resItem } from "../http/ItemApi";
 import { fetchSelectsAll } from "../http/SelectApi";
 import { fetchCathedras } from "../http/CathedraApi";
+import { createCathValue } from "../http/CathValueApi";
 import { postAnketaReport } from "../http/ReportApi";
 import { fetchOneUser } from "../http/UserApi";
 import { fetchUserCathedras, updateUserCathedras } from "../http/UserCathedraApi";
@@ -44,7 +45,6 @@ const Blank = observer(() => {
   const selectorWeights = [11, 5, 4];
 
   useEffect(async () => {
-
     await fetchItems().then((data) => {
       let array = createTree2([
         ...data.map((d) =>
