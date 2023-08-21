@@ -16,6 +16,7 @@ import { fetchDates } from "../http/DatesApi";
 import FindBookReport from "./FindBookReport";
 import { fetchByCathBookReports } from "../http/BooksReportApi";
 import { fetchUserCathedras } from "../http/UserCathedraApi";
+import { fetchCathResponsibles } from "../http/CathResponsiblesApi";
 moment().format();
 
 
@@ -36,6 +37,7 @@ const Filter = observer(() => {
   const [endDate, setEndDate] = useState("");
 
   const [userCathedras, setUserCathedras] = useState([]);
+  const [cathResponsibles, setCathResponsibles] = useState([]);
 
   const mobile = useMediaQuery({ query: '(max-width: 770px)' })
 
@@ -61,13 +63,17 @@ const Filter = observer(() => {
     fetchDates().then(data => {
       dates.setDates(data[0]);
     })
+
+    fetchCathResponsibles().then((data) => {
+      setCathResponsibles(data);
+    });
   }, []);
 
   useEffect(async () => {
-    if (userCathedras && userCathedras.length) {
-      const cand = await userCathedras.find(cath => cath.user_id === user.user.id);
+    if (userCathedras && userCathedras.length && cathResponsibles) {
+      const cand = await cathResponsibles.find(res => (res.userId === user.user.id && res.cathedraId === cathId));
 
-      if (cand && cand.id === cathId) {
+      if (cand) {
         cathedra.setOpen(true);
       } else {
         cathedra.setOpen(false);
