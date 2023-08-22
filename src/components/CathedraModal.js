@@ -45,7 +45,7 @@ const CathedrasModal = observer(({ setVisible }) => {
           style={{ fontWeight: 'bold' }}
         >
           {cathedra.values.map((value, index) => (
-            <div>
+            <>
               <input
                 style={{ marginRight: '5px', marginLeft: '10px' }}
                 checked={clin_or_teor === value.id}
@@ -61,7 +61,7 @@ const CathedrasModal = observer(({ setVisible }) => {
               <label className="yes_no" htmlFor={index}>
                 {value.name}
               </label>
-            </div>
+            </>
           ))}
         </div>
 
