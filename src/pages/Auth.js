@@ -100,7 +100,7 @@ const Auth = observer(() => {
           placeholder="Введите логин..."
         />
         {loginEmpty && loginError && (
-          <div style={{ marginBottom: "-1rem", color: "red" }}>{loginError}</div>
+          <div style={{ marginBottom: "-1.5rem", color: "red" }}>{loginError}</div>
         )}
         <input
           onBlur={(e) => blurHandler(e)}
@@ -111,7 +111,7 @@ const Auth = observer(() => {
           placeholder="Введите пароль..."
         />
         {passwordEmpty && passwordError && (
-          <div style={{ marginBottom: "-1rem", color: "red" }}>{passwordError}</div>
+          <div style={{ marginBottom: "-1.5rem", color: "red" }}>{passwordError}</div>
         )}
 
         <Button
@@ -120,6 +120,8 @@ const Auth = observer(() => {
           onClick={auth}
           variant="primary"
           style={{
+            width: "20%",
+            marginLeft: "40%",
             marginTop: "2rem",
             fontFamily: "Roboto",
             fontSize: "20px",
