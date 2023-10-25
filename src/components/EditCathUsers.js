@@ -2,18 +2,18 @@ import { observer } from "mobx-react-lite";
 import { useContext, useEffect, useState } from "react";
 import { Col, Container, Row, Button } from "react-bootstrap";
 import { Context } from "..";
-import { fetchCathedras, updateCathedra } from "../http/CathedraApi";
+import { fetchCathedras } from "../http/CathedraApi";
 import { findAdmins } from "../http/UserApi";
+import { createCathResponsible, deleteCathResponsible, fetchCathResponsibles } from "../http/CathResponsiblesApi";
 import trash from "./../imgs/trash_icon.svg";
 
 const EditCathUsers = observer(() => {
   const { cathedra } = useContext(Context);
   const { user } = useContext(Context);
 
-  const [cathVal, setCathVal] = useState("");
   const [cathId, setCathId] = useState(0);
-  const [cath, setCath] = useState({});
   const [login, setLogin] = useState("");
+  const [cathResponsibles, setResponsibles] = useState([]);
 
   useEffect(() => {
     fetchCathedras().then((data) => {
@@ -22,51 +22,37 @@ const EditCathUsers = observer(() => {
     findAdmins().then((data) => {
       user.setUsers(data);
     });
+    fetchCathResponsibles().then((data) => {
+      setResponsibles(data);
+    });
   }, []);
-
-  useEffect(() => {
-    if (cathVal) {
-      cathedra.cathedras.forEach((cath) => {
-        if (cath.name === cathVal) {
-          setCathId(cath.id);
-          setCath(cath);
-        }
-      });
-    }
-  }, [cathVal]);
 
   const addUser = async () => {
     if (cathId && login) {
-      const condidate = await user.users.find(
-        (us) => us.login.toLowerCase() === login.toLowerCase() + "@bsmu.by"
-      );
+      const responsibles = cathResponsibles.filter((element) => element.cathedraId === cathId);
+      if (responsibles.length < 2) {
+        const condidate = await user.users.find(
+          (us) => us.login.toLowerCase() === login.toLowerCase() + "@bsmu.by"
+        );
 
-      if (condidate) {
-        updateCathedra(cathId, {
-          ...cath,
-          user_id: condidate.id,
-          user_name: condidate.fullname,
-        }).then((data) => {
-          window.location.reload();
-        });
+        if (condidate) {
+          createCathResponsible(cathId, condidate.id).then((data) => {
+            window.location.reload();
+          });
+        } else {
+          alert("Такого пользователя нет в базе данных сайта!");
+        }
       } else {
-        alert("Такого пользователя нет в базе данных сайта!");
+        alert("Данная кафедра уже имеет " + responsibles.length + " ответственых");
       }
     }
   };
 
   const deleteFunc = async (id) => {
-
-    const cath = await cathedra.cathedras.find(el => el.id === id);
-
-    if (cath) {
-        updateCathedra(id, {
-            ...cath,
-            user_id: null,
-            user_name: null,
-          }).then((data) => {
-            window.location.reload();
-          });
+    if (id) {
+      deleteCathResponsible(id).then((data) => {
+        window.location.reload();
+      })
     }
   }
 
@@ -79,14 +65,14 @@ const EditCathUsers = observer(() => {
               Кафедра:
             </span>
             <select
-              onChange={(e) => setCathVal(e.target.value)}
-              value={cathVal}
+              onChange={(e) => setCathId(parseInt(e.target.value))}
+              value={cathId}
               className="select"
             >
               <option value=""></option>
 
               {cathedra.cathedras.map((cath) => (
-                <option key={cath.id} value={cath.name}>
+                <option key={cath.id} value={cath.id}>
                   {cath.name}
                 </option>
               ))}
@@ -129,16 +115,18 @@ const EditCathUsers = observer(() => {
           </Row>
         </div>
 
-        {cathedra.cathedras.map((el) => {
-          if (el.user_name) {
+        {cathResponsibles.map((el) => {
+          let cath = cathedra.cathedras.find((cath) => el.cathedraId === cath.id);
+          let cathUser = user.users.find((user) => el.userId === user.id);
+          if (cathUser && cath) {
             return (
               <div key={el.id} style={{ marginLeft: "12px", marginRight: "12px" }}>
                 <Row className="us_item">
-                  <Col md={5} >{el.name}</Col>
-                  <Col>{el.user_name}</Col>
+                  <Col md={5} >{cath.name}</Col>
+                  <Col>{cathUser.fullname}</Col>
                   <Col md={1}>
                     <img
-                    onClick={() => deleteFunc(el.id)}
+                      onClick={() => deleteFunc(el.id)}
                       style={{
                         height: "30px",
                         marginLeft: "30px",

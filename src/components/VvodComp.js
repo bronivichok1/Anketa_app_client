@@ -49,16 +49,16 @@ const VvodComp = ({d, test, type}) => {
       value={
         d.vvod
           ? d.vvod
-          : ""
+          : ''
       }
       style={{ marginTop: "0.5rem" }}
       onChange={(e) => {
-        setVvod(Number(e.target.value) > 0 ? e.target.value : '') ;
+        setVvod(Number(e.target.value) > 0 ? e.target.value : 0);
         setVvodId(d.id);
         item.setItems([
           ...item.items.map((dat) =>
             dat.id === d.id
-              ? { ...dat, vvod: Number(e.target.value) > 0 ? e.target.value : '' }
+              ? { ...dat, vvod: Number(e.target.value) > 0 ? e.target.value : 0 }
               : { ...dat }
           ),
         ]);

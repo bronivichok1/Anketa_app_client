@@ -15,7 +15,9 @@ import { findByCathResult } from "../http/ResultApi";
 import { fetchDates } from "../http/DatesApi";
 import FindBookReport from "./FindBookReport";
 import { fetchByCathBookReports } from "../http/BooksReportApi";
-moment().format(); 
+import { fetchUserCathedras } from "../http/UserCathedraApi";
+import { fetchCathResponsibles } from "../http/CathResponsiblesApi";
+moment().format();
 
 
 const Filter = observer(() => {
@@ -34,33 +36,55 @@ const Filter = observer(() => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
+  const [userCathedras, setUserCathedras] = useState([]);
+  const [cathResponsibles, setCathResponsibles] = useState([]);
+
   const mobile = useMediaQuery({ query: '(max-width: 770px)' })
 
   useEffect(() => {
+
     fetchCathedras().then((data) => {
       cathedra.setCathedras(data);
+      if (!user.isAuth) {
+        fetchUserCathedras(user.user.id).then((cathedrasIDs) => {
+          if (cathedrasIDs && cathedrasIDs.length > 0) {
+            let array = [];
+            cathedrasIDs.forEach((id) => {
+              let cathedra = data.find(cath => cath.id === id);
+              array.push(cathedra);
+            });
+            setUserCathedras(array);
+          } else {
+            setUserCathedras(data);
+          }
+        });
+      } else setUserCathedras(data);
     });
     fetchDates().then(data => {
       dates.setDates(data[0]);
     })
+
+    fetchCathResponsibles().then((data) => {
+      setCathResponsibles(data);
+    });
   }, []);
 
   useEffect(async () => {
-    if(cathedra.cathedras && cathedra.cathedras.length) {
-      const cand = await cathedra.cathedras.find(cath => cath.user_id === user.user.id);
+    if (userCathedras && userCathedras.length && cathResponsibles) {
+      const cand = await cathResponsibles.find(res => (res.userId === user.user.id && res.cathedraId === cathId));
 
-      if(cand && cand.id === cathId) {
+      if (cand) {
         cathedra.setOpen(true);
       } else {
         cathedra.setOpen(false);
       }
     }
-  }, [cathedra.cathedras, cathId])
+  }, [userCathedras, cathId])
 
 
   useEffect(() => {
     if (cathVal) {
-      cathedra.cathedras.forEach((cath) => {
+      userCathedras.forEach((cath) => {
         if (cath.name === cathVal) {
           setCathId(cath.id);
         }
@@ -70,30 +94,29 @@ const Filter = observer(() => {
 
   useEffect(() => {
     if (cathId && type === "Индивидуальный отчёт") {
-     findByCathResult(cathId).then(async data => {
-       await report.setResults(data);
+      findByCathResult(cathId).then(async data => {
+        await report.setResults(data);
 
-        if(report.results && report.results.length) {
+        if (report.results && report.results.length) {
           report.results.forEach(res => {
             fetchOneUser(res.userId).then(us => {
-              report.setResults([...report.results.map(el => el.userId === us.id ? {...el, fullname: us.fullname} : {...el})]);
+              report.setResults([...report.results.map(el => el.userId === us.id ? { ...el, fullname: us.fullname } : { ...el })]);
             })
           })
         }
       })
     }
-  }, [cathId, type, dates.startDate, dates.endDate
-  ]);
+  }, [cathId, type, dates.startDate, dates.endDate]);
 
   useEffect(async () => {
     if (cathId && type === "Кафедральный отчёт") {
       await fetchCathResults(cathId).then((data) => {
 
-        if(startDate && endDate) {
+        if (startDate && endDate) {
           cath_report.setResult([...data.filter(el => moment(el.createdAt).isBetween(startDate, endDate, undefined, '[]'))]);
-      } 
+        }
         else {
-            cath_report.setResult(data);
+          cath_report.setResult(data);
         }
       });
     }
@@ -103,9 +126,9 @@ const Filter = observer(() => {
     if (cathId && type === "Приложения к отчету кафедры") {
       await fetchByCathBookReports(cathId).then((data) => {
 
-        if(startDate && endDate) {
+        if (startDate && endDate) {
           book.setBookReports([...data.filter(el => moment(el.createdAt).isBetween(startDate, endDate, undefined, '[]'))]);
-      } 
+        }
         else {
           book.setBookReports(data);
         }
@@ -148,31 +171,31 @@ const Filter = observer(() => {
           <Col style={{ fontFamily: "Roboto" }} md={4}>
             Период:
           </Col>
-          <Col style={mobile ? {marginTop: '0.5rem'} : {}} md={5}>
-           <Row>
-             <Col md={1} >
-             <span className="date_span ">С:</span>
-           </Col>
-           <Col md={5} >
-           <input
-              onChange={(e) => setStartDate(e.target.value)}
-              className="date select "
-              type="date"
-            />
-           </Col>
-           </Row>
+          <Col style={mobile ? { marginTop: '0.5rem' } : {}} md={5}>
+            <Row>
+              <Col md={1} >
+                <span className="date_span ">С:</span>
+              </Col>
+              <Col md={5} >
+                <input
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="date select "
+                  type="date"
+                />
+              </Col>
+            </Row>
           </Col>
-          <Col style={mobile ? {marginTop: '0.5rem'} : {}} md={3}>
+          <Col style={mobile ? { marginTop: '0.5rem' } : {}} md={3}>
             <Row>
               <Col md={2} >
-              <span className="date_span">По:</span>
+                <span className="date_span">По:</span>
               </Col>
               <Col md={8} >
-              <input
-              onChange={(e) => setEndDate(e.target.value)}
-              className="date select"
-              type="date"
-            />
+                <input
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className="date select"
+                  type="date"
+                />
               </Col>
             </Row>
           </Col>
@@ -208,7 +231,7 @@ const Filter = observer(() => {
               className="select"
             >
               <option value=""></option>
-              {cathedra.cathedras.map((cath) => (
+              {userCathedras.map((cath) => (
                 <option key={cath.id} value={cath.name}>
                   {cath.name}
                 </option>

@@ -34,7 +34,3 @@ export const findAdmins = async () => {
     const {data} = await $host.get('/user');
     return data;
 }
-
-
-
-

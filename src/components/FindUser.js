@@ -18,11 +18,11 @@ const FindUser = observer(() => {
   const { report } = useContext(Context);
 
   const filteredResults = useMemo(() => {
-   if(report.results) {
-    return report.results.filter((us) => {
-      return us.fullname ? us.fullname.toLowerCase().includes(value.toLowerCase()) : '';
-    });
-   }
+    if (report.results) {
+      return report.results.filter((us) => {
+        return us.fullname ? us.fullname.toLowerCase().includes(value.toLowerCase()) : '';
+      });
+    }
   });
 
   useEffect(() => {
@@ -52,7 +52,7 @@ const FindUser = observer(() => {
         dates.dates.lastDate,
         undefined,
         "[]"
-      ) || cathedra.open || user.isAuth 
+      ) || cathedra.open || user.isAuth
     ) {
       navigate(`/reports/${id}`);
     } else {
@@ -79,7 +79,7 @@ const FindUser = observer(() => {
           Сотрудники
         </h4>
 
-      {(report.results && report.results.length && cathedra.open) || report.results && report.results.length && user.isAuth ? (
+        {(report.results && report.results.length && cathedra.open) || report.results && report.results.length && user.isAuth ? (
           <Row>
             <Col md={4}></Col>
             <Col md={4}>
@@ -95,9 +95,9 @@ const FindUser = observer(() => {
           </Row>
         ) : (
           <></>
-        )} 
+        )}
 
-       {report.results && report.results.length ? (
+        {report.results && report.results.length ? (
           <>
             <Row
               style={{ marginBottom: "1rem", marginTop: "1rem" }}
@@ -110,32 +110,32 @@ const FindUser = observer(() => {
 
             {cathedra.open || user.isAuth
               ? filteredResults.map((us) => (
-                  <Row className="us_item" key={us.id}>
-                    <Col md={4}>{us.fullname}</Col>
-                    <Col md={4} >{moment(us.createdAt).format("DD.MM.YYYY h:mm:ss")}</Col>
-                    <Col md={3} >{us.result}</Col>
-                    <Col onClick={() => editUser(us.id)} md={1}>
-                      <img className="edit" src={edit} alt="" />
-                    </Col>
-                  </Row>
-                ))
+                <Row className="us_item" key={us.id}>
+                  <Col md={4}>{us.fullname}</Col>
+                  <Col md={4} >{moment(us.createdAt).format("DD.MM.YYYY h:mm:ss")}</Col>
+                  <Col md={3} >{us.result}</Col>
+                  <Col onClick={() => editUser(us.id)} md={1}>
+                    <img className="edit" src={edit} alt="" />
+                  </Col>
+                </Row>
+              ))
               :
-                report.results.map((us) => {
-                  if (us.userId === user.user.id) {
-                    return (
-                      <Row key={us.id} className="us_item">
-                        <Col md={4}>{us.fullname}</Col>
-                        <Col md={4} >
-                          {moment(us.createdAt).format("DD.MM.YYYY h:mm:ss")}
-                        </Col>
-                        <Col md={3} >{us.result}</Col>
-                        <Col onClick={() => editUser(us.id)} md={1}>
-                          <img className="edit" src={edit} alt="" />
-                        </Col>
-                      </Row>
-                    );
-                  }
-                })}
+              report.results.map((us) => {
+                if (us.userId === user.user.id) {
+                  return (
+                    <Row key={us.id} className="us_item">
+                      <Col md={4}>{us.fullname}</Col>
+                      <Col md={4} >
+                        {moment(us.createdAt).format("DD.MM.YYYY h:mm:ss")}
+                      </Col>
+                      <Col md={3} >{us.result}</Col>
+                      <Col onClick={() => editUser(us.id)} md={1}>
+                        <img className="edit" src={edit} alt="" />
+                      </Col>
+                    </Row>
+                  );
+                }
+              })}
           </>
         ) : (
           <div>Сотрудники не найдены!</div>

@@ -91,9 +91,6 @@ const Auth = observer(() => {
         <h4 style={{ textAlign: "center", color: '#0b5ed7', marginTop: "1rem" }}>
           Авторизация
         </h4>
-        {loginEmpty && loginError && (
-          <div style={{ color: "red" }}>{loginError}</div>
-        )}
         <input
           onBlur={(e) => blurHandler(e)}
           name="login"
@@ -102,8 +99,8 @@ const Auth = observer(() => {
           type="text"
           placeholder="Введите логин..."
         />
-        {passwordEmpty && passwordError && (
-          <div style={{ color: "red" }}>{passwordError}</div>
+        {loginEmpty && loginError && (
+          <div style={{ marginBottom: "-1.5rem", color: "red" }}>{loginError}</div>
         )}
         <input
           onBlur={(e) => blurHandler(e)}
@@ -113,6 +110,9 @@ const Auth = observer(() => {
           type="password"
           placeholder="Введите пароль..."
         />
+        {passwordEmpty && passwordError && (
+          <div style={{ marginBottom: "-1.5rem", color: "red" }}>{passwordError}</div>
+        )}
 
         <Button
           className="button"
@@ -120,6 +120,8 @@ const Auth = observer(() => {
           onClick={auth}
           variant="primary"
           style={{
+            width: "20%",
+            marginLeft: "40%",
             marginTop: "2rem",
             fontFamily: "Roboto",
             fontSize: "20px",

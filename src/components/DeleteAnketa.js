@@ -14,7 +14,7 @@ import moment from 'moment';
 import { countResAgain, deleteCathResult, fetchCathResultActive, fetchCathResults } from "../http/CathResultApi";
 import { createObj, deleteCathReport, deleteCathReportByRes } from "../http/CathReportApi";
 import { deleteColvo, deleteColvoByRes } from "../http/ColvoSelectsApi";
-moment().format(); 
+moment().format();
 moment.locale("ru");
 
 const DeleteAnketa = observer(() => {
@@ -64,40 +64,40 @@ const DeleteAnketa = observer(() => {
     setBool(true);
     if (report.results && report.results.length) {
       report.results.forEach((res) => {
-       fetchOneUser(res.userId).then(data => {
-         report.setResults([...report.results.map(el => el.userId === data.id ? {...el, fullname: data.fullname}
-          : {...el})]);
-       })
+        fetchOneUser(res.userId).then(data => {
+          report.setResults([...report.results.map(el => el.userId === data.id ? { ...el, fullname: data.fullname }
+            : { ...el })]);
+        })
       });
     }
   }
-  
+
 
   async function DeleteFunc(id, cath_result_id) {
-  console.log(id);
+    console.log(id);
 
-await deleteReportsByRes(id).then(data => {
-    console.log('report');
-})
+    await deleteReportsByRes(id).then(data => {
+      console.log('report');
+    })
 
-await deleteMassivByRes(id).then(data => {
-  console.log('massiv');
-})
+    await deleteMassivByRes(id).then(data => {
+      console.log('massiv');
+    })
 
- deleteResultOwn(id).then(data => {
-    console.log('result');
-  })
+    deleteResultOwn(id).then(data => {
+      console.log('result');
+    })
 
 
-   report.setResults([...report.results.filter(u => u.id !== id)]);
+    report.setResults([...report.results.filter(u => u.id !== id)]);
 
-   await deleteCathReportByRes(cath_result_id).then(data => {});
-   await deleteColvoByRes(cath_result_id).then(data => {});
+    await deleteCathReportByRes(cath_result_id).then(data => { });
+    await deleteColvoByRes(cath_result_id).then(data => { });
 
-   await countResAgain({cath_result_id: cath_result_id}).then(data => {
-     console.log('updated cath result');
-   })
-    
+    await countResAgain({ cath_result_id: cath_result_id }).then(data => {
+      console.log('updated cath result');
+    })
+
   }
 
 
@@ -126,7 +126,7 @@ await deleteMassivByRes(id).then(data => {
             </select>
           </Col>
           <Col md={1} >
-          <Button onClick={findUser} variant='primary' >Найти</Button>
+            <Button onClick={findUser} variant='primary' >Найти</Button>
           </Col>
         </Row>
 
@@ -141,7 +141,7 @@ await deleteMassivByRes(id).then(data => {
             Сотрудники
           </h4>
 
-       {report.results && report.results.length && cathVal && bool ? (
+          {report.results && report.results.length && cathVal && bool ? (
             <Row>
               <Col md={4}></Col>
               <Col md={4}>
@@ -157,44 +157,44 @@ await deleteMassivByRes(id).then(data => {
             </Row>
           ) : (
             <></>
-          )} 
+          )}
 
-{report.results && report.results.length && cathVal && bool ? (
+          {report.results && report.results.length && cathVal && bool ? (
 
-<>
+            <>
 
- <Row style={{marginBottom: '1rem'}} className="blankHead" >
-     <Col md={4}>ФИО</Col>
-     <Col md={3}>Общий балл</Col>
-     <Col md={4}>Дата последнего редактирования</Col>
+              <Row style={{ marginBottom: '1rem' }} className="blankHead" >
+                <Col md={4}>ФИО</Col>
+                <Col md={3}>Общий балл</Col>
+                <Col md={4}>Дата последнего редактирования</Col>
 
- </Row>
+              </Row>
 
- {filteredResults.map((us) => (
-   <Row className="us_item" key={us.id}>
-     <Col md={4}>{us.fullname}</Col>
-     <Col md={3}>{us.result}</Col>
-     <Col md={4}>{ 
-    moment(us.updatedAt).format("DD.MM.YYYY h:mm:ss")}</Col>
-     <Col md={1}>
-       <img
-       onClick={() => DeleteFunc(us.id, us.cath_result_id)}
-         style={{
-           height: "30px",
-           marginLeft: "30px",
-           cursor: "pointer",
-         }}
-         md={1}
-         src={trash}
-         alt=""
-       />
-     </Col>
-   </Row>
- ))}
-</>
-) : cathVal && bool ? (
- <div>Сотрудники не найдены!</div>
-) : <></>}
+              {filteredResults.map((us) => (
+                <Row className="us_item" key={us.id}>
+                  <Col md={4}>{us.fullname}</Col>
+                  <Col md={3}>{us.result}</Col>
+                  <Col md={4}>{
+                    moment(us.updatedAt).format("DD.MM.YYYY h:mm:ss")}</Col>
+                  <Col md={1}>
+                    <img
+                      onClick={() => DeleteFunc(us.id, us.cath_result_id)}
+                      style={{
+                        height: "30px",
+                        marginLeft: "30px",
+                        cursor: "pointer",
+                      }}
+                      md={1}
+                      src={trash}
+                      alt=""
+                    />
+                  </Col>
+                </Row>
+              ))}
+            </>
+          ) : cathVal && bool ? (
+            <div>Сотрудники не найдены!</div>
+          ) : <></>}
         </div>
       </Container>
     </div>
