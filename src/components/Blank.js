@@ -41,7 +41,8 @@ const Blank = observer(() => {
   const [currentLocalReportId, setLocalReportId] = useState(undefined);
   const [requestedLocalReportId, setRequestedLocalReportId] = useState(0);
   const [defaultItemsArray, setDefaultItemsArray] = useState([]);
-
+  const [minusClicks, setMinusClicks] = useState(0);
+  
   const selectorWeights = [11, 5, 4];
 
   useEffect(async () => {
@@ -242,6 +243,13 @@ const Blank = observer(() => {
     })
   }
 
+  function deleteUserCathedra() {
+    setUserCathedras((oldArray) => {
+        const newArray = oldArray.slice(0, oldArray.length - 1);
+        return newArray;
+    });
+}
+
   const handleRadioChange = (e) => {
     setSelectedCath(parseInt(e.target.value));
   }
@@ -323,6 +331,22 @@ const Blank = observer(() => {
               >
                 +
               </Button>
+
+            </Col>
+            }
+            { userCathedras.length > 1 && <Col md={1}>
+              <Button
+                className='minusButtonClass'
+                onClick={(e) => {
+                  if (userCathedras.length > 1) {
+                    deleteUserCathedra()
+                  }
+                }}
+                variant="primary"
+              >
+                —
+              </Button>
+              
             </Col>
             }
 

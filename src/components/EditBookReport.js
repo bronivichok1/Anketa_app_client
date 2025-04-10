@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import { Context } from "..";
-import { fetchMassivItems } from "../http/ItemApi";
+import { fetchMassivItems, fetchItems } from "../http/ItemApi";
 import MyModal from "../UI/MyModal/MyModal";
 import { SEE_REPORTS_ROUTE } from "../utils/consts";
 import CreateBookModal from "./CreateBookModal";
@@ -19,6 +19,7 @@ import { editBookApi, fetchOneBookReport } from "../http/BooksReportApi";
 import axios from "axios";
 import { saveAs } from "file-saver";
 import { fetchOneCathedra } from "../http/CathedraApi";
+import Tippy from "@tippyjs/react";
 
 const EditBookReport = observer(() => {
   const navigate = useNavigate();
@@ -41,11 +42,13 @@ const EditBookReport = observer(() => {
   });
   const [bookReportId, setBookReportId] = useState(0);
   const [cath, setCath] = useState('');
+  const [items, setItems] = useState([]);
 
   useEffect(() => {
     fetchMassivItems().then(data => {
         book.setMassivItems(data);
     })
+    fetchItems().then((data) => setItems(data));
     setBookReportId(Number(params.id));
     getAuthorsByReport(Number(params.id)).then(authors => {
         getBooksByReport(Number(params.id)).then(async books => {
@@ -130,9 +133,16 @@ const EditBookReport = observer(() => {
        <h5 style={{marginBottom: '3rem'}} >Кафедра: {cath}</h5>
        {book.massivItems.map(item =>
            <div key={item.id}>
-             <Row className="bookItem" >
-              <Col md={11} > {item.num}. {item.name}</Col>
-              <Col> <Button onClick={() => addBook(item.id)} variant="primary">+</Button> </Col>
+             <Row className="bookItem">
+              <Col md={11}>{item.num}. {item.name}</Col>
+              <Col style={{ display: 'flex', alignItems: 'center' }}>
+                <Tippy content={item.parent.name}>
+                  <div style={{ textAlign: "center", cursor: "pointer", marginRight: '0.5rem' }} className="ques">
+                    ?
+                  </div>
+                </Tippy>
+                <Button onClick={() => addBook(item.id)} variant="primary">+</Button>
+              </Col>
             </Row>
             {book.books.map(b => {
               if(b.item_id === item.id) {
